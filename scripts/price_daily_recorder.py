@@ -86,15 +86,40 @@ def previous_product(product_id, scan_date):
     return None
 
 
+def infer_baseline_date(product_id, current_date):
+    """从历史记录中推断基准日期（最早的记录日期），格式化为YYYY年M月"""
+    product_dir = TREND_HISTORY_DIR / product_id
+    if not product_dir.exists():
+        return None
+    # 获取最早的记录文件
+    files = sorted(product_dir.glob("*.json"))
+    if not files:
+        return None
+    earliest_file = files[0]
+    # 从文件名提取日期（格式：YYYY-MM-DD.json）
+    date_str = earliest_file.stem
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        return dt.strftime("%Y年%-m月")
+    except ValueError:
+        return None
+
+
 def build_daily_record(cache):
     scan_date = cache.get("scan_time") or today_str()
     records = []
-    prices = cache.get("prices") or {}
+    prices = cache.get("prices") or cache.get("models") or {}
 
     for product_id, item in prices.items():
         prev = previous_product(product_id, scan_date)
         platform_records = {}
         representative_change = None
+
+        # 如果没有baseline_date但有历史记录，自动填充
+        if not item.get("baseline_date") and prev:
+            inferred_date = infer_baseline_date(product_id, scan_date)
+            if inferred_date:
+                item["baseline_date"] = inferred_date
 
         for platform, path in PLATFORM_PATHS.items():
             current = as_number(nested_get(item, path))

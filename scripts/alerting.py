@@ -115,6 +115,49 @@ class AlertManager:
             )
         return False
     
+    def on_price_drop_alert(
+        self,
+        product: str,
+        baseline_price: str,
+        current_price: str,
+        change_pct: str,
+        baseline_date: str = None,
+        current_date: str = None
+    ) -> bool:
+        """
+        价格下跌告警（带原均价日期标注）
+        
+        示例格式：RTX 3070: 2200-2600元（2026年3月）→ 1360-1903元（4月29日），跌幅22-38%
+        
+        Args:
+            product: 产品名称
+            baseline_price: 原均价（如 "2200-2600"）
+            current_price: 当前价格（如 "1360-1903"）
+            change_pct: 跌幅百分比（如 "22-38%"）
+            baseline_date: 原均价日期（格式如 "2026年3月"），可选
+            current_date: 当前日期（格式如 "4月29日"），可选
+        """
+        baseline_label = baseline_date if baseline_date else "历史数据"
+        current_label = current_date if current_date else "今日"
+        
+        # 格式化baseline_price
+        bp = f"{baseline_price}元" if baseline_price and not baseline_price.endswith("元") else baseline_price or "未知"
+        
+        # 格式化current_price  
+        cp = f"{current_price}元" if current_price and not current_price.endswith("元") else current_price or "未知"
+        
+        # 构建内容
+        if baseline_date:
+            content = f"**{product}**: {bp}（{baseline_date}）→ {cp}（{current_label}），跌幅 {change_pct}"
+        else:
+            content = f"**{product}**: 原均价 {bp} → 当前 {cp}，跌幅 {change_pct}"
+        
+        return self._send(
+            title=f"🚨 价格下跌告警 - {product}",
+            content=content,
+            level="error"
+        )
+    
     def on_scenario_alert(self, scenario: str, product: str, details: str) -> bool:
         """市场场景告警"""
         return self._send(

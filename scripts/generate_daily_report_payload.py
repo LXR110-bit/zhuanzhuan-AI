@@ -108,13 +108,13 @@ def build_rows_from_price_cache(cache, validation_report=None):
     rows = []
     missing = []
     validation_products = (validation_report or {}).get("products", {})
-    prices = cache.get("prices") or {}
+    prices = cache.get("prices") or cache.get("models") or {}
     for product_id, item in prices.items():
-        product_name = item.get("product_name") or product_id
+        product_name = item.get("product_name") or item.get("name") or product_id
         xianyu_market = item.get("xianyu_market", {}).get("avg")
         xianyu_recycle = item.get("xianyu_official", {}).get("price")
         aihuishou = item.get("aihuishou", {}).get("tansuo_price")
-        updated = item.get("updated_at") or item.get("last_crawl")
+        updated = item.get("updated_at") or item.get("last_crawl") or item.get("verification_date")
         validation_item = validation_products.get(product_id, {})
         platform_validation = validation_item.get("platforms", {})
         if platform_validation.get("xianyu_market", {}).get("reason"):
@@ -123,6 +123,9 @@ def build_rows_from_price_cache(cache, validation_report=None):
             xianyu_recycle = None
         if platform_validation.get("aihuishou", {}).get("reason"):
             aihuishou = None
+
+        # 读取 baseline_date 字段
+        baseline_date = item.get("baseline_date") or "历史数据"
 
         if xianyu_market is None and xianyu_recycle is None and aihuishou is None:
             missing.append(f"{product_name}: 三价格缺失")
@@ -155,6 +158,9 @@ def build_rows_from_price_cache(cache, validation_report=None):
                 for platform in platform_validation.values()
                 if platform.get("reason")
             ),
+            # 新增：原均价日期标注
+            "baseline_date": baseline_date,
+            "baseline_price": item.get("baseline_price") or item.get("二手均价"),
         })
     return rows, sorted(set(missing))
 
@@ -324,6 +330,19 @@ def main():
             "source": "cloud_pc_daily_recommendation",
         } for rec in recommendations[:5])
 
+    # 构建drop_alerts，添加baseline_date信息
+    drop_alerts = []
+    for alert in validation_report.get("warnings", []):
+        if isinstance(alert, dict):
+            # 尝试从price_cache获取baseline_date
+            model_name = alert.get("model") or alert.get("product_name") or alert.get("product_id")
+            if model_name and model_name in price_cache.get("models", {}):
+                model_data = price_cache["models"][model_name]
+                alert = alert.copy()
+                alert["baseline_date"] = model_data.get("baseline_date") or "历史数据"
+                alert["baseline_price"] = model_data.get("baseline_price")
+        drop_alerts.append(alert)
+    
     payload = {
         "version": "1.0.0",
         "date": today_str(),
@@ -336,7 +355,7 @@ def main():
             "daily_record": str(latest_daily_price_file()) if latest_daily_price_file() else None,
         },
         "risks": {
-            "drop_alerts": validation_report.get("warnings", []),
+            "drop_alerts": drop_alerts,
             "rise_alerts": [],
             "missing_data": missing,
             "validation_errors": validation_report.get("errors", []),

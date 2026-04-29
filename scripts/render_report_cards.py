@@ -252,6 +252,30 @@ def price_row(draw, y, row, header_row=False):
         draw.text((x, y), value, font=font(27, True if header_row or idx == 4 else False), fill=color)
 
 
+def price_table_header(draw, y, baseline_date_hint=None):
+    """渲染带baseline_date标注的表头"""
+    # 提取月份（去掉"年"和"月"）
+    month_label = ""
+    if baseline_date_hint and baseline_date_hint != "历史数据":
+        # 从"2026年3月"提取"3月"
+        for i, c in enumerate(baseline_date_hint):
+            if c == "年":
+                month_label = baseline_date_hint[i+1:]
+                break
+        if not month_label:
+            month_label = baseline_date_hint
+    
+    col1 = "机型"
+    col2 = f"原均价（{month_label}）" if month_label else "原均价"
+    col3 = "最新价"
+    col4 = "日环比"
+    rounded(draw, (88, y - 38, 992, y + 18), radius=8, fill="#F1F5F9")
+    draw.text((96, y + 4), col1, font=font(26, True), fill="#64748B")
+    draw.text((330, y + 4), col2, font=font(26, True), fill="#64748B")
+    draw.text((520, y + 4), col3, font=font(26, True), fill="#64748B")
+    draw.text((700, y + 4), col4, font=font(26, True), fill="#64748B")
+
+
 def render_price_card(payload, output_path):
     colors = palette("price")
     img = Image.new("RGBA", (WIDTH, HEIGHT), colors["page"])
@@ -280,8 +304,14 @@ def render_price_card(payload, output_path):
     rounded(draw, (64, y, 1016, y + 700), radius=8, fill="#FFFFFF", outline="#E2E8F0")
     draw.text((96, y + 34), "价格总览", font=font(32, True), fill=colors["accent"])
     table_y = y + 102
-    rounded(draw, (88, table_y - 38, 992, table_y + 18), radius=8, fill="#F1F5F9")
-    price_row(draw, table_y - 2, {"model": "机型", "xianyu_market": "自由市", "xianyu_recycle": "官方回", "aihuishou": "爱回收", "daily_change": "日环比"}, True)
+    # 使用带baseline_date标注的表头
+    baseline_date_hint = None
+    if rows:
+        for row in rows:
+            if row.get("baseline_date") and row.get("baseline_date") != "历史数据":
+                baseline_date_hint = row.get("baseline_date")
+                break
+    price_table_header(draw, table_y, baseline_date_hint)
     table_y += 58
     for idx, row in enumerate(rows[:10]):
         if idx % 2 == 1:
@@ -303,7 +333,19 @@ def render_price_card(payload, output_path):
             draw.text((x + 30, line_y), "无", font=font(30), fill="#64748B")
         else:
             for item in items[:3]:
-                line_y = draw_wrapped(draw, (x + 30, line_y), item, font(27), fill="#334155", chars=16, line_gap=4, max_lines=2)
+                # 支持带baseline_date的告警对象
+                if isinstance(item, dict):
+                    model = item.get("model") or item.get("product_name") or item.get("product_id") or str(item)
+                    detail = item.get("detail") or item.get("message") or item.get("type") or ""
+                    baseline_date = item.get("baseline_date")
+                    if baseline_date and baseline_date != "历史数据":
+                        # 格式化为：RTX 3070（3月）：跌幅22-38%
+                        display_text = f"{model}（{baseline_date[5:-1]}）：{detail}"
+                    else:
+                        display_text = f"{model}：{detail}"
+                else:
+                    display_text = str(item)
+                line_y = draw_wrapped(draw, (x + 30, line_y), display_text, font(27), fill="#334155", chars=16, line_gap=4, max_lines=2)
                 line_y += 26
 
     draw.text((64, 1848), "数据来源：闲鱼自由市场价格 / 闲鱼官方回收价格 / 爱回收价格｜仅展示价格与日环比", font=font(26), fill="#6D7788")

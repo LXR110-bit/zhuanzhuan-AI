@@ -8,11 +8,16 @@ __pycache__/
 logs/
 *.log
 
+# Deprecated Python crawling entrypoints must not return to scripts/
+scripts/price_crawler.py
+scripts/run_daytime_scan.py
+
 # Runtime data and generated reports
 data/*
 !data/.gitkeep
 cloud_pc_daily.json
 2026_*/
+每日备份/
 白天异动检测/日报_*.md
 
 # Generated images / exports

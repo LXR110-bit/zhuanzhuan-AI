@@ -12,6 +12,7 @@ import json
 import os
 import re
 import time
+from http.client import RemoteDisconnected
 from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
@@ -288,7 +289,7 @@ def main() -> int:
                     "query": query,
                     **format_http_error(exc),
                 })
-            except (URLError, TimeoutError, json.JSONDecodeError) as exc:
+            except (URLError, TimeoutError, RemoteDisconnected, json.JSONDecodeError) as exc:
                 errors.append({
                     "source": source.get("id"),
                     "platform": source.get("platform"),

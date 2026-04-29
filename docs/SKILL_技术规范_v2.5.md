@@ -366,6 +366,13 @@ KOL搜索（补充策略）：
 
 ### 5.3 新增数据源
 
+**IT之家**：
+- 官网：https://www.ithome.com/
+- RSS：https://www.ithome.com/rss/
+- 获取方式：RSS + `search_web site:ithome.com`
+- 关注频道：业界、手机、电脑、AI、苹果、iPhone、安卓、数码、智车、测评
+- 关键词：降价、新品、发布、英伟达、NVIDIA、AMD、显卡、内存、SSD、大疆、影石、GoPro、以旧换新、补贴
+
 **RSS订阅**：
 - 头条号RSS转换：通过RSSHub桥接订阅目标头条号
 - 微信公众号：通过搜狗微信搜索或WeRSS等服务桥接

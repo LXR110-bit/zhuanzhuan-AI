@@ -27,6 +27,7 @@
     "data_sources": [
       "search_web",
       "RSS",
+      "IT之家",
       "tikhub"
     ],
     "canonical_push_time": "10:00",

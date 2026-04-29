@@ -160,6 +160,28 @@
       ],
       "caution": "不建议云手机爬取，成本高、易封号"
     },
+    "ithome": {
+      "version": "1.0.0",
+      "updated_at": "2026-04-29",
+      "description": "IT之家科技资讯源，覆盖手机、电脑、AI、半导体、数码硬件、苹果、安卓、智能汽车等",
+      "homepage": "https://www.ithome.com/",
+      "rss": "https://www.ithome.com/rss/",
+      "method": "RSS + search_web site:ithome.com",
+      "channels": ["业界", "手机", "电脑", "AI", "苹果", "iPhone", "安卓", "数码", "智车", "测评"],
+      "keywords": ["降价", "新品", "发布", "英伟达", "NVIDIA", "AMD", "显卡", "内存", "SSD", "大疆", "影石", "GoPro", "以旧换新", "补贴"],
+      "search_queries": [
+        "site:ithome.com 大疆 新品 发布",
+        "site:ithome.com 影石 Insta360 新品",
+        "site:ithome.com GoPro 新品",
+        "site:ithome.com NVIDIA 显卡 降价",
+        "site:ithome.com AMD 显卡 降价",
+        "site:ithome.com DDR5 内存 价格",
+        "site:ithome.com SSD 价格",
+        "site:ithome.com 以旧换新 补贴 数码"
+      ],
+      "credibility": "high",
+      "note": "优先使用RSS获取最新文章，再用search_web定向补充品类关键词。"
+    },
     "scheduling": {
       "original": "06:00",
       "new_schedule": {

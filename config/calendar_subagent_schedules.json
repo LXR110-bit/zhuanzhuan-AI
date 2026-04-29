@@ -63,6 +63,18 @@
         "python3 scripts/render_report_cards.py"
       ]
     },
+    "daily_report_push": {
+      "calendar_summary": "日报推送",
+      "time": "10:00",
+      "description_template": "日程描述模板_20260429.md#五、日报推送",
+      "sub_agent_tools": ["bash"],
+      "push_steps": [
+        "检查 data/report_cards/ 下当天PNG卡片是否存在",
+        "存在 → 推送两张卡片到扣子主对话 + 企业微信webhook",
+        "不存在 → 在扣子主对话报告异常（06:00日报生成失败）"
+      ],
+      "python_after_tools": []
+    },
     "cloud_pc_scan": {
       "calendar_summary": "云电脑扫描",
       "times": ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],

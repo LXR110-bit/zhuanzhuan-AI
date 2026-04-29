@@ -1,0 +1,62 @@
+{
+  "archived_at": "2026-04-29T11:21:28.332523",
+  "scan_time": "2026-04-29",
+  "product_id": "ddr5_16g",
+  "data": {
+    "product_id": "ddr5_16g",
+    "product_name": "DDR5内存",
+    "updated_at": "2026-04-26",
+    "source": "coze_original_price_cache",
+    "note": "16GB 6000MHz，价格暴跌40%-70%，需持续跟踪",
+    "status": "cached",
+    "platforms": {
+      "xianyu_market": {
+        "price": 560.0,
+        "source": "coze_search_web",
+        "last_crawl": "2026-04-26",
+        "status": "cached"
+      },
+      "xianyu_official": {
+        "price": null,
+        "source": "coze_mobile_use",
+        "last_crawl": "2026-04-26",
+        "status": "cached"
+      },
+      "aihuishou": {
+        "price": null,
+        "source": "coze_mobile_use_or_search_web",
+        "last_crawl": "2026-04-26",
+        "status": "cached"
+      }
+    },
+    "xianyu_market": {
+      "avg": 560.0,
+      "last_crawl": "2026-04-26",
+      "status": "cached",
+      "source": "coze_search_web"
+    },
+    "xianyu_official": {
+      "price": null,
+      "last_crawl": "2026-04-26",
+      "status": "no_price",
+      "source": "coze_mobile_use"
+    },
+    "aihuishou": {
+      "tansuo_price": null,
+      "last_crawl": "2026-04-26",
+      "status": "no_price",
+      "source": "coze_mobile_use_or_search_web"
+    },
+    "latest_prices": {
+      "market_price": 560.0,
+      "official_recycle_price": null,
+      "recycle_price": null
+    },
+    "change_1d_by_platform": {
+      "xianyu_market": null,
+      "aihuishou": null,
+      "xianyu_official": null
+    },
+    "change_1d": null
+  }
+}

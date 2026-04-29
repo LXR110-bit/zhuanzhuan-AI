@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-29T11:21:28.900425",
+  "date": "2026-04-29",
+  "daily_report": {
+    "expected_push_time": "10:00",
+    "status": "missed",
+    "attempts": 1,
+    "sent": false,
+    "sent_at": null,
+    "image_required": true,
+    "images": {
+      "market_daily_card": "/Users/lilixiaoran/工作/转转/行情追踪助手/data/report_cards/2026-04-29_market_daily_card.png",
+      "price_monitor_card": "/Users/lilixiaoran/工作/转转/行情追踪助手/data/report_cards/2026-04-29_price_monitor_card.png"
+    },
+    "last_error": null
+  },
+  "alerts": []
+}

@@ -1,0 +1,62 @@
+{
+  "archived_at": "2026-04-29T11:21:28.323409",
+  "scan_time": "2026-04-29",
+  "product_id": "rtx_3060",
+  "data": {
+    "product_id": "rtx_3060",
+    "product_name": "RTX 3060",
+    "updated_at": "2026-04-28",
+    "source": "coze_original_price_cache",
+    "note": "search_web 4月28日数据，1600-1900元（3月矿卡报告），+10~31%，首次异动，待确认",
+    "status": "pending_confirm",
+    "platforms": {
+      "xianyu_market": {
+        "price": 1450.0,
+        "source": "coze_search_web",
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm"
+      },
+      "xianyu_official": {
+        "price": 781.0,
+        "source": "coze_mobile_use",
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm"
+      },
+      "aihuishou": {
+        "price": null,
+        "source": "coze_mobile_use_or_search_web",
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm"
+      }
+    },
+    "xianyu_market": {
+      "avg": 1450.0,
+      "last_crawl": "2026-04-28",
+      "status": "pending_confirm",
+      "source": "coze_search_web"
+    },
+    "xianyu_official": {
+      "price": 781.0,
+      "last_crawl": "2026-04-28",
+      "status": "pending_confirm",
+      "source": "coze_mobile_use"
+    },
+    "aihuishou": {
+      "tansuo_price": null,
+      "last_crawl": "2026-04-28",
+      "status": "no_price",
+      "source": "coze_mobile_use_or_search_web"
+    },
+    "latest_prices": {
+      "market_price": 1450.0,
+      "official_recycle_price": 781.0,
+      "recycle_price": null
+    },
+    "change_1d_by_platform": {
+      "xianyu_market": null,
+      "aihuishou": null,
+      "xianyu_official": null
+    },
+    "change_1d": null
+  }
+}

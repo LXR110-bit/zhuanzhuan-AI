@@ -28,3 +28,11 @@ cloud-pc-monitor/data/
 *.png
 *.zip
 *.tar.gz
+
+# Sanitized debug bundles are intentionally commit-able.
+!debug_snapshots/
+!debug_snapshots/.gitkeep
+!debug_snapshots/**/
+!debug_snapshots/**/*.json
+!debug_snapshots/**/*.md
+!debug_snapshots/**/*.log

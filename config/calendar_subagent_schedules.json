@@ -77,7 +77,7 @@
     },
     "cloud_pc_scan": {
       "calendar_summary": "云电脑扫描",
-      "times": ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],
+      "times": ["08:00", "10:30", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],
       "description_template": "日程描述模板_20260429.md#四、云电脑扫描",
       "sub_agent_tools": ["search_web", "bash"],
       "python_after_tools": [

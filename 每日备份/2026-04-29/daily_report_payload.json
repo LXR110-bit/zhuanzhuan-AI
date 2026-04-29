@@ -1,0 +1,565 @@
+{
+  "version": "1.0.0",
+  "date": "2026-04-29",
+  "generated_at": "2026-04-29T11:29:24.037474",
+  "summary": {
+    "one_sentence": "今日监控17个有效价格项，发现1条需关注信号。",
+    "today_action": "按10点固定节奏推送图片日报，白天继续巡检。",
+    "data_quality": "价格记录26条，有效17条；缺失68项；已合并云电脑日报；资讯信号保留0条，去重/过期0条；缺失项已标注原因"
+  },
+  "signals": {
+    "S": [],
+    "A": [],
+    "B": [
+      {
+        "title": "市场整体平稳，无特殊建议",
+        "source": "cloud_pc_daily_recommendation"
+      }
+    ]
+  },
+  "prices": {
+    "updated_at": "2026-04-29T11:29:09.003062",
+    "rows": [
+      {
+        "product_id": "rtx_3060",
+        "model": "RTX 3060",
+        "xianyu_market": "¥1750",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-29",
+        "source": "search_web_20260429",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "rtx_3070",
+        "model": "RTX 3070",
+        "xianyu_market": "¥2400",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-29",
+        "source": "search_web_20260429",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "rtx_3080",
+        "model": "RTX 3080",
+        "xianyu_market": "¥3000",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-29",
+        "source": "search_web_20260429",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "rtx_3090",
+        "model": "RTX 3090",
+        "xianyu_market": "¥4850",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-29",
+        "source": "search_web_20260429",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "rtx_4070",
+        "model": "RTX 4070",
+        "xianyu_market": "¥3500",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-29",
+        "source": "search_web_20260429",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "rtx_4080",
+        "model": "RTX 4080",
+        "xianyu_market": "¥8900",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-29",
+        "source": "search_web_20260429",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "i5_13600k",
+        "model": "i5 13600K",
+        "xianyu_market": "¥2400",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-29",
+        "source": "search_web_20260429",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "i7_13700k",
+        "model": "i7 13700K",
+        "xianyu_market": "¥3500",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-29",
+        "source": "search_web_20260429",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "r5_5600x",
+        "model": "5600X",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-27",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "r7_5800x3d",
+        "model": "5800X3D",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-27",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "dji_pocket3",
+        "model": "DJI Pocket 3",
+        "xianyu_market": "¥1568",
+        "xianyu_recycle": "¥1344",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-24",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "dji_pocket4",
+        "model": "DJI Pocket 4",
+        "xianyu_market": "¥2999",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-26",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "dji_action5",
+        "model": "DJI Action 5",
+        "xianyu_market": "¥2098",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-23",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "dji_action6",
+        "model": "DJI Action 6",
+        "xianyu_market": "¥2998",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-24",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "djilito1",
+        "model": "DJI Lito 1",
+        "xianyu_market": "¥1999",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-26",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "dji_lito_x1",
+        "model": "DJI Lito X1",
+        "xianyu_market": "¥2488",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-26",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "insta360_x4",
+        "model": "insta360 X4",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-27",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "insta360x4air",
+        "model": "insta360 X4 Air",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-27",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "insta360_x5",
+        "model": "insta360 X5",
+        "xianyu_market": "¥1717",
+        "xianyu_recycle": "¥1302",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-24",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "insta360_acepro",
+        "model": "insta360 Ace Pro",
+        "xianyu_market": "¥1998",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-24",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "ddr5_16g",
+        "model": "DDR5内存",
+        "xianyu_market": "¥560",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-26",
+        "source": "coze_original_price_cache",
+        "status": "ok",
+        "missing_reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "nand_ssd",
+        "model": "NAND固态",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-27",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果；PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      },
+      {
+        "product_id": "xiaomi_band9",
+        "model": "小米手环9",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-27",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "xiaomi_band10",
+        "model": "小米手环10",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-27",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "goprohero13",
+        "model": "GoPro Hero 13",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-27",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      },
+      {
+        "product_id": "gopromission1",
+        "model": "GoPro Mission 1",
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+          "xianyu_market": "—",
+          "aihuishou": "—",
+          "xianyu_official": "—"
+        },
+        "updated_at": "2026-04-26",
+        "source": "coze_original_price_cache",
+        "status": "no_valid_price",
+        "missing_reason": "本次扫描未获取到有效报价；本次扫描未获取到有效报价；本次扫描未获取到有效报价"
+      }
+    ],
+    "daily_record": "/app/data/所有对话/主对话/行情价格追踪/data/daily_price_records/2026-04-29.json"
+  },
+  "risks": {
+    "drop_alerts": [
+      "5600X: 本次扫描没有任何有效价格",
+      "5800X3D: 本次扫描没有任何有效价格",
+      "insta360 X4: 本次扫描没有任何有效价格",
+      "insta360 X4 Air: 本次扫描没有任何有效价格",
+      "NAND固态: 本次扫描没有任何有效价格",
+      "小米手环9: 本次扫描没有任何有效价格",
+      "小米手环10: 本次扫描没有任何有效价格",
+      "GoPro Hero 13: 本次扫描没有任何有效价格",
+      "GoPro Mission 1: 本次扫描没有任何有效价格"
+    ],
+    "rise_alerts": [],
+    "missing_data": [
+      "5600X 爱回收价: 本次扫描未获取到有效报价",
+      "5600X 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "5600X 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "5600X: 三价格缺失",
+      "5800X3D 爱回收价: 本次扫描未获取到有效报价",
+      "5800X3D 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "5800X3D 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "5800X3D: 三价格缺失",
+      "DDR5内存 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "DDR5内存 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "DJI Action 5 爱回收价: 本次扫描未获取到有效报价",
+      "DJI Action 5 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "DJI Action 6 爱回收价: 本次扫描未获取到有效报价",
+      "DJI Action 6 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "DJI Lito 1 爱回收价: 本次扫描未获取到有效报价",
+      "DJI Lito 1 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "DJI Lito X1 爱回收价: 本次扫描未获取到有效报价",
+      "DJI Lito X1 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "DJI Pocket 3 爱回收价: 本次扫描未获取到有效报价",
+      "DJI Pocket 4 爱回收价: 本次扫描未获取到有效报价",
+      "DJI Pocket 4 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "GoPro Hero 13 爱回收价: 本次扫描未获取到有效报价",
+      "GoPro Hero 13 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "GoPro Hero 13 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "GoPro Hero 13: 三价格缺失",
+      "GoPro Mission 1 爱回收价: 本次扫描未获取到有效报价",
+      "GoPro Mission 1 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "GoPro Mission 1 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "GoPro Mission 1: 三价格缺失",
+      "NAND固态 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "NAND固态 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "NAND固态 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "NAND固态: 三价格缺失",
+      "RTX 3060 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 3060 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 3070 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 3070 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 3080 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 3080 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 3090 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 3090 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 4070 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 4070 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 4080 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "RTX 4080 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "i5 13600K 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "i5 13600K 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "i7 13700K 爱回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "i7 13700K 闲鱼官方回收价: PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+      "insta360 Ace Pro 爱回收价: 本次扫描未获取到有效报价",
+      "insta360 Ace Pro 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "insta360 X4 Air 爱回收价: 本次扫描未获取到有效报价",
+      "insta360 X4 Air 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "insta360 X4 Air 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "insta360 X4 Air: 三价格缺失",
+      "insta360 X4 爱回收价: 本次扫描未获取到有效报价",
+      "insta360 X4 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "insta360 X4 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "insta360 X4: 三价格缺失",
+      "insta360 X5 爱回收价: 本次扫描未获取到有效报价",
+      "小米手环10 爱回收价: 本次扫描未获取到有效报价",
+      "小米手环10 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "小米手环10 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "小米手环10: 三价格缺失",
+      "小米手环9 爱回收价: 本次扫描未获取到有效报价",
+      "小米手环9 闲鱼官方回收价: 本次扫描未获取到有效报价",
+      "小米手环9 闲鱼自由市场价格: 本次扫描未获取到有效报价",
+      "小米手环9: 三价格缺失"
+    ],
+    "validation_errors": [],
+    "manual_confirmation_required": false
+  },
+  "images": {
+    "market_daily_card": "/app/data/所有对话/主对话/行情价格追踪/data/report_cards/2026-04-29_market_daily_card.png",
+    "price_monitor_card": "/app/data/所有对话/主对话/行情价格追踪/data/report_cards/2026-04-29_price_monitor_card.png"
+  },
+  "sources": {
+    "price_cache": "/app/data/所有对话/主对话/行情价格追踪/data/price_cache.json",
+    "cloud_pc_daily": "/app/data/所有对话/主对话/行情价格追踪/cloud_pc_daily.json",
+    "validation_report": "/app/data/所有对话/主对话/行情价格追踪/data/validation_report.json",
+    "anomaly_votes": "/app/data/所有对话/主对话/行情价格追踪/data/anomaly_votes.json",
+    "news_signals_filtered": "/app/data/所有对话/主对话/行情价格追踪/data/news_signals_filtered.json"
+  }
+}

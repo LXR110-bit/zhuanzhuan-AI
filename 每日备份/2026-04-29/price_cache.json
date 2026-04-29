@@ -1,0 +1,212 @@
+{
+  "version": "2.2",
+  "generated_at": "2026-04-29T10:45:00+08:00",
+  "detection_times": ["07:30", "12:00", "17:30"],
+  "source": "search_web",
+  "verification": "mobile_use",
+  "models": {
+    "RTX 3060": {
+      "id": "rtx_3060",
+      "name": "微星 RTX 3060",
+      "category": "显卡",
+      "二手均价": "1600-1900",
+      "unit": "元",
+      "confidence": "medium",
+      "sources": [
+        {
+          "platform": "什么值得买/闲鱼/转转",
+          "price": "1600-1900",
+          "note": "2026年3月二手均价",
+          "date": "2026-03"
+        },
+        {
+          "platform": "电脑玩家莫哥",
+          "price": "1600-1900",
+          "note": "2026年4月真实二手价",
+          "date": "2026-04"
+        }
+      ],
+      "risk_notes": ["98%都是矿卡，需仔细甄别", "低于1500元按矿卡处理"],
+      "stop_threshold": 900
+    },
+    "RTX 3070": {
+      "id": "rtx_3070",
+      "name": "微星 RTX 3070",
+      "category": "显卡",
+      "二手均价": "2200-2600",
+      "unit": "元",
+      "confidence": "medium",
+      "sources": [
+        {
+          "platform": "91挖矿卡报告",
+          "price": "2200-2600",
+          "note": "2026年3月9成新参考价",
+          "date": "2026-03"
+        },
+        {
+          "platform": "NGA玩家",
+          "price": "1500",
+          "note": "技嘉3070魔鹰带保修，快过保",
+          "date": "2026-04"
+        }
+      ],
+      "risk_notes": ["价格差异大，需验机", "矿卡重灾区"],
+      "stop_threshold": 1400
+    },
+    "RTX 3080": {
+      "id": "rtx_3080",
+      "name": "微星 RTX 3080",
+      "category": "显卡",
+      "二手均价": "2850-3800",
+      "unit": "元",
+      "confidence": "medium",
+      "sources": [
+        {
+          "platform": "什么值得买/闲鱼7日均价",
+          "price": "2850",
+          "note": "较2025年12月上涨42%",
+          "date": "2026-03"
+        },
+        {
+          "platform": "91挖矿卡报告",
+          "price": "3200-3800",
+          "note": "2026年3月9成新参考价",
+          "date": "2026-03"
+        },
+        {
+          "platform": "戴尔外星人原装",
+          "price": "2000-3600",
+          "note": "OEM版本，需甄别原装vs翻新",
+          "date": "2026-04"
+        }
+      ],
+      "risk_notes": ["矿卡重灾区", "市场鱼龙混杂"],
+      "stop_threshold": 2200
+    },
+    "RTX 3090": {
+      "id": "rtx_3090",
+      "name": "微星 RTX 3090",
+      "category": "显卡",
+      "二手均价": "4500-5200",
+      "unit": "元",
+      "confidence": "high",
+      "sources": [
+        {
+          "platform": "91挖矿卡报告",
+          "price": "4500-5200",
+          "note": "2026年3月9成新参考价",
+          "date": "2026-03"
+        },
+        {
+          "platform": "个人买家博主",
+          "price": "7200-7700",
+          "note": "七彩虹Advanced OC带保修成交",
+          "date": "2026-03"
+        }
+      ],
+      "risk_notes": ["注意显存温度", "高端卡建议购买延保"],
+      "stop_threshold": 3200
+    },
+    "RTX 4070": {
+      "id": "rtx_4070",
+      "name": "微星 RTX 4070",
+      "category": "显卡",
+      "二手均价": "3400-4200",
+      "unit": "元",
+      "confidence": "medium",
+      "sources": [
+        {
+          "platform": "什么值得买/闲鱼",
+          "price": "3400",
+          "note": "2026年3月7日均价",
+          "date": "2026-03"
+        },
+        {
+          "platform": "91挖矿卡报告",
+          "price": "4200-4800",
+          "note": "9成新参考价",
+          "date": "2026-03"
+        },
+        {
+          "platform": "NGA卖家",
+          "price": "2780",
+          "note": "微星万图师三风扇带原盒无拆修",
+          "date": "2026-04"
+        }
+      ],
+      "risk_notes": ["40系矿卡比例低", "全新vs二手差价500-1000元"],
+      "stop_threshold": 2000
+    },
+    "RTX 4080": {
+      "id": "rtx_4080",
+      "name": "微星 RTX 4080",
+      "category": "显卡",
+      "二手均价": "7500-8500",
+      "unit": "元",
+      "confidence": "high",
+      "sources": [
+        {
+          "platform": "91挖矿卡报告",
+          "price": "7500-8500",
+          "note": "2026年3月9成新参考价",
+          "date": "2026-03"
+        }
+      ],
+      "risk_notes": ["40系相对新，矿卡比例低"],
+      "stop_threshold": 4500
+    },
+    "i5 13600K": {
+      "id": "i5_13600k",
+      "name": "i5 13600K",
+      "category": "CPU",
+      "二手均价": "1000-1200",
+      "unit": "元",
+      "confidence": "medium",
+      "sources": [
+        {
+          "platform": "NGA卖家",
+          "price": "1200",
+          "note": "23年7月购买，快过保",
+          "date": "2026-04"
+        },
+        {
+          "platform": "ZOL问答",
+          "price": "1800",
+          "note": "13600KF散片参考价",
+          "date": "2025-10"
+        }
+      ],
+      "risk_notes": ["注意是否ES/QS工程样品", "建议购买带保修版本"],
+      "stop_threshold": 900
+    },
+    "i7 13700K": {
+      "id": "i7_13700k",
+      "name": "i7 13700K",
+      "category": "CPU",
+      "二手均价": "1900-2000",
+      "unit": "元",
+      "confidence": "high",
+      "sources": [
+        {
+          "platform": "NGA玩家",
+          "price": "1900",
+          "note": "上个月成交参考",
+          "date": "2025-05"
+        },
+        {
+          "platform": "NGA问答",
+          "price": "1800-2000",
+          "note": "137KF约1800，137约2000",
+          "date": "2025-05"
+        }
+      ],
+      "risk_notes": ["Intel保值性好", "注意缩肛风险"],
+      "stop_threshold": 1400
+    }
+  },
+  "summary": {
+    "high_confidence": ["RTX 3090", "RTX 4080", "i7 13700K"],
+    "medium_confidence": ["RTX 3060", "RTX 3070", "RTX 3080", "RTX 4070", "i5 13600K"],
+    "alert_models": []
+  }
+}

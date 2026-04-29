@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "date": "2026-04-29",
+  "generated_at": "2026-04-29T13:49:22.242980",
+  "source": "/app/data/所有对话/主对话/行情价格追踪/data/price_cache.json",
+  "ok": true,
+  "manual_confirmation_required": false,
+  "errors": [],
+  "warnings": [],
+  "products": {},
+  "stats": {
+    "product_count": 0,
+    "valid_product_count": 0,
+    "valid_price_count": 0
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "updated_at": "2026-04-29",
   "execution_model": "Calendar -> sub-agent -> search_web/mobile_use -> Python post-processing",
   "source_templates": {

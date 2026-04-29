@@ -26,7 +26,8 @@
     "responsibility": "资讯整合、信号分级、收购建议",
     "data_sources": [
       "search_web",
-      "RSS"
+      "RSS",
+      "tikhub"
     ],
     "canonical_push_time": "10:00",
     "scan_start": "04:00",
@@ -46,6 +47,7 @@
       "require_publish_time": true,
       "dedupe_window_days": 7,
       "drop_older_than_days": 7,
+      "structured_social_entrypoint": "python3 scripts/fetch_tikhub_signals.py --append",
       "entrypoint": "python3 scripts/news_signal_filter.py",
       "history_file": "data/news_signal_dedupe_history.json",
       "dedupe_key": "url_or_source_title"

@@ -18,6 +18,7 @@
     "python3 scripts/price_data_validator.py",
     "python3 scripts/price_daily_recorder.py",
     "python3 scripts/price_archiver.py archive",
+    "python3 scripts/fetch_tikhub_signals.py --append",
     "python3 scripts/news_signal_filter.py",
     "python3 scripts/generate_daily_report_payload.py",
     "python3 scripts/render_report_cards.py"
@@ -29,6 +30,7 @@
       "description_template": "日程描述模板_20260429.md#三、市场追踪日报",
       "sub_agent_tools": ["search_web", "bash"],
       "python_after_tools": [
+        "python3 scripts/fetch_tikhub_signals.py --append",
         "python3 scripts/news_signal_filter.py",
         "python3 scripts/generate_daily_report_payload.py",
         "python3 scripts/render_report_cards.py"

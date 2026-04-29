@@ -254,18 +254,8 @@ def price_row(draw, y, row, header_row=False):
 
 def price_table_header(draw, y, baseline_date_hint=None):
     """渲染带baseline_date标注的表头"""
-    # 提取月份（去掉"年"和"月"）
-    month_label = ""
-    if baseline_date_hint and baseline_date_hint != "历史数据":
-        # 从"2026年3月"提取"3月"
-        for i, c in enumerate(baseline_date_hint):
-            if c == "年":
-                month_label = baseline_date_hint[i+1:]
-                break
-        if not month_label:
-            month_label = baseline_date_hint
-    
     col1 = "机型"
+    month_label = baseline_month_label(baseline_date_hint)
     col2 = f"原均价（{month_label}）" if month_label else "原均价"
     col3 = "最新价"
     col4 = "日环比"
@@ -274,6 +264,15 @@ def price_table_header(draw, y, baseline_date_hint=None):
     draw.text((330, y + 4), col2, font=font(26, True), fill="#64748B")
     draw.text((520, y + 4), col3, font=font(26, True), fill="#64748B")
     draw.text((700, y + 4), col4, font=font(26, True), fill="#64748B")
+
+
+def baseline_month_label(value):
+    if not value or value == "历史数据":
+        return ""
+    text = str(value).strip()
+    if "年" in text:
+        return text.split("年", 1)[1] or text
+    return text
 
 
 def render_price_card(payload, output_path):
@@ -340,7 +339,7 @@ def render_price_card(payload, output_path):
                     baseline_date = item.get("baseline_date")
                     if baseline_date and baseline_date != "历史数据":
                         # 格式化为：RTX 3070（3月）：跌幅22-38%
-                        display_text = f"{model}（{baseline_date[5:-1]}）：{detail}"
+                        display_text = f"{model}（{baseline_month_label(baseline_date)}）：{detail}"
                     else:
                         display_text = f"{model}：{detail}"
                 else:

@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-26",
+  "daily_limit": 4,
+  "schedule": [
+    {"period": "07:00-12:00", "max_usage": 1, "purpose": "上午观察"},
+    {"period": "12:00-18:00", "max_usage": 1, "purpose": "下午验证"},
+    {"period": "18:00-22:00", "max_usage": 1, "purpose": "晚间灵活"},
+    {"period": "22:00-07:00", "max_usage": 1, "purpose": "夜间保留"}
+  ],
+  "current_usage": 0,
+  "last_reset": "2026-04-26"
+}

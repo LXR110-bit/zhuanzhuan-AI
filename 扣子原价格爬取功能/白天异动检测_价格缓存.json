@@ -1,0 +1,233 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-04-27",
+  "source": "云手机实时爬取 + 搜索数据 + 矿卡市场报告",
+  "prices": {
+    "RTX 3060": {
+      "market_price": 1450,
+      "xianyu_official": 781,
+      "aihuishou": null,
+      "last_update": "2026-04-28",
+      "note": "search_web 4月28日数据，1600-1900元（3月矿卡报告），+10~31%，首次异动，待确认",
+      "status": "pending_confirm"
+    },
+    "RTX 3070": {
+      "market_price": 1480,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-28",
+      "note": "search_web 4月28日数据，2200-2600元（3月矿卡报告），+49~81%，首次异动，待确认",
+      "status": "pending_confirm"
+    },
+    "RTX 3080": {
+      "market_price": 3500,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-28",
+      "note": "nickys 4/24数据，约3500元，+16.7%，连续2次异动",
+      "status": "confirmed"
+    },
+    "RTX 3090": {
+      "market_price": 4850,
+      "xianyu_official": 5192,
+      "aihuishou": null,
+      "last_update": "2026-04-27",
+      "note": "有得卖官网ASUS ROG 3090约5192，矿卡报告4850，-6.9%",
+      "status": "normal"
+    },
+    "RTX 4070": {
+      "market_price": 2950,
+      "xianyu_official": 2036,
+      "aihuishou": null,
+      "last_update": "2026-04-28",
+      "note": "nickys 4/24数据，2950元，+28.3%，连续2次异动",
+      "status": "confirmed"
+    },
+    "RTX 4080": {
+      "market_price": 5850,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-28",
+      "note": "nickys 4/24数据，5850元，-16.4%，连续2次异动，40系下跌",
+      "status": "confirmed"
+    },
+    "i5 13600K": {
+      "market_price": 1500,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-28",
+      "note": "日本市场参考价约2200元，+47%，首次异动，待确认",
+      "status": "pending_confirm"
+    },
+    "i7 13700K": {
+      "market_price": 2100,
+      "xianyu_official": 1499.5,
+      "aihuishou": null,
+      "last_update": "2026-04-28",
+      "note": "微博数据约2100元，+40%，首次异动，待确认",
+      "status": "pending_confirm"
+    },
+    "5600X": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": null
+    },
+    "5800X3D": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": null
+    },
+    "DJI Pocket 3": {
+      "market_price": 1568,
+      "xianyu_official": 1344,
+      "aihuishou": null,
+      "last_update": "2026-04-24",
+      "note": "9成新，云手机实时爬取"
+    },
+    "DJI Pocket 4": {
+      "market_price": 2999,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-26",
+      "note": "官方发布价，标准版，4月16日发布"
+    },
+    "DJI Action 5": {
+      "market_price": 2098,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-23",
+      "note": "限时促销价"
+    },
+    "DJI Action 6": {
+      "market_price": 2998,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-24",
+      "note": "官方发布价"
+    },
+    "DJI Lito 1": {
+      "market_price": 1999,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-26",
+      "note": "官方发布价，入门级无人机，4月23日发布"
+    },
+    "DJI Lito X1": {
+      "market_price": 2488,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-26",
+      "note": "官方发布价，入门级高性能，4月23日发布"
+    },
+    "insta360 X4": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": null
+    },
+    "insta360 X4 Air": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": null
+    },
+    "insta360 X5": {
+      "market_price": 1717,
+      "xianyu_official": 1302,
+      "aihuishou": null,
+      "last_update": "2026-04-24",
+      "note": "9成新，云手机实时爬取，含加价券"
+    },
+    "insta360 Ace Pro": {
+      "market_price": 1998,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-24",
+      "note": "官网价格"
+    },
+    "DDR5内存": {
+      "market_price": 560,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-26",
+      "note": "16GB 6000MHz，价格暴跌40%-70%，需持续跟踪"
+    },
+    "NAND固态": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": null
+    },
+    "小米手环9": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": null
+    },
+    "小米手环10": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": null
+    },
+    "GoPro Hero 13": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": null,
+      "note": "待补充价格"
+    },
+    "GoPro Mission 1": {
+      "market_price": null,
+      "xianyu_official": null,
+      "aihuishou": null,
+      "last_update": "2026-04-26",
+      "note": "4月15日发布，5月28日开售，价格未公布"
+    }
+  },
+  "price_records": [
+    {
+      "date": "2026-04-28",
+      "detection_time": "17:30",
+      "queries": [
+        {"model": "RTX 3060", "price_range": "1600-1900", "change": "+10~31%", "source": "3月矿卡报告", "status": "pending_confirm"},
+        {"model": "RTX 3070", "price_range": "2200-2600", "change": "+49~81%", "source": "3月矿卡报告", "status": "pending_confirm"},
+        {"model": "RTX 3080", "price_range": "3200-3800", "change": "-8.6%~+8.6%", "source": "3月矿卡报告", "status": "confirmed"},
+        {"model": "RTX 3090", "price_range": "4500-5200", "change": "-7%~+7%", "source": "3月矿卡报告", "status": "normal"},
+        {"model": "RTX 4070", "price_range": "4200-4800", "change": "+42~63%", "source": "3月矿卡报告", "status": "confirmed"},
+        {"model": "RTX 4080", "price_range": "7500-8500", "change": "+28~45%", "source": "3月矿卡报告", "status": "confirmed"},
+        {"model": "i5 13600K", "price": "~2400", "change": "+60%", "source": "nga论坛 4/2", "status": "pending_confirm"},
+        {"model": "i7 13700K", "price_range": "1600-1900", "change": "-24%~-10%", "source": "日本市场", "status": "pending_confirm"}
+      ]
+    },
+    {
+      "date": "2026-04-24",
+      "queries": [
+        {"model": "insta360 X5", "condition": "轻微使用痕迹/9成新", "price": 1717, "with_coupon": 1302},
+        {"model": "DJI Pocket 3", "condition": "轻微使用痕迹/9成新", "price": 1568, "with_coupon": 1344}
+      ]
+    },
+    {
+      "date": "2026-04-26",
+      "new_products": [
+        {"model": "DJI Pocket 4", "official_price": 2999, "release_date": "2026-04-16"},
+        {"model": "DJI Lito 1", "official_price": 1999, "release_date": "2026-04-23"},
+        {"model": "DJI Lito X1", "official_price": 2488, "release_date": "2026-04-23"},
+        {"model": "GoPro Mission 1", "official_price": "TBD", "release_date": "2026-04-15", "note": "5月28日开售"}
+      ],
+      "price_changes": [
+        {"model": "DDR5内存", "change": "暴跌40%-70%", "note": "从高位回落"}
+      ]
+    }
+  ],
+  "notes": [
+    "此缓存作为价格查询的兜底数据和偏差计算基线",
+    "每天6:00日程执行后会更新此文件",
+    "2026-04-24更新：新增影石X5、Pocket 3实时价格",
+    "2026-04-26更新：新增Pocket 4(4.16发布)、Lito系列(4.23发布)、GoPro Mission 1(4.15发布)",
+    "2026-04-26更新：DDR5内存暴跌40%-70%，需持续跟踪",
+    "2026-04-26修复：键名与品类配置对齐，删除多余条目13600kf，添加NAND固态、insta360 X4 Air"
+  ]
+}

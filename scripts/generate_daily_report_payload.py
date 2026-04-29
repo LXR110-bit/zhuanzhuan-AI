@@ -1,0 +1,374 @@
+#!/usr/bin/env python3
+"""Build the single daily report payload from current local data sources."""
+import argparse
+import json
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+PRICE_CACHE_FILE = DATA_DIR / "price_cache.json"
+PAYLOAD_FILE = DATA_DIR / "daily_report_payload.json"
+PUSH_STATUS_FILE = DATA_DIR / "push_status.json"
+CLOUD_PC_DAILY_FILE = BASE_DIR / "cloud_pc_daily.json"
+VALIDATION_REPORT_FILE = DATA_DIR / "validation_report.json"
+ANOMALY_VOTES_FILE = DATA_DIR / "anomaly_votes.json"
+NEWS_SIGNALS_FILE = DATA_DIR / "news_signals_filtered.json"
+DAILY_PRICE_DIR = DATA_DIR / "daily_price_records"
+
+
+def today_str():
+    return datetime.now().strftime("%Y-%m-%d")
+
+
+def now_iso():
+    return datetime.now().isoformat()
+
+
+def parse_time(value):
+    if not value:
+        return None
+    text = str(value).strip()
+    for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(text, fmt).replace(tzinfo=None)
+        except ValueError:
+            continue
+    if text.endswith("Z"):
+        try:
+            return datetime.fromisoformat(text[:-1]).replace(tzinfo=None)
+        except ValueError:
+            return None
+    try:
+        return datetime.fromisoformat(text).replace(tzinfo=None)
+    except ValueError:
+        return None
+
+
+def publish_time(item):
+    return (
+        item.get("published_at")
+        or item.get("publish_time")
+        or item.get("publish_date")
+        or item.get("event_date")
+    )
+
+
+def load_json(path):
+    if not path.exists():
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"invalid json: {path}: {exc}") from exc
+
+
+def save_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(".tmp")
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    tmp_path.replace(path)
+
+
+def fmt_price(value):
+    if value is None or value == "":
+        return "—"
+    if isinstance(value, (int, float)):
+        return f"¥{value:g}"
+    text = str(value)
+    return text if text.startswith(("¥", "€", "$")) else text
+
+
+def pct_text(value):
+    if value in (None, ""):
+        return "—"
+    if isinstance(value, (int, float)):
+        return f"{value:+.1f}%"
+    return str(value)
+
+
+def platform_change_text(item, platform_key):
+    changes = item.get("change_1d_by_platform") or {}
+    value = changes.get(platform_key)
+    return pct_text(value)
+
+
+def latest_daily_price_file():
+    if not DAILY_PRICE_DIR.exists():
+        return None
+    files = sorted(DAILY_PRICE_DIR.glob("*.json"))
+    return files[-1] if files else None
+
+
+def build_rows_from_price_cache(cache, validation_report=None):
+    rows = []
+    missing = []
+    validation_products = (validation_report or {}).get("products", {})
+    prices = cache.get("prices") or {}
+    for product_id, item in prices.items():
+        product_name = item.get("product_name") or product_id
+        xianyu_market = item.get("xianyu_market", {}).get("avg")
+        xianyu_recycle = item.get("xianyu_official", {}).get("price")
+        aihuishou = item.get("aihuishou", {}).get("tansuo_price")
+        updated = item.get("updated_at") or item.get("last_crawl")
+        validation_item = validation_products.get(product_id, {})
+        platform_validation = validation_item.get("platforms", {})
+        if platform_validation.get("xianyu_market", {}).get("reason"):
+            xianyu_market = None
+        if platform_validation.get("xianyu_official", {}).get("reason"):
+            xianyu_recycle = None
+        if platform_validation.get("aihuishou", {}).get("reason"):
+            aihuishou = None
+
+        if xianyu_market is None and xianyu_recycle is None and aihuishou is None:
+            missing.append(f"{product_name}: 三价格缺失")
+        for platform_key, label in (
+            ("xianyu_market", "闲鱼自由市场价格"),
+            ("xianyu_official", "闲鱼官方回收价"),
+            ("aihuishou", "爱回收价"),
+        ):
+            reason = platform_validation.get(platform_key, {}).get("reason")
+            if reason:
+                missing.append(f"{product_name} {label}: {reason}")
+
+        rows.append({
+            "product_id": product_id,
+            "model": product_name,
+            "xianyu_market": fmt_price(xianyu_market),
+            "xianyu_recycle": fmt_price(xianyu_recycle),
+            "aihuishou": fmt_price(aihuishou),
+            "daily_change": pct_text(item.get("change_1d")),
+            "platform_changes": {
+                "xianyu_market": platform_change_text(item, "xianyu_market"),
+                "aihuishou": platform_change_text(item, "aihuishou"),
+                "xianyu_official": platform_change_text(item, "xianyu_official"),
+            },
+            "updated_at": updated,
+            "source": item.get("source", "price_cache"),
+            "status": validation_item.get("status") or item.get("status", "cached"),
+            "missing_reason": "；".join(
+                platform.get("reason")
+                for platform in platform_validation.values()
+                if platform.get("reason")
+            ),
+        })
+    return rows, sorted(set(missing))
+
+
+def row_has_price(row):
+    return any(row.get(key) not in (None, "", "-", "—") for key in ("xianyu_market", "xianyu_recycle", "aihuishou"))
+
+
+def build_rows_from_cloud_pc(data):
+    rows = []
+    for row in data.get("price_table", [])[:20]:
+        rows.append({
+            "product_id": row.get("机型", "").replace(" ", "_"),
+            "model": row.get("机型", "-"),
+            "xianyu_market": row.get("当前价格", "-"),
+            "xianyu_recycle": "-",
+            "aihuishou": "-",
+            "daily_change": row.get("变化", "-"),
+            "updated_at": data.get("generated_at"),
+            "source": "cloud_pc_daily",
+            "status": row.get("趋势", "-"),
+        })
+    return rows
+
+
+def normalize_signals(cloud_pc_data):
+    signals = {"S": [], "A": [], "B": []}
+    cloud_signals = cloud_pc_data.get("signals") or {}
+    mapping = {"S级": "S", "A级": "A", "B级": "B"}
+    for source_level, target_level in mapping.items():
+        for item in cloud_signals.get(source_level, [])[:8]:
+            title = item.get("产品") or item.get("title") or str(item)
+            change = item.get("变化")
+            signals[target_level].append({
+                "title": f"{title} {change}".strip(),
+                "source": "cloud_pc_daily",
+                "raw": item,
+            })
+    return signals
+
+
+def merge_news_signals(signals, news_data):
+    cutoff = datetime.now() - timedelta(days=int(news_data.get("max_age_days") or 7))
+    for item in (news_data.get("items") or [])[:20]:
+        pub_time = parse_time(publish_time(item))
+        if pub_time is None or pub_time < cutoff:
+            continue
+        level = item.get("level") or "B"
+        if level not in signals:
+            level = "B"
+        title = item.get("title") or item.get("summary") or "未命名信号"
+        published_at = pub_time.strftime("%Y-%m-%d %H:%M:%S")
+        publish_date = pub_time.strftime("%Y-%m-%d")
+        signals[level].append({
+            "title": title,
+            "source": item.get("source") or "news_signals",
+            "published_at": published_at,
+            "publish_date": publish_date,
+            "dedupe_key": item.get("dedupe_key"),
+            "raw": item,
+        })
+    return signals
+
+
+def merge_anomaly_votes(signals, anomaly_votes):
+    for item in (anomaly_votes.get("items") or [])[:20]:
+        level = item.get("level", "B")
+        if level not in signals:
+            level = "B"
+        change = item.get("change_pct")
+        change_text = f"{change:+.1f}%" if isinstance(change, (int, float)) else str(change or "异动")
+        title = (
+            f"{item.get('product_name') or item.get('product_id')} "
+            f"{item.get('platform')} {change_text}"
+        )
+        signals[level].append({
+            "title": title,
+            "source": "anomaly_votes",
+            "raw": item,
+        })
+    return signals
+
+
+def summarize(rows, signals, missing, cloud_pc_data, news_data=None):
+    signal_count = sum(len(v) for v in signals.values())
+    valid_rows = [row for row in rows if isinstance(row, dict) and row_has_price(row)]
+    if rows and not valid_rows:
+        one_sentence = f"今日扫描{len(rows)}个价格项，但未获取到有效报价。"
+    elif valid_rows and signal_count:
+        one_sentence = f"今日监控{len(valid_rows)}个有效价格项，发现{signal_count}条需关注信号。"
+    elif valid_rows:
+        one_sentence = f"今日监控{len(valid_rows)}个有效价格项，暂未发现高优先级异动。"
+    else:
+        one_sentence = "今日暂无可用价格数据，需先完成价格扫描。"
+
+    if signals["S"]:
+        today_action = "优先核查S级信号对应机型，必要时即时告警。"
+    elif signals["A"]:
+        today_action = "关注A级信号，纳入10点日报和后续价格核查。"
+    elif valid_rows:
+        today_action = "按10点固定节奏推送图片日报，白天继续巡检。"
+    elif rows:
+        today_action = "先修复价格源连接，再重新执行价格扫描。"
+    else:
+        today_action = "先执行价格扫描或云电脑日报生成，再生成图片卡片。"
+
+    quality_parts = []
+    if rows:
+        quality_parts.append(f"价格记录{len(rows)}条，有效{len(valid_rows)}条")
+    else:
+        quality_parts.append("价格记录为空")
+    if missing:
+        quality_parts.append(f"缺失{len(missing)}项")
+    if cloud_pc_data:
+        quality_parts.append("已合并云电脑日报")
+    else:
+        quality_parts.append("未发现云电脑日报")
+    if news_data:
+        summary = news_data.get("summary", {})
+        quality_parts.append(f"资讯信号保留{summary.get('kept', 0)}条，去重/过期{summary.get('dropped', 0)}条")
+    if missing:
+        quality_parts.append("缺失项已标注原因")
+
+    return {
+        "one_sentence": one_sentence,
+        "today_action": today_action,
+        "data_quality": "；".join(quality_parts),
+    }
+
+
+def update_push_status(payload):
+    status = load_json(PUSH_STATUS_FILE)
+    if not status:
+        return
+    if status.get("date") != payload["date"]:
+        status["date"] = payload["date"]
+    status["updated_at"] = now_iso()
+    daily = status.setdefault("daily_report", {})
+    if daily.get("status") in (None, "pending", "not_generated"):
+        daily["status"] = "payload_ready"
+    daily["last_error"] = None
+    save_json(PUSH_STATUS_FILE, status)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", default=str(PAYLOAD_FILE))
+    args = parser.parse_args()
+
+    price_cache = load_json(PRICE_CACHE_FILE)
+    cloud_pc_data = load_json(CLOUD_PC_DAILY_FILE)
+    validation_report = load_json(VALIDATION_REPORT_FILE)
+    anomaly_votes = load_json(ANOMALY_VOTES_FILE)
+    news_data = load_json(NEWS_SIGNALS_FILE)
+
+    rows, missing = build_rows_from_price_cache(price_cache, validation_report)
+    if not rows and cloud_pc_data:
+        rows = build_rows_from_cloud_pc(cloud_pc_data)
+
+    signals = normalize_signals(cloud_pc_data)
+    signals = merge_news_signals(signals, news_data)
+    signals = merge_anomaly_votes(signals, anomaly_votes)
+    recommendations = cloud_pc_data.get("recommendations") or []
+    if recommendations and not signals["A"] and not signals["S"]:
+        signals["B"].extend({
+            "title": rec,
+            "source": "cloud_pc_daily_recommendation",
+        } for rec in recommendations[:5])
+
+    payload = {
+        "version": "1.0.0",
+        "date": today_str(),
+        "generated_at": now_iso(),
+        "summary": summarize(rows, signals, missing, cloud_pc_data, news_data),
+        "signals": signals,
+        "prices": {
+            "updated_at": price_cache.get("updated_at") or cloud_pc_data.get("generated_at"),
+            "rows": rows,
+            "daily_record": str(latest_daily_price_file()) if latest_daily_price_file() else None,
+        },
+        "risks": {
+            "drop_alerts": validation_report.get("warnings", []),
+            "rise_alerts": [],
+            "missing_data": missing,
+            "validation_errors": validation_report.get("errors", []),
+            "manual_confirmation_required": validation_report.get("manual_confirmation_required", False),
+        },
+        "images": {
+            "market_daily_card": None,
+            "price_monitor_card": None,
+        },
+        "sources": {
+            "price_cache": str(PRICE_CACHE_FILE),
+            "cloud_pc_daily": str(CLOUD_PC_DAILY_FILE) if cloud_pc_data else None,
+            "validation_report": str(VALIDATION_REPORT_FILE) if validation_report else None,
+            "anomaly_votes": str(ANOMALY_VOTES_FILE) if anomaly_votes else None,
+            "news_signals_filtered": str(NEWS_SIGNALS_FILE) if news_data else None,
+        },
+    }
+
+    output = Path(args.output)
+    save_json(output, payload)
+    if output.resolve() == PAYLOAD_FILE.resolve():
+        update_push_status(payload)
+
+    print(json.dumps({
+        "ok": True,
+        "output": str(output),
+        "date": payload["date"],
+        "rows": len(rows),
+        "signals": {k: len(v) for k, v in signals.items()},
+        "missing": len(missing),
+    }, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

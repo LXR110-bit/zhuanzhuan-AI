@@ -1,0 +1,110 @@
+{
+  "version": "2.1.0",
+  "updated_at": "2026-04-28",
+  "merged_from": ["白天异动检测/品类配置.json", "cloud-pc-monitor/config/thresholds.json"],
+  
+  "confidence": {
+    "trigger_cloud_phone": 70,
+    "direct_record": 90,
+    "weights": {
+      "data_source": 0.25,
+      "sample_size": 0.20,
+      "consistency": 0.20,
+      "trend": 0.20,
+      "cross_validation": 0.15
+    }
+  },
+  
+  "anomaly": {
+    "algorithms": {
+      "three_sigma": { "weight": 0.25, "enabled": true, "description": "超出均值±2倍标准差" },
+      "trend_break": { "weight": 0.25, "enabled": true, "description": "连续变化方向反转" },
+      "distribution_shift": { "weight": 0.20, "enabled": true, "description": "价格分布形态变化" },
+      "isolation_forest": { "weight": 0.15, "enabled": true, "description": "异常点识别" },
+      "iqr": { "weight": 0.15, "enabled": true, "description": "超出四分位距1.5倍" }
+    },
+    "vote_threshold": 3,
+    "adaptive_threshold": {
+      "enabled": true,
+      "min_samples": 7,
+      "learning_rate": 0.1,
+      "cooldown_hours": 24
+    }
+  },
+  "validation": {
+    "enabled": true,
+    "price_min": 1,
+    "price_max": 100000,
+    "warn_change_pct": 20.0,
+    "manual_confirm_change_pct": 30.0,
+    "null_display": "—",
+    "null_policy": "必须标注原因，禁止推测填充",
+    "normal_missing_coverage": {
+      "pc_hardware": {
+        "platforms": ["xianyu_official", "aihuishou"],
+        "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果"
+      }
+    }
+  },
+  
+  "batch": {
+    "min_models_for_batch": 3,
+    "min_hours_since_last": 2
+  },
+  
+  "signal_levels": {
+    "S": {
+      "vote_count_min": 3,
+      "drop_pct_min": 30.0,
+      "confidence_min": 90,
+      "action": "立即推送+人工确认"
+    },
+    "A": {
+      "vote_count_min": 3,
+      "confidence_min": 70,
+      "confidence_max": 90,
+      "action": "告警或汇入日报"
+    },
+    "B": {
+      "vote_count_max": 2,
+      "action": "持续观察"
+    }
+  },
+
+  "alert_levels": {
+    "INFO": { "vote_count": 1, "action": "记录", "push": false },
+    "WARN": { "vote_count": 2, "action": "记录+日报", "push": false },
+    "ALERT": { "vote_count": 3, "action": "立即推送", "push": true },
+    "CRITICAL": { "vote_count": 3, "drop_pct_min": 30.0, "confidence_min": 90, "action": "立即推送+人工确认", "push": true }
+  },
+
+  "data_sources": {
+    "xianyu_market": {
+      "method": "search_web",
+      "coverage": "100%",
+      "applicable": "全品类"
+    },
+    "xianyu_official_recycle": {
+      "method": "mobile_use",
+      "coverage": "67%",
+      "applicable": "手机/数码/手环"
+    },
+    "aihuishou": {
+      "method": "mobile_use/search_web",
+      "coverage": "27%",
+      "applicable": "手机/平板/手环"
+    }
+  },
+  
+  "price_change_thresholds": {
+    "A层": 10.0,
+    "B层": 10.0,
+    "C层": 15.0
+  },
+  
+  "stop_collect_warning": {
+    "enabled": true,
+    "threshold_pct": 10.0,
+    "description": "距停收阈值<10%时预警"
+  }
+}

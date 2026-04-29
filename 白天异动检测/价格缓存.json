@@ -1,0 +1,7 @@
+{
+  "version": "2.3.0",
+  "updated_at": "2026-04-28T21:20:00+08:00",
+  "module": "白天异动检测",
+  "redirect": "../data/price_cache.json",
+  "note": "兼容旧流程的占位文件。真实价格缓存只维护在 ../data/price_cache.json，避免两份缓存造成信息错位。"
+}

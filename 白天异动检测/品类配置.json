@@ -1,0 +1,7 @@
+{
+  "version": "2.3.0",
+  "updated_at": "2026-04-28T21:20:00+08:00",
+  "module": "白天异动检测",
+  "redirect": "../config/categories.json",
+  "note": "兼容旧流程的占位文件。统一品类配置只维护在 ../config/categories.json。"
+}

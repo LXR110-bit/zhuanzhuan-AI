@@ -1,0 +1,115 @@
+{
+  "version": "2.2.1",
+  "updated_at": "2026-04-25",
+  "categories": {
+    "运动相机": {
+      "items": [
+        {"id": "dji_pocket3", "name": "DJI Pocket 3", "stop_threshold": 1400, "search_keywords": ["DJI Pocket 3", "大疆Pocket 3", "Pocket3"]},
+        {"id": "dji_pocket4", "name": "DJI Pocket 4", "stop_threshold": 2200, "search_keywords": ["DJI Pocket 4", "大疆Pocket 4", "Pocket4"]},
+        {"id": "dji_action5", "name": "DJI Action 5", "stop_threshold": 1300, "search_keywords": ["DJI Action 5", "大疆Action 5", "Action5"]},
+        {"id": "dji_action6", "name": "DJI Action 6", "stop_threshold": 1500, "search_keywords": ["DJI Action 6", "大疆Action 6", "Action6"]},
+        {"id": "insta360_x4", "name": "insta360 X4", "stop_threshold": 1100, "search_keywords": ["insta360 X4", "影石X4"]},
+        {"id": "insta360_x4air", "name": "insta360 X4 Air", "stop_threshold": 800, "search_keywords": ["insta360 X4 Air", "X4 Air"]},
+        {"id": "insta360_x5", "name": "insta360 X5", "stop_threshold": 2000, "search_keywords": ["insta360 X5", "影石X5"]},
+        {"id": "insta360_acepro", "name": "insta360 Ace Pro", "stop_threshold": 900, "search_keywords": ["insta360 Ace Pro", "Ace Pro", "影石Ace Pro"]}
+      ],
+      "change_threshold": 10.0
+    },
+    "显卡": {
+      "items": [
+        {"id": "rtx_3060", "name": "RTX 3060", "stop_threshold": 900, "search_keywords": ["RTX 3060", "3060显卡"]},
+        {"id": "rtx_3070", "name": "RTX 3070", "stop_threshold": 1400, "search_keywords": ["RTX 3070", "3070显卡"]},
+        {"id": "rtx_3080", "name": "RTX 3080", "stop_threshold": 2200, "search_keywords": ["RTX 3080", "3080显卡"]},
+        {"id": "rtx_3090", "name": "RTX 3090", "stop_threshold": 3200, "search_keywords": ["RTX 3090", "3090显卡"]},
+        {"id": "rtx_4070", "name": "RTX 4070", "stop_threshold": 2000, "search_keywords": ["RTX 4070", "4070显卡"]},
+        {"id": "rtx_4080", "name": "RTX 4080", "stop_threshold": 4500, "search_keywords": ["RTX 4080", "4080显卡"]}
+      ],
+      "change_threshold": 10.0
+    },
+    "CPU": {
+      "items": [
+        {"id": "i5_13600k", "name": "i5 13600K", "stop_threshold": 900, "search_keywords": ["i5 13600K", "13600K"]},
+        {"id": "i7_13700k", "name": "i7 13700K", "stop_threshold": 1400, "search_keywords": ["i7 13700K", "13700K"]},
+        {"id": "r5_5600x", "name": "5600X", "stop_threshold": 500, "search_keywords": ["5600X", "R5 5600X"]},
+        {"id": "r7_5800x3d", "name": "5800X3D", "stop_threshold": 1100, "search_keywords": ["5800X3D", "R7 5800X3D"]}
+      ],
+      "change_threshold": 10.0
+    },
+    "内存固态": {
+      "items": [
+        {"id": "ddr5", "name": "DDR5内存", "stop_threshold": null, "note": "追踪市场指数", "search_keywords": ["DDR5 16G", "DDR5 32G"]},
+        {"id": "nand", "name": "NAND固态", "stop_threshold": null, "note": "追踪市场指数", "search_keywords": ["固态硬盘 1T", "SSD 1T"]}
+      ],
+      "change_threshold": 10.0
+    },
+    "手环": {
+      "items": [
+        {"id": "mi_band_9", "name": "小米手环9", "stop_threshold": 150, "note": "回收价阈值待确认", "search_keywords": ["小米手环9", "小米手环 9"]},
+        {"id": "mi_band_10", "name": "小米手环10", "stop_threshold": 200, "note": "回收价阈值待确认", "search_keywords": ["小米手环10", "小米手环 10"]}
+      ],
+      "change_threshold": 10.0
+    },
+    "无人机": {
+      "items": [
+        {"id": "dji_lito_x1", "name": "DJI Lito X1", "stop_threshold": null, "note": "入门级无人机，2026-04-23发布", "search_keywords": ["DJI Lito X1", "大疆Lito X1"]},
+        {"id": "dji_lito_1", "name": "DJI Lito 1", "stop_threshold": null, "note": "入门级无人机，2026-04-23发布", "search_keywords": ["DJI Lito 1", "大疆Lito"]},
+        {"id": "dji_mini_pro", "name": "DJI Mini Pro", "stop_threshold": null, "note": "轻量级航拍", "search_keywords": ["DJI Mini Pro", "大疆Mini Pro"]},
+        {"id": "dji_mavic", "name": "DJI Mavic", "stop_threshold": null, "note": "专业级航拍", "search_keywords": ["DJI Mavic", "大疆Mavic"]}
+      ],
+      "change_threshold": 10.0,
+      "note": "资讯追踪重点品类，关注新品发布"
+    }
+  },
+  "检测时间": ["10:00", "15:00", "21:00"],
+  "推送策略": {
+    "10:00": "A层检测，结果合并到日报推送",
+    "15:00": "A层检测，发现异动立即推送",
+    "21:00": "A+B层全量检测，发现异动立即推送"
+  },
+  "分层策略": {
+    "A层_高频": {
+      "说明": "每次都检测，价格波动频繁",
+      "机型": ["RTX 3060", "RTX 3070", "RTX 3080", "RTX 3090", "RTX 4070", "RTX 4080", "i5 13600K", "i7 13700K"],
+      "数量": 8
+    },
+    "B层_低频": {
+      "说明": "仅21:00检测，价格相对稳定",
+      "机型": ["DJI Pocket 3", "DJI Pocket 4", "DJI Action 5", "DJI Action 6", "insta360 X4", "insta360 X4 Air", "insta360 X5", "insta360 Ace Pro", "5600X", "5800X3D", "DDR5内存", "NAND固态", "小米手环9", "小米手环10"],
+      "数量": 14
+    }
+  },
+  "异动定义": {
+    "价格变动阈值": "≥10%",
+    "停收预警": "价格跌破stop_threshold"
+  },
+  "执行策略": {
+    "模式": "纯串行",
+    "并行数": 1,
+    "批次并行": false,
+    "批次间隔秒": 0,
+    "机型间隔秒": 5,
+    "单机型超时秒": 90,
+    "最大重试次数": 2,
+    "重试间隔秒": 10,
+    "熔断暂停秒": 300,
+    "失败处理": "跳过并使用缓存",
+    "硬截止时间": "23:00",
+    "截止前预警分钟": 10,
+    "A层必须完成": true,
+    "B层尽力完成": true
+  },
+  "日报策略": {
+    "强制生成": true,
+    "允许缺失数据": true,
+    "缺失数据标注": true,
+    "缓存数据标注": true,
+    "生成时机": "全部完成后 或 23:00强制触发"
+  },
+  "deprecated_schedules": {
+    "note": "以下日程已废弃，执行session检测到此列表中的日程UID时直接跳过",
+    "uids": [
+      "5798ae0c-6fbd-4121-94c8-f4f2fd8c2155",
+      "f0f109ab-4e87-49c1-98b8-28a0764bca32"
+    ]
+  }
+}

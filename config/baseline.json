@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-26T11:05:15+08:00",
+  "baselines": {
+    "RTX_3070": {
+      "min": 3899,
+      "max": 4999,
+      "avg": 4299,
+      "source": "ZOL",
+      "updated": "2026-04-26"
+    },
+    "RTX_3090": {
+      "min": 12999,
+      "max": 18999,
+      "avg": 15999,
+      "source": "ZOL",
+      "updated": "2026-04-26"
+    },
+    "RTX_4060": {
+      "min": 2299,
+      "max": 2899,
+      "avg": 2549,
+      "source": "ZOL/太平洋",
+      "updated": "2026-04-26"
+    },
+    "RX_6600": {
+      "min": 2499,
+      "max": 3499,
+      "avg": 2849,
+      "source": "ZOL",
+      "updated": "2026-04-26"
+    },
+    "i7_13700K": {
+      "min_eur": 400,
+      "max_eur": 420,
+      "avg_eur": 410,
+      "source": "Geizhals",
+      "updated": "2026-04-26"
+    },
+    "DDR5_16G": {
+      "min": 550,
+      "max": 600,
+      "avg": 575,
+      "trend": "下跌中",
+      "peak_price": 1800,
+      "drop_pct": 68,
+      "source": "多渠道综合",
+      "updated": "2026-04-26"
+    },
+    "DDR5_32G": {
+      "min": 1000,
+      "max": 1500,
+      "avg": 1200,
+      "trend": "下跌中",
+      "peak_price": 3800,
+      "drop_pct": 68,
+      "source": "多渠道综合",
+      "updated": "2026-04-26"
+    },
+    "Pocket_3": {
+      "official": 2799,
+      "second_hand_avg": 2012,
+      "second_hand_min": 1900,
+      "second_hand_max": 2300,
+      "trend": "下跌中",
+      "reason": "Pocket 4上市",
+      "source": "官方/二手平台",
+      "updated": "2026-04-26"
+    },
+    "Action_4": {
+      "official": 1398,
+      "source": "DJI官方",
+      "updated": "2026-04-26"
+    },
+    "Insta360_X4": {
+      "official": 2999,
+      "source": "官方商城",
+      "updated": "2026-04-26"
+    },
+    "Insta360_X5": {
+      "official": 2798,
+      "source": "官方商城",
+      "updated": "2026-04-26"
+    },
+    "DJI_Mini_3": {
+      "official": 1699,
+      "source": "DJI官方",
+      "updated": "2026-04-26"
+    }
+  }
+}

@@ -1,0 +1,343 @@
+{
+  "version": "1.4.0",
+  "updated_at": "2026-04-29T11:15:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "execution_model": {
+    "mode": "Calendar -> sub-agent -> tool calls",
+    "calendar_subagent_config": "config/calendar_subagent_schedules.json",
+    "description_templates": [
+      "扣子原价格爬取功能/sub-agent执行方式说明_20260429.md",
+      "扣子原价格爬取功能/日程描述模板_20260429.md",
+      "扣子原价格爬取功能/工具调用模板_20260429.md"
+    ],
+    "deprecated_python_entrypoints": [
+      "scripts/deprecated/price_crawler.py",
+      "scripts/deprecated/run_daytime_scan.py"
+    ],
+    "rule": "Python只做验证、记录、归档、生成日报；不得作为search_web/mobile_use爬取替代。"
+  },
+  "quiet_hours": {
+    "start": "22:30",
+    "end": "07:30"
+  },
+  "daily_report": {
+    "module_name": "市场追踪日报",
+    "trigger_time": "06:00",
+    "responsibility": "资讯整合、信号分级、收购建议",
+    "data_sources": [
+      "search_web",
+      "RSS"
+    ],
+    "canonical_push_time": "10:00",
+    "scan_start": "04:00",
+    "aggregation_time": "05:00",
+    "analysis_time": "05:30",
+    "image_generation_time": "06:00",
+    "push_time": "10:00",
+    "delay_warning_time": "09:50",
+    "format": "image_cards",
+    "entrypoint": "Calendar description -> sub-agent",
+    "description_template": "扣子原价格爬取功能/日程描述模板_20260429.md#三、市场追踪日报",
+    "sub_agent_tools": [
+      "search_web",
+      "bash"
+    ],
+    "news_rules": {
+      "require_publish_time": true,
+      "dedupe_window_days": 7,
+      "drop_older_than_days": 7,
+      "entrypoint": "python3 scripts/news_signal_filter.py",
+      "history_file": "data/news_signal_dedupe_history.json",
+      "dedupe_key": "url_or_source_title"
+    },
+    "required_cards": [
+      "market_daily_card",
+      "price_monitor_card"
+    ],
+    "text_fallback": "failure_notice_only",
+    "retry": {
+      "max_attempts": 3,
+      "retry_interval_minutes": 10
+    },
+    "late_push_policy": {
+      "enabled": true,
+      "deadline": "10:30",
+      "after_deadline": "send_failure_notice_and_mark_missed"
+    }
+  },
+  "price_scan": {
+    "module_name": "白天异动检测+晚间全量检测",
+    "regular_times": [
+      "07:30",
+      "12:00",
+      "17:30",
+      "21:00"
+    ],
+    "max_daily_runs": 4,
+    "mode_by_time": {
+      "07:30": "a_layer_morning_check",
+      "12:00": "a_layer_midday_check",
+      "17:30": "a_layer_before_close_check",
+      "21:00": "full_a_b_layer_check"
+    },
+    "emergency_run_reserved": 1,
+    "tolerance_minutes": 20,
+    "forbid_outside_window": true,
+    "entrypoint": "Calendar description -> sub-agent",
+    "description_template": "扣子原价格爬取功能/日程描述模板_20260429.md#一、白天异动检测",
+    "sub_agent_tools": [
+      "search_web",
+      "mobile_use",
+      "bash"
+    ],
+    "coze_cache_fallback": "python3 scripts/import_coze_price_cache.py",
+    "post_steps": [
+      "python3 scripts/price_data_validator.py",
+      "python3 scripts/price_daily_recorder.py",
+      "python3 scripts/price_archiver.py archive"
+    ],
+    "note": "兼容配置：07:30/12:00/17:30 是白天异动检测；21:00 是晚间全量检测。真实执行由Calendar创建sub-agent完成工具调用。"
+  },
+  "daytime_anomaly_detection": {
+    "module_name": "白天异动检测",
+    "regular_times": [
+      "07:30",
+      "12:00",
+      "17:30"
+    ],
+    "max_daily_runs": 3,
+    "responsibility": "A层8个机型轻量检测",
+    "data_sources": [
+      "search_web",
+      "mobile_use_validation"
+    ],
+    "output": [
+      "日报",
+      "告警"
+    ],
+    "layer": "A",
+    "model_count": 8,
+    "mode_by_time": {
+      "07:30": "a_layer_morning_check",
+      "12:00": "a_layer_midday_check",
+      "17:30": "a_layer_before_close_check"
+    },
+    "entrypoint": "Calendar description -> sub-agent",
+    "description_template": "扣子原价格爬取功能/日程描述模板_20260429.md#一、白天异动检测",
+    "sub_agent_tools": [
+      "search_web",
+      "mobile_use",
+      "bash"
+    ],
+    "storage": {
+      "compat_dir": "白天异动检测/",
+      "canonical_price_cache": "data/price_cache.json",
+      "status": "data/daytime_scan_status.json"
+    }
+  },
+  "evening_full_scan": {
+    "module_name": "晚间全量检测",
+    "trigger_time": "21:00",
+    "responsibility": "A+B层22个机型三价格口径深度爬取",
+    "data_sources": [
+      "mobile_use_xianyu_market",
+      "mobile_use_xianyu_official",
+      "mobile_use_aihuishou",
+      "search_web_fallback"
+    ],
+    "output": [
+      "图片卡片日报",
+      "告警"
+    ],
+    "layers": [
+      "A",
+      "B"
+    ],
+    "model_count": 22,
+    "entrypoint": "Calendar description -> sub-agent",
+    "description_template": "扣子原价格爬取功能/日程描述模板_20260429.md#二、晚间全量检测",
+    "sub_agent_tools": [
+      "mobile_use",
+      "search_web",
+      "bash"
+    ],
+    "required_price_sources": [
+      "xianyu_market",
+      "xianyu_official",
+      "aihuishou"
+    ],
+    "required_cache_fields": [
+      "prices.{product_id}.xianyu_market.price",
+      "prices.{product_id}.xianyu_market.samples",
+      "prices.{product_id}.xianyu_official.price",
+      "prices.{product_id}.aihuishou.base_price",
+      "prices.{product_id}.aihuishou.after_coupon",
+      "prices.{product_id}.aihuishou.tansuo_price"
+    ]
+  },
+  "cloud_pc_scan": {
+    "module_name": "云电脑扫描",
+    "interval_hours": 2,
+    "responsibility": "轻量价格扫描+异动检测",
+    "data_sources": [
+      "search_web"
+    ],
+    "output": [
+      "日志",
+      "告警"
+    ],
+    "regular_times": [
+      "08:00",
+      "10:00",
+      "12:00",
+      "14:00",
+      "16:00",
+      "18:00",
+      "20:00",
+      "22:00"
+    ],
+    "max_daily_runs": 8,
+    "entrypoint": "Calendar description -> sub-agent",
+    "description_template": "扣子原价格爬取功能/日程描述模板_20260429.md#四、云电脑扫描",
+    "sub_agent_tools": [
+      "search_web",
+      "bash"
+    ],
+    "storage": {
+      "monitor_dir": "cloud-pc-monitor/",
+      "daily_output": "cloud_pc_daily.json",
+      "status": "data/cloud_pc_scan_status.json"
+    },
+    "push_policy": {
+      "regular": "cache_only",
+      "S": "immediate_alert",
+      "A": "merge_to_report"
+    },
+    "note": "恢复原云电脑每2小时扫描模块；它不是白天异动检测，也不是日报正式推送。"
+  },
+  "daytime_incremental_scan": {
+    "regular_times": [
+      "10:00",
+      "14:00",
+      "18:00"
+    ],
+    "max_daily_runs": 3,
+    "mode": "light_signal_scan",
+    "push_policy": {
+      "S": "immediate_alert",
+      "A": "merge_to_evening_or_next_report",
+      "B": "cache_only"
+    },
+    "note": "日间增量巡检是轻量资讯巡检；10:00 的正式日报推送不等于价格扫描。"
+  },
+  "cloud_phone_quota": {
+    "daily_limit": 4,
+    "fixed_evening_reserved": 1,
+    "daytime_validation_limit": 2,
+    "emergency_reserved": 1,
+    "evening_fixed_time": "21:00",
+    "daytime_trigger_policy": "only_when_anomaly_detected",
+    "forbid_use_when_remaining_quota_lte_emergency_reserved": true,
+    "quota_allocation": {
+      "21:00_evening_full_scan": 1,
+      "daytime_anomaly_validation": 2,
+      "emergency_s_level_validation": 1
+    },
+    "template_file": "config/mobile_use_templates.json",
+    "task_generator": "python3 scripts/generate_mobile_use_task.py --product PRODUCT_ID",
+    "condition": "轻微使用痕迹",
+    "grade": "9成新",
+    "timeout_seconds_per_app": 90,
+    "apps": [
+      "闲鱼App",
+      "爱回收App"
+    ]
+  },
+  "baseline_update": {
+    "module_name": "基准线更新",
+    "schedule": "weekly",
+    "entrypoint": "python3 scripts/update_baseline.py",
+    "output": "data/baseline_update_proposal.json",
+    "apply_entrypoint": "python3 scripts/update_baseline.py --apply-confirmed",
+    "policy": "默认只生成待人工确认方案，不直接覆盖 config/baseline.json"
+  },
+  "price_report": {
+    "daily_record_dir": "data/daily_price_records/",
+    "record_platforms": [
+      "xianyu_market",
+      "xianyu_official",
+      "aihuishou"
+    ],
+    "platform_labels": {
+      "xianyu_market": "闲鱼自由市场价格",
+      "xianyu_official": "闲鱼官方回收价格",
+      "aihuishou": "爱回收价格"
+    },
+    "broadcast_fields": [
+      "price",
+      "daily_change"
+    ],
+    "note": "价格播报只展示每日价格和日环比，不混入资讯长文。"
+  },
+  "periodic_trend_report": {
+    "module_name": "周期价格趋势播报",
+    "weekly": {
+      "trigger": "每周一 09:30",
+      "period_days": 7,
+      "entrypoint": "python3 scripts/generate_periodic_trend_report.py --period weekly",
+      "output": "data/periodic_reports/YYYY-MM-DD_weekly_trend_card.png"
+    },
+    "monthly": {
+      "trigger": "每月1日 09:30",
+      "period_days": 30,
+      "entrypoint": "python3 scripts/generate_periodic_trend_report.py --period monthly",
+      "output": "data/periodic_reports/YYYY-MM-DD_monthly_trend_card.png"
+    },
+    "data_source": "data/trend_history/",
+    "note": "7天/30天趋势不进入每日播报，只进入周报/月报。"
+  },
+  "push_channels": {
+    "wecom": {
+      "enabled": true,
+      "required": true,
+      "format": "image_news"
+    },
+    "wechat": {
+      "enabled": true,
+      "required": false,
+      "format": "image"
+    },
+    "feishu": {
+      "enabled": true,
+      "required": false,
+      "format": "image"
+    },
+    "coze": {
+      "enabled": true,
+      "required": false,
+      "format": "image_or_image_link"
+    }
+  },
+  "report_contract": {
+    "single_source_of_truth": "data/daily_report_payload.json",
+    "do_not_read_from_memory_docs": true,
+    "content_order": [
+      "one_sentence_conclusion",
+      "today_action",
+      "s_level_signals",
+      "a_level_signals",
+      "price_table",
+      "risk_and_exceptions",
+      "data_quality"
+    ],
+    "forbidden": [
+      "pure_markdown_daily_report",
+      "mixed_old_and_new_prices_without_timestamp",
+      "push_before_canonical_push_time",
+      "duplicate_push_without_push_status_check",
+      "news_without_publish_time",
+      "news_older_than_7_days",
+      "price_report_with_non_price_content"
+    ]
+  }
+}

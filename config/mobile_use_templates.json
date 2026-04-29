@@ -1,0 +1,89 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-29",
+  "condition_profile": {
+    "label": "轻微使用痕迹",
+    "mapped_grade": "9成新",
+    "note": "闲鱼官方回收与爱回收均按该成色口径记录，禁止混用其他成色。"
+  },
+  "timeout_seconds": 90,
+  "tasks": {
+    "xianyu_market": {
+      "platform": "闲鱼",
+      "app": "闲鱼App",
+      "target_fields": [
+        "xianyu_market.price",
+        "xianyu_market.samples"
+      ],
+      "template": "在闲鱼App搜索\"{search_term}\"，筛选\"轻微使用痕迹\"（对应9成新），取前5个有效商品价格，返回价格列表和中位数。禁止搜索\"成交\"关键词。超时90秒。",
+      "required_output_fields": [
+        "search_term",
+        "platform",
+        "condition",
+        "grade",
+        "samples",
+        "median_price",
+        "currency",
+        "captured_at",
+        "status",
+        "failure_reason"
+      ]
+    },
+    "xianyu_official_recycle": {
+      "platform": "闲鱼",
+      "app": "闲鱼App",
+      "target_field": "xianyu_official.price",
+      "template": "在闲鱼App搜索\"{search_term}\"，进入回收服务页面，获取官方回收价格。筛选\"轻微使用痕迹\"（对应9成新），返回价格数据。超时90秒。",
+      "required_output_fields": [
+        "search_term",
+        "platform",
+        "condition",
+        "grade",
+        "official_recycle_price",
+        "currency",
+        "captured_at",
+        "status",
+        "failure_reason"
+      ]
+    },
+    "aihuishou_recycle": {
+      "platform": "爱回收",
+      "app": "爱回收App",
+      "target_fields": [
+        "aihuishou.base_price",
+        "aihuishou.after_coupon",
+        "aihuishou.tansuo_price"
+      ],
+      "template": "打开爱回收App，搜索\"{search_term}\"，获取基础价、券后价、碳索家价。筛选\"轻微使用痕迹\"（对应9成新）。超时90秒。",
+      "required_output_fields": [
+        "search_term",
+        "platform",
+        "condition",
+        "grade",
+        "base_price",
+        "after_coupon",
+        "tansuo_price",
+        "currency",
+        "captured_at",
+        "status",
+        "failure_reason"
+      ]
+    }
+  },
+  "combined_template": "闲鱼自由市场：在闲鱼App搜索\"{search_term}\"，筛选\"轻微使用痕迹\"（对应9成新），取前5个有效商品价格，返回价格列表和中位数。禁止搜索\"成交\"关键词。超时90秒。\n闲鱼官方回收：在闲鱼App搜索\"{search_term}\"，进入回收服务页面，获取官方回收价格。筛选\"轻微使用痕迹\"（对应9成新），返回价格数据。超时90秒。\n爱回收：打开爱回收App，搜索\"{search_term}\"，获取基础价、券后价、碳索家价。筛选\"轻微使用痕迹\"（对应9成新）。超时90秒。",
+  "write_back_contract": {
+    "price_cache": "data/price_cache.json",
+    "xianyu_market_path": "prices.{product_id}.xianyu_market.price",
+    "xianyu_market_samples_path": "prices.{product_id}.xianyu_market.samples",
+    "xianyu_official_path": "prices.{product_id}.xianyu_official.price",
+    "aihuishou_base_path": "prices.{product_id}.aihuishou.base_price",
+    "aihuishou_after_coupon_path": "prices.{product_id}.aihuishou.after_coupon",
+    "aihuishou_tansuo_path": "prices.{product_id}.aihuishou.tansuo_price",
+    "required_metadata": [
+      "source=mobile_use",
+      "condition=轻微使用痕迹",
+      "grade=9成新",
+      "captured_at"
+    ]
+  }
+}

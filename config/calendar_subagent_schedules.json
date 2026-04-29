@@ -1,0 +1,75 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-29",
+  "execution_model": "Calendar -> sub-agent -> search_web/mobile_use -> Python post-processing",
+  "source_templates": {
+    "sub_agent_execution": "扣子原价格爬取功能/sub-agent执行方式说明_20260429.md",
+    "calendar_description": "扣子原价格爬取功能/日程描述模板_20260429.md",
+    "tool_calls": "扣子原价格爬取功能/工具调用模板_20260429.md"
+  },
+  "hard_rules": [
+    "数据爬取必须由Calendar触发sub-agent完成",
+    "sub-agent负责调用search_web和mobile_use",
+    "Python脚本不得用requests替代search_web/mobile_use爬取",
+    "sub-agent写入data/price_cache.json后，才能调用Python后处理脚本",
+    "price_crawler.py和run_daytime_scan.py为废弃入口，不得作为日程入口"
+  ],
+  "post_processing_steps": [
+    "python3 scripts/price_data_validator.py",
+    "python3 scripts/price_daily_recorder.py",
+    "python3 scripts/price_archiver.py archive",
+    "python3 scripts/news_signal_filter.py",
+    "python3 scripts/generate_daily_report_payload.py",
+    "python3 scripts/render_report_cards.py"
+  ],
+  "schedules": {
+    "daily_report": {
+      "calendar_summary": "市场追踪日报",
+      "time": "06:00",
+      "description_template": "日程描述模板_20260429.md#三、市场追踪日报",
+      "sub_agent_tools": ["search_web", "bash"],
+      "python_after_tools": [
+        "python3 scripts/news_signal_filter.py",
+        "python3 scripts/generate_daily_report_payload.py",
+        "python3 scripts/render_report_cards.py"
+      ]
+    },
+    "daytime_anomaly_detection": {
+      "calendar_summary": "白天异动检测",
+      "times": ["07:30", "12:00", "17:30"],
+      "description_template": "日程描述模板_20260429.md#一、白天异动检测",
+      "sub_agent_tools": ["search_web", "mobile_use", "bash"],
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py",
+        "python3 scripts/price_daily_recorder.py",
+        "python3 scripts/price_archiver.py archive",
+        "python3 scripts/generate_daily_report_payload.py",
+        "python3 scripts/render_report_cards.py"
+      ]
+    },
+    "evening_full_scan": {
+      "calendar_summary": "晚间全量检测",
+      "time": "21:00",
+      "description_template": "日程描述模板_20260429.md#二、晚间全量检测",
+      "sub_agent_tools": ["mobile_use", "search_web", "bash"],
+      "required_price_sources": ["xianyu_market", "xianyu_official", "aihuishou"],
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py",
+        "python3 scripts/price_daily_recorder.py",
+        "python3 scripts/price_archiver.py archive",
+        "python3 scripts/generate_daily_report_payload.py",
+        "python3 scripts/render_report_cards.py"
+      ]
+    },
+    "cloud_pc_scan": {
+      "calendar_summary": "云电脑扫描",
+      "times": ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],
+      "description_template": "日程描述模板_20260429.md#四、云电脑扫描",
+      "sub_agent_tools": ["search_web", "bash"],
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py",
+        "python3 scripts/price_archiver.py archive"
+      ]
+    }
+  }
+}

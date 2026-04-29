@@ -1,0 +1,7 @@
+{
+  "version": "2.3.0",
+  "date": "2026-04-28",
+  "updated_at": "2026-04-28T21:40:00+08:00",
+  "redirect": "../data/progress.json",
+  "note": "兼容旧流程的进度文件。真实进度以 ../data/progress.json 为准。"
+}

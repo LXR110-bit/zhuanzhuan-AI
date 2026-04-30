@@ -1,6 +1,6 @@
 {
-  "version": "1.4.0",
-  "updated_at": "2026-04-29T11:15:00+08:00",
+  "version": "1.5.0",
+  "updated_at": "2026-04-30T11:30:00+08:00",
   "timezone": "Asia/Shanghai",
   "execution_model": {
     "mode": "Calendar -> sub-agent -> tool calls",
@@ -44,6 +44,28 @@
       "search_web",
       "bash"
     ],
+    "price_backfill_scope": {
+      "enabled": true,
+      "purpose": "06:00日报生成前用search_web补全全量26个监控机型的闲鱼自由市场价，避免早报价格卡片为空。",
+      "config_source": "config/categories.json",
+      "platform": "xianyu_market",
+      "categories": [
+        "运动相机",
+        "显卡",
+        "CPU",
+        "内存固态",
+        "无人机",
+        "智能手环"
+      ],
+      "expected_model_count": 26,
+      "query_template": "{search_keyword} 闲鱼 二手 9成新 价格 2026",
+      "write_target": "data/price_cache.json",
+      "hard_rules": [
+        "必须遍历config/categories.json中的全部机型，不得只搜索显卡和宏观词。",
+        "只写入search_web能确认的闲鱼自由市场价；闲鱼官方回收价和爱回收价保留给21:00 mobile_use。",
+        "无价格时写null和failure_reason，禁止推测填充。"
+      ]
+    },
     "news_rules": {
       "require_publish_time": true,
       "dedupe_window_days": 7,

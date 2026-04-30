@@ -1,7 +1,7 @@
 {
-  "version": "1.5.1",
+  "version": "2.5.0",
   "branch": "local/dev",
   "updated_at": "2026-04-30T11:40:00+08:00",
-  "last_change": "要求每次推送local/dev前同步更新版本号",
+  "last_change": "项目版本基线调整为2.5.0；后续每次推送local/dev前同步更新版本号",
   "version_rule": "每次提交并推送local/dev前，必须递增本文件version并更新updated_at；涉及日程主配置时同步更新config/schedule.json版本。"
 }

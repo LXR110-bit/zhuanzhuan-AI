@@ -112,6 +112,61 @@ def send_news(webhook_url, payload, base_url):
     return post_json(webhook_url, {"msgtype": "news", "news": {"articles": articles}})
 
 
+def signal_url(item):
+    return item.get("url") or item.get("source_url") or item.get("link") or (item.get("raw") or {}).get("url") or ""
+
+
+def signal_summary(item):
+    return item.get("summary") or item.get("description") or (item.get("raw") or {}).get("summary") or item.get("title") or ""
+
+
+def build_text_summary(payload, base_url=""):
+    lines = [
+        f"📊 今日行情日报（{payload.get('date')}）",
+        payload.get("summary", {}).get("one_sentence", ""),
+        "",
+    ]
+
+    images = payload.get("images", {})
+    if base_url:
+        for label, path in (("市场信号卡片", images.get("market_daily_card")), ("价格监控卡片", images.get("price_monitor_card"))):
+            if path:
+                name = Path(path).name
+                url = urllib.parse.urljoin(base_url.rstrip("/") + "/", urllib.parse.quote(name))
+                lines.append(f"{label}：{url}")
+        lines.append("")
+
+    signals = payload.get("signals", {})
+    added = 0
+    for level in ("S", "A", "B"):
+        items = signals.get(level) or []
+        if not items:
+            continue
+        lines.append(f"{level}级信号：")
+        for item in items[:5]:
+            title = item.get("title") or "未命名信号"
+            summary = signal_summary(item)
+            source = item.get("source") or "未知来源"
+            published = item.get("published_at") or item.get("publish_date") or ""
+            url = signal_url(item)
+            lines.append(f"- {title}")
+            if summary and summary != title:
+                lines.append(f"  摘要：{summary}")
+            lines.append(f"  来源：{source}" + (f"｜时间：{published}" if published else ""))
+            lines.append(f"  原文：{url or '无原文链接'}")
+            added += 1
+        lines.append("")
+
+    if not added:
+        lines.append("今日暂无带原文链接的行情信号。")
+    return "\n".join(line for line in lines if line is not None)
+
+
+def send_markdown_summary(webhook_url, payload, base_url=""):
+    text = build_text_summary(payload, base_url)
+    return post_json(webhook_url, {"msgtype": "markdown", "markdown": {"content": text[:4000]}})
+
+
 def send_files(webhook_url, payload):
     images = payload.get("images", {})
     for key in ("market_daily_card", "price_monitor_card"):
@@ -138,6 +193,7 @@ def write_outbox(payload):
     save_json(path, {
         "created_at": datetime.now().isoformat(),
         "reason": "dry_run_or_missing_webhook",
+        "text_summary": build_text_summary(payload),
         "payload": payload,
     })
     return path
@@ -165,11 +221,13 @@ def main():
             "mode": "dry_run",
             "outbox": str(outbox),
             "images": payload.get("images", {}),
+            "text_summary": build_text_summary(payload),
         }, ensure_ascii=False, indent=2))
         return
 
     try:
         mark_status("sending")
+        send_markdown_summary(args.webhook_url, payload, args.base_url)
         if args.base_url:
             send_news(args.webhook_url, payload, args.base_url)
             mode = "news"

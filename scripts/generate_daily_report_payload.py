@@ -334,11 +334,17 @@ def merge_news_signals(signals, news_data):
         if level not in signals:
             level = "B"
         title = item.get("title") or item.get("summary") or "未命名信号"
+        summary_text = item.get("summary") or item.get("content") or item.get("description") or title
+        source_url = item.get("url") or item.get("source_url") or item.get("link") or ""
         published_at = pub_time.strftime("%Y-%m-%d %H:%M:%S")
         publish_date = pub_time.strftime("%Y-%m-%d")
         signals[level].append({
             "title": title,
+            "summary": summary_text,
             "source": item.get("source") or "news_signals",
+            "url": source_url,
+            "domain": item.get("domain") or "",
+            "author": item.get("author") or "",
             "published_at": published_at,
             "publish_date": publish_date,
             "dedupe_key": item.get("dedupe_key"),

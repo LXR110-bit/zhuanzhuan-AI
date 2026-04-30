@@ -5,6 +5,7 @@ HTML+CSS 卡片渲染脚本 v2.5
 支持6品类×2机型分组展示
 """
 import argparse
+import html
 import json
 import os
 import re
@@ -140,6 +141,29 @@ def format_time_display(time_str):
         return f"{dt.month}月{dt.day}日 {dt.hour:02d}:{dt.minute:02d}"
     except ValueError:
         return time_str
+
+
+def escape_html(value):
+    return html.escape(str(value or ""), quote=True)
+
+
+def signal_url(sig):
+    return sig.get("url") or sig.get("source_url") or sig.get("link") or (sig.get("raw") or {}).get("url") or ""
+
+
+def short_url(url):
+    if not url:
+        return "无原文链接"
+    text = str(url).replace("https://", "").replace("http://", "")
+    return text if len(text) <= 42 else text[:39] + "..."
+
+
+def signal_summary(sig, title):
+    summary = sig.get("summary") or sig.get("description") or (sig.get("raw") or {}).get("summary") or ""
+    summary = str(summary or "").strip()
+    if not summary or summary == title:
+        return "暂无摘要，需打开原文核查。"
+    return summary
 
 
 def dedupe_signals(signals, max_count=5):
@@ -408,17 +432,21 @@ def generate_signal_box(level, signals):
     items_html = []
     for sig in signals[:5]:  # 最多5条
         title = clean_signal_title(sig.get("title", "无标题"))
+        summary = signal_summary(sig, title)
         source = sig.get("source", "未知来源")
         time_str = format_time_display(sig.get("published_at", ""))
+        url = signal_url(sig)
         
         if level in ["S", "A"]:
             meta = f"{source} · {time_str}"
         else:
-            meta = source
+            meta = f"{source} · {time_str}" if time_str else source
         
         items_html.append(f"""<div class="signal-item">
-            <div class="signal-item-title">{title}</div>
-            <div class="signal-item-meta">{meta}</div>
+            <div class="signal-item-title">{escape_html(title)}</div>
+            <div class="signal-item-summary">{escape_html(summary)}</div>
+            <div class="signal-item-meta">{escape_html(meta)}</div>
+            <div class="signal-item-link">原文：{escape_html(short_url(url))}</div>
         </div>""")
     
     return f"""<div class="signal-box {config['class']}">

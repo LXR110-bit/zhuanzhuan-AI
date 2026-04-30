@@ -177,21 +177,66 @@ def metric(draw, x, y, w, label, value, accent):
     draw.text((x + 26, y + 74), value, font=font(44, True), fill=accent)
 
 
+def strip_model_prefix(model):
+    """去掉品牌前缀，只保留产品型号"""
+    # 常见品牌前缀
+    prefixes = ["微星 ", "华硕 ", "技嘉 ", "七彩虹 ", "影驰 ", "耕升 ", "铭瑄 ", "索泰 "]
+    text = str(model or "")
+    for prefix in prefixes:
+        if text.startswith(prefix):
+            return text[len(prefix):]
+    return text
+
+
+def format_updated_at(timestamp):
+    """友好化时间戳显示：YYYY-MM-DD HH:MM"""
+    if not timestamp:
+        return "未更新"
+    text = str(timestamp)
+    # 处理ISO格式：2026-04-29T18:12:37.886497
+    if "T" in text:
+        text = text.replace("T", " ").split(".")[0]
+    # 去掉秒数
+    parts = text.split(":")
+    if len(parts) >= 2:
+        return ":".join(parts[:-1])
+    return text
+
+
 def signal_text(item):
+    """提取信号文本，去掉douyin signal:前缀，去重"""
     if isinstance(item, dict):
         title = item.get("title") or str(item)
         publish_date = item.get("publish_date")
         if not publish_date and item.get("published_at"):
             publish_date = str(item.get("published_at"))[:10]
+        # 去掉 "douyin signal:" 前缀
+        if title.startswith("douyin signal:"):
+            title = title[len("douyin signal:"):].strip()
         return f"{publish_date}｜{title}" if publish_date else title
     return str(item)
+
+
+def dedupe_signals(items):
+    """去重信号列表，相同内容只保留一次"""
+    seen = set()
+    result = []
+    for item in items or []:
+        text = signal_text(item)
+        # 用处理后的文本做去重键
+        if text not in seen:
+            seen.add(text)
+            result.append(item)
+    return result
 
 
 def draw_signal_panel(draw, x, y, title, items, accent, fill):
     rounded(draw, (x, y, x + 952, y + 220), radius=8, fill=fill, outline="#E2E8F0")
     draw.rounded_rectangle((x, y, x + 8, y + 220), radius=4, fill=accent)
     draw.text((x + 32, y + 34), title, font=font(30, True), fill=accent)
-    lines = [signal_text(item) for item in (items or [])[:3]] or ["无"]
+    # 去重后的信号
+    unique_items = dedupe_signals(items)
+    lines = [signal_text(item) for item in unique_items[:3]] or ["无"]
     line_y = y + 92
     for line in lines:
         line_y = draw_wrapped(draw, (x + 36, line_y), line, font(28), fill="#334155", chars=34, line_gap=4, max_lines=2)
@@ -206,7 +251,8 @@ def render_market_card(payload, output_path):
     signals = payload.get("signals", {})
     risks = payload.get("risks", {})
     date = payload.get("date") or datetime.now().strftime("%Y-%m-%d")
-    generated_at = payload.get("generated_at") or "未生成"
+    # 友好化时间显示
+    generated_at = format_updated_at(payload.get("generated_at")) if payload.get("generated_at") else "未生成"
 
     header(img, draw, "市场追踪日报", f"{date} | 更新 {generated_at}", "market")
     y = 330
@@ -243,32 +289,45 @@ def render_market_card(payload, output_path):
     img.convert("RGB").save(output_path, "PNG", optimize=True)
 
 
-def price_row(draw, y, row, header_row=False):
-    values = [
-        short_text(row.get("model") or row.get("机型") or "-", 13),
-        short_text(row.get("xianyu_market") or row.get("闲鱼市场") or "-", 9),
-        short_text(row.get("xianyu_recycle") or row.get("闲鱼回收") or "-", 9),
-        short_text(row.get("aihuishou") or row.get("爱回收") or "-", 9),
-        short_text(row.get("daily_change") or row.get("日环比") or "-", 8),
-    ]
-    xs = [96, 330, 520, 700, 880]
+def price_row(draw, y, row, header_row=False, has_multi_platform=False):
+    # 去掉品牌前缀，只显示产品型号，max_chars改为16
+    raw_model = row.get("model") or row.get("机型") or "-"
+    model = short_text(strip_model_prefix(raw_model), 16)
+    xianyu = row.get("xianyu_market") or row.get("闲鱼市场") or "-"
+    recycle = row.get("xianyu_recycle") or row.get("闲鱼回收") or "-"
+    aihuishou = row.get("aihuishou") or row.get("爱回收") or "-"
+    change = short_text(row.get("daily_change") or row.get("日环比") or "-", 8)
+    baseline = short_text(row.get("baseline_price") or "-", 9)
+    if has_multi_platform:
+        # 三平台模式：机型/闲鱼市场/闲鱼回收/爱回收/日环比
+        values = [model, short_text(xianyu, 9), short_text(recycle, 9), short_text(aihuishou, 9), change]
+        xs = [96, 330, 520, 700, 880]
+    else:
+        # 单平台模式：机型/原均价/最新价/日环比
+        # 列宽分配：机型280px / 原均价240px / 最新价240px / 日环比160px（总宽约920px）
+        values = [model, baseline, short_text(xianyu, 9), change]
+        xs = [80, 360, 600, 840]  # 调整列起始位置
     for idx, (x, value) in enumerate(zip(xs, values)):
-        color = change_color(value) if idx == 4 and not header_row else "#243044"
-        draw.text((x, y), value, font=font(27, True if header_row or idx == 4 else False), fill=color)
+        is_change_col = (has_multi_platform and idx == 4) or (not has_multi_platform and idx == 3)
+        color = change_color(value) if is_change_col and not header_row else "#243044"
+        draw.text((x, y), value, font=font(27, True if header_row or is_change_col else False), fill=color)
 
 
-def price_table_header(draw, y, baseline_date_hint=None):
+def price_table_header(draw, y, baseline_date_hint=None, has_multi_platform=False):
     """渲染带baseline_date标注的表头"""
-    col1 = "机型"
-    month_label = baseline_month_label(baseline_date_hint)
-    col2 = f"原均价（{month_label}）" if month_label else "原均价"
-    col3 = "最新价"
-    col4 = "日环比"
     rounded(draw, (88, y - 38, 992, y + 18), radius=8, fill="#F1F5F9")
-    draw.text((96, y + 4), col1, font=font(26, True), fill="#64748B")
-    draw.text((330, y + 4), col2, font=font(26, True), fill="#64748B")
-    draw.text((520, y + 4), col3, font=font(26, True), fill="#64748B")
-    draw.text((700, y + 4), col4, font=font(26, True), fill="#64748B")
+    if has_multi_platform:
+        # 三平台模式
+        headers = ["机型", "闲鱼市场", "闲鱼回收", "爱回收", "日环比"]
+        xs = [96, 330, 520, 700, 880]
+    else:
+        # 单平台模式：列宽分配 机型280px / 原均价240px / 最新价240px / 日环比160px
+        month_label = baseline_month_label(baseline_date_hint)
+        col2 = f"原均价（{month_label}）" if month_label else "原均价"
+        headers = ["机型", col2, "最新价", "日环比"]
+        xs = [80, 360, 600, 840]  # 匹配price_row中的xs
+    for x, col in zip(xs, headers):
+        draw.text((x, y + 4), col, font=font(26, True), fill="#64748B")
 
 
 def baseline_month_label(value):
@@ -287,7 +346,8 @@ def render_price_card(payload, output_path):
     prices = payload.get("prices", {})
     risks = payload.get("risks", {})
     date = payload.get("date") or datetime.now().strftime("%Y-%m-%d")
-    updated_at = prices.get("updated_at") or "未更新"
+    # 友好化更新时间显示
+    updated_at = format_updated_at(prices.get("updated_at")) if prices.get("updated_at") else "未更新"
     rows = prices.get("rows") or []
     alert_count = len(risks.get("drop_alerts") or []) + len(risks.get("rise_alerts") or [])
 
@@ -315,12 +375,18 @@ def render_price_card(payload, output_path):
             if row.get("baseline_date") and row.get("baseline_date") != "历史数据":
                 baseline_date_hint = row.get("baseline_date")
                 break
-    price_table_header(draw, table_y, baseline_date_hint)
+    # 判断是否有三平台数据：任一行有闲鱼回收或爱回收数据
+    has_multi_platform = any(
+        (row.get("xianyu_recycle") or row.get("闲鱼回收")) not in (None, "", "-", "—")
+        or (row.get("aihuishou") or row.get("爱回收")) not in (None, "", "-", "—")
+        for row in rows
+    )
+    price_table_header(draw, table_y, baseline_date_hint, has_multi_platform)
     table_y += 58
     for idx, row in enumerate(rows[:10]):
         if idx % 2 == 1:
             rounded(draw, (88, table_y - 36, 992, table_y + 12), radius=6, fill="#F8FAFC")
-        price_row(draw, table_y - 2, row if isinstance(row, dict) else {"model": row})
+        price_row(draw, table_y - 2, row if isinstance(row, dict) else {"model": row}, has_multi_platform=has_multi_platform)
         table_y += 52
     if not rows:
         draw.text((96, table_y), "暂无价格数据", font=font(32), fill="#64748B")
@@ -352,7 +418,7 @@ def render_price_card(payload, output_path):
                 line_y = draw_wrapped(draw, (x + 30, line_y), display_text, font(27), fill="#334155", chars=16, line_gap=4, max_lines=2)
                 line_y += 26
 
-    draw.text((64, 1848), "数据来源：闲鱼自由市场价格 / 闲鱼官方回收价格 / 爱回收价格｜仅展示价格与日环比", font=font(26), fill="#6D7788")
+    draw.text((64, 1848), "数据来源：闲鱼自由市场价格｜仅展示价格与日环比", font=font(26), fill="#6D7788")
     img.convert("RGB").save(output_path, "PNG", optimize=True)
 
 

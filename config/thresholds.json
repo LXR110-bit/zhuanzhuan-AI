@@ -106,5 +106,19 @@
     "enabled": true,
     "threshold_pct": 10.0,
     "description": "距停收阈值<10%时预警"
+  },
+
+  "alert_dedup": {
+    "default_cooldown_minutes": 1440,
+    "cooldown_by_level": {
+      "CRITICAL": 360,
+      "ALERT": 1440,
+      "WARN": 2880,
+      "INFO": 4320
+    },
+    "consecutive_confirmation_required": 2,
+    "state_file": "data/alert_dedup_state.json",
+    "archive_dir": "data/anomaly_votes_archive",
+    "max_archive_days": 60
   }
 }

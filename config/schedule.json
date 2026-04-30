@@ -1,6 +1,6 @@
 {
-  "version": "2.5.0",
-  "updated_at": "2026-04-30T11:40:00+08:00",
+  "version": "2.6.0",
+  "updated_at": "2026-04-30T15:00:00+08:00",
   "timezone": "Asia/Shanghai",
   "execution_model": {
     "mode": "Calendar -> sub-agent -> tool calls",
@@ -281,10 +281,15 @@
   "baseline_update": {
     "module_name": "基准线更新",
     "schedule": "weekly",
-    "entrypoint": "python3 scripts/update_baseline.py",
+    "trigger_time": "06:00",
+    "trigger_day": "monday",
+    "entrypoint": "python3 scripts/update_baseline.py --mode adaptive",
     "output": "data/baseline_update_proposal.json",
-    "apply_entrypoint": "python3 scripts/update_baseline.py --apply-confirmed",
-    "policy": "默认只生成待人工确认方案，不直接覆盖 config/baseline.json"
+    "apply_entrypoint": "python3 scripts/update_baseline.py --mode apply-confirmed",
+    "policy": "变化<5%自动应用，>=5%生成待确认方案",
+    "rolling_window_days": 14,
+    "auto_apply_threshold_pct": 5.0,
+    "history_dir": "data/baseline_history/"
   },
   "price_report": {
     "daily_record_dir": "data/daily_price_records/",
@@ -313,19 +318,25 @@
   "periodic_trend_report": {
     "module_name": "周期价格趋势播报",
     "weekly": {
-      "trigger": "每周一 09:30",
+      "trigger": "每周一 09:00",
+      "trigger_day": "monday",
+      "trigger_time": "09:00",
       "period_days": 7,
       "entrypoint": "python3 scripts/generate_periodic_trend_report.py --period weekly",
+      "push_entrypoint": "python3 scripts/send_periodic_report.py --period weekly",
       "output": "data/periodic_reports/YYYY-MM-DD_weekly_trend_card.png"
     },
     "monthly": {
-      "trigger": "每月1日 09:30",
+      "trigger": "每月1日 09:00",
+      "trigger_day": 1,
+      "trigger_time": "09:00",
       "period_days": 30,
       "entrypoint": "python3 scripts/generate_periodic_trend_report.py --period monthly",
+      "push_entrypoint": "python3 scripts/send_periodic_report.py --period monthly",
       "output": "data/periodic_reports/YYYY-MM-DD_monthly_trend_card.png"
     },
     "data_source": "data/trend_history/",
-    "note": "7天/30天趋势不进入每日播报，只进入周报/月报。"
+    "note": "周一09:00在baseline更新(06:00)之后执行，确保使用最新基准线。"
   },
   "push_channels": {
     "wecom": {

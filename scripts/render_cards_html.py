@@ -342,18 +342,31 @@ def generate_category_table_rows(rows, is_night):
         daily_change = row.get("daily_change", "—")
         change_class = format_change_class(daily_change)
         is_core = row.get("_is_core")
-        
+        trend_label = row.get("trend_label")
+        trend_direction = row.get("trend_direction")
+
         # 机型标签
         tag_html = ""
         if is_core:
             tag_html = '<span class="model-tag model-tag-core">核心</span>'
         elif parse_change_percent(daily_change) >= 5:
             tag_html = '<span class="model-tag model-tag-hot">异动</span>'
-        
+
+        # 趋势标签
+        trend_html = ""
+        if trend_label:
+            if trend_direction == "falling":
+                trend_cls = "trend-down"
+            elif trend_direction == "rising":
+                trend_cls = "trend-up"
+            else:
+                trend_cls = "trend-stable"
+            trend_html = f'<span class="trend-tag {trend_cls}">{trend_label}</span>'
+
         row_html = f"""<tr>
                 <td>
                     <div class="model-name">{display_name}{tag_html}</div>
-                    <div class="baseline">{baseline_date}</div>
+                    <div class="baseline">{baseline_date}{trend_html}</div>
                 </td>
                 <td class="price">{xianyu_market}</td>
                 <td class="price">{xianyu_recycle}</td>

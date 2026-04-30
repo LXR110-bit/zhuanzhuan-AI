@@ -6,6 +6,8 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from price_history_analyzer import build_all_products_history
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -450,6 +452,37 @@ def main():
         rows = build_rows_from_cloud_pc(cloud_pc_data)
     display_rows, display_policy = select_daily_display_rows(rows, categories_data)
 
+    history = {}
+    try:
+        history = build_all_products_history()
+    except Exception as exc:
+        print(f"[warn] history build failed: {exc}", file=sys.stderr)
+
+    history_products = history.get("products", {})
+    for row in display_rows:
+        pid = row.get("product_id")
+        h = history_products.get(pid)
+        if h and h.get("weekly"):
+            pct = h["weekly"]["change_pct"]
+            trend = h["weekly"]["trend"]
+            if pct is not None:
+                if abs(pct) < 0.5:
+                    row["trend_label"] = "周持平"
+                elif pct > 0:
+                    row["trend_label"] = f"周涨{abs(pct):.1f}%"
+                else:
+                    row["trend_label"] = f"周跌{abs(pct):.1f}%"
+            else:
+                row["trend_label"] = None
+            row["trend_direction"] = trend
+            row["weekly_change_pct"] = pct
+            row["monthly_change_pct"] = h["monthly"]["change_pct"] if h.get("monthly") else None
+        else:
+            row["trend_label"] = None
+            row["trend_direction"] = None
+            row["weekly_change_pct"] = None
+            row["monthly_change_pct"] = None
+
     signals = normalize_signals(cloud_pc_data)
     signals = merge_news_signals(signals, news_data)
     signals = merge_anomaly_votes(signals, anomaly_votes)
@@ -474,7 +507,7 @@ def main():
         drop_alerts.append(alert)
     
     payload = {
-        "version": "1.0.0",
+        "version": "2.6.0",
         "date": today_str(),
         "generated_at": now_iso(),
         "summary": summarize(rows, signals, missing, cloud_pc_data, news_data),
@@ -486,6 +519,7 @@ def main():
             "display_policy": display_policy,
             "daily_record": str(latest_daily_price_file()) if latest_daily_price_file() else None,
         },
+        "history": history,
         "risks": {
             "drop_alerts": drop_alerts,
             "rise_alerts": [],

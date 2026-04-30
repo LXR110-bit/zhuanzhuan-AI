@@ -42,6 +42,129 @@ ANOMALY_TREND_MIN = 1      # 趋势异常最少票数
 S_LEVEL_POINT = 2          # S级单点票数
 S_LEVEL_TREND = 1          # S级趋势票数
 
+CATEGORIES_FILE = os.path.join(BASE_DIR, "config", "categories.json")
+
+# ============== Payload 集成函数 ==============
+
+def build_history_for_payload(product_id: str, price_type: str = "aihuishou") -> Optional[Dict]:
+    """为单个产品构建 payload 所需的历史摘要"""
+    archives_7 = load_recent_archives(product_id, 7)
+    archives_30 = load_recent_archives(product_id, 30)
+
+    def extract_prices(archives):
+        prices, dates = [], []
+        for a in archives:
+            p = get_price_value(a["data"], price_type)
+            if p:
+                prices.append(p)
+                dates.append(a["date"])
+        return prices, dates
+
+    prices_7, dates_7 = extract_prices(archives_7)
+    prices_30, dates_30 = extract_prices(archives_30)
+
+    if len(prices_7) < 2 and len(prices_30) < 2:
+        return None
+
+    def period_summary(prices, dates):
+        if len(prices) < 2:
+            return None
+        trend_info = calculate_trend(prices, dates)
+        return {
+            "change_pct": trend_info["change_pct"],
+            "trend": trend_info["trend"],
+            "avg_price": trend_info["avg"],
+            "min_price": trend_info["min"],
+            "max_price": trend_info["max"],
+            "sample_count": trend_info["sample_count"],
+            "start_date": dates[0] if dates else None,
+            "end_date": dates[-1] if dates else None,
+        }
+
+    weekly = period_summary(prices_7, dates_7)
+    monthly = period_summary(prices_30, dates_30)
+
+    deviation = calculate_deviation(product_id, price_type)
+    consecutive = detect_consecutive_trend(prices_30 if prices_30 else prices_7)
+    momentum = analyze_momentum(prices_30 if len(prices_30) >= 8 else prices_7)
+
+    return {
+        "product_id": product_id,
+        "weekly": weekly,
+        "monthly": monthly,
+        "deviation_7d_pct": deviation.get("deviation_7day_pct"),
+        "deviation_30d_pct": deviation.get("deviation_30day_pct"),
+        "consecutive_days": consecutive.get("current_streak", 0),
+        "consecutive_direction": consecutive.get("direction", "unknown"),
+        "momentum": momentum.get("signal", "insufficient_data"),
+    }
+
+
+def build_all_products_history() -> Dict:
+    """遍历所有产品构建历史摘要，按品类聚合"""
+    if not os.path.exists(TREND_HISTORY):
+        return {"generated_at": datetime.now().isoformat(), "data_days_available": 0, "products": {}, "category_summary": {}}
+
+    categories_data = load_json(CATEGORIES_FILE) or {}
+    product_to_category = {}
+    for cat_name, cat_data in (categories_data.get("categories") or {}).items():
+        for item in cat_data.get("items", []):
+            pid = item.get("id")
+            if pid:
+                product_to_category[pid] = cat_name
+
+    products = {}
+    category_agg = {}
+
+    for d in os.listdir(TREND_HISTORY):
+        product_dir = os.path.join(TREND_HISTORY, d)
+        if not os.path.isdir(product_dir):
+            continue
+        history = build_history_for_payload(d)
+        if history is None:
+            continue
+        products[d] = history
+
+        cat = product_to_category.get(d, "其他")
+        agg = category_agg.setdefault(cat, {"changes": [], "count": 0})
+        agg["count"] += 1
+        weekly = history.get("weekly")
+        if weekly and weekly.get("change_pct") is not None:
+            agg["changes"].append(weekly["change_pct"])
+
+    category_summary = {}
+    for cat, agg in category_agg.items():
+        changes = agg["changes"]
+        avg_change = round(statistics.mean(changes), 2) if changes else None
+        if avg_change is None:
+            trend = "insufficient_data"
+        elif abs(avg_change) < 1:
+            trend = "stable"
+        elif avg_change > 0:
+            trend = "rising"
+        else:
+            trend = "falling"
+        category_summary[cat] = {
+            "avg_weekly_change_pct": avg_change,
+            "dominant_trend": trend,
+            "product_count": agg["count"],
+        }
+
+    archive_files = []
+    for d in os.listdir(TREND_HISTORY):
+        product_dir = os.path.join(TREND_HISTORY, d)
+        if os.path.isdir(product_dir):
+            archive_files.extend(os.listdir(product_dir))
+    data_days = len(set(f.replace(".json", "") for f in archive_files if f.endswith(".json")))
+
+    return {
+        "generated_at": datetime.now().isoformat(),
+        "data_days_available": data_days,
+        "products": products,
+        "category_summary": category_summary,
+    }
+
+
 # ============== 工具函数 ==============
 
 def load_json(filepath: str) -> Optional[Dict]:

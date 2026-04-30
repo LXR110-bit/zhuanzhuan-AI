@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Generate weekly/monthly 7d/30d price trend report payload and PNG card."""
+"""Generate weekly/monthly 7d/30d price trend report payload and PNG card. v2.6"""
 import argparse
 import json
 import math
 import statistics
-from datetime import datetime
+from collections import defaultdict
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -13,6 +14,9 @@ from PIL import Image, ImageDraw, ImageFont
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 TREND_HISTORY_DIR = DATA_DIR / "trend_history"
+CATEGORIES_FILE = BASE_DIR / "config" / "categories.json"
+BASELINE_FILE = BASE_DIR / "config" / "baseline.json"
+ANOMALY_ARCHIVE_DIR = DATA_DIR / "anomaly_votes_archive"
 OUTPUT_DIR = DATA_DIR / "periodic_reports"
 
 WIDTH = 1080
@@ -206,6 +210,132 @@ def summarize_product(product_id, history):
     }
 
 
+def build_category_trends(products, categories_file=CATEGORIES_FILE):
+    """按品类聚合产品涨跌幅"""
+    cat_data = load_json(categories_file) if categories_file.exists() else {}
+    pid_to_cat = {}
+    for cat_name, cat_info in (cat_data.get("categories") or {}).items():
+        for item in cat_info.get("items", []):
+            pid = item.get("id")
+            if pid:
+                pid_to_cat[pid] = cat_name
+
+    agg = defaultdict(lambda: {"changes": [], "products": [], "count": 0})
+    for product in products:
+        pid = product["product_id"]
+        cat = pid_to_cat.get(pid, "其他")
+        agg[cat]["count"] += 1
+        for plat in product.get("platforms", []):
+            pct = plat.get("change_pct")
+            if pct is not None:
+                agg[cat]["changes"].append(pct)
+                agg[cat]["products"].append({
+                    "product_id": pid,
+                    "product_name": product.get("product_name", pid),
+                    "change_pct": pct,
+                })
+
+    result = []
+    for cat, data in sorted(agg.items()):
+        changes = data["changes"]
+        avg_pct = round(statistics.mean(changes), 2) if changes else None
+        if avg_pct is None:
+            trend = "insufficient_data"
+        elif abs(avg_pct) < 1:
+            trend = "stable"
+        elif avg_pct > 0:
+            trend = "rising"
+        else:
+            trend = "falling"
+        top = max(data["products"], key=lambda x: abs(x["change_pct"]), default=None) if data["products"] else None
+        result.append({
+            "category": cat,
+            "avg_change_pct": avg_pct,
+            "trend": trend,
+            "product_count": data["count"],
+            "top_mover": top,
+        })
+    return result
+
+
+def build_anomaly_summary(period_days, archive_dir=ANOMALY_ARCHIVE_DIR):
+    """读取异动归档，按产品聚合"""
+    if not archive_dir.exists():
+        return {"total_anomalies": 0, "by_level": {}, "items": []}
+
+    cutoff = (datetime.now() - timedelta(days=period_days)).strftime("%Y-%m-%d")
+    all_items = []
+    for f in sorted(archive_dir.glob("*.json")):
+        if f.stem < cutoff:
+            continue
+        data = load_json(f)
+        all_items.extend(data.get("items", []))
+
+    if not all_items:
+        return {"total_anomalies": 0, "by_level": {}, "items": []}
+
+    by_level = defaultdict(int)
+    by_product = defaultdict(lambda: {"count": 0, "levels": []})
+    for item in all_items:
+        lvl = item.get("level", "INFO")
+        by_level[lvl] += 1
+        pid = item.get("product_id", "unknown")
+        by_product[pid]["count"] += 1
+        by_product[pid]["levels"].append(lvl)
+        by_product[pid]["product_name"] = item.get("product_name", pid)
+
+    product_items = []
+    for pid, info in sorted(by_product.items(), key=lambda x: x[1]["count"], reverse=True):
+        levels = info["levels"]
+        avg_level = max(set(levels), key=levels.count) if levels else "INFO"
+        product_items.append({
+            "product_id": pid,
+            "product_name": info["product_name"],
+            "anomaly_count": info["count"],
+            "avg_level": avg_level,
+        })
+
+    return {
+        "total_anomalies": len(all_items),
+        "by_level": dict(by_level),
+        "items": product_items[:10],
+    }
+
+
+def build_baseline_drift(products, baseline_file=BASELINE_FILE):
+    """对比 baseline 与最近均价，找出漂移产品"""
+    baseline = load_json(baseline_file) if baseline_file.exists() else {}
+    baselines = baseline.get("baselines", {})
+    if not baselines:
+        return {"products_drifted": 0, "items": []}
+
+    items = []
+    for product in products:
+        pid = product["product_id"]
+        key = pid.replace("-", "_").replace(" ", "_")
+        bl = baselines.get(key, {})
+        bl_avg = bl.get("avg")
+        if not isinstance(bl_avg, (int, float)) or not bl_avg:
+            continue
+        for plat in product.get("platforms", []):
+            current_avg = plat.get("avg_price")
+            if current_avg is None:
+                continue
+            drift_pct = round((current_avg - bl_avg) / bl_avg * 100, 2)
+            if abs(drift_pct) > 10:
+                items.append({
+                    "product_id": pid,
+                    "product_name": product.get("product_name", pid),
+                    "baseline_avg": bl_avg,
+                    "current_avg": current_avg,
+                    "drift_pct": drift_pct,
+                    "recommendation": "建议更新基准线" if abs(drift_pct) > 15 else "关注漂移",
+                })
+            break
+
+    return {"products_drifted": len(items), "items": items}
+
+
 def build_payload(period):
     config = PERIODS[period]
     products = []
@@ -224,9 +354,21 @@ def build_payload(period):
     movers = sorted(flat, key=lambda item: abs(item.get("change_pct") or 0), reverse=True)[:12]
     rising = sum(1 for item in flat if (item.get("change_pct") or 0) > 0)
     falling = sum(1 for item in flat if (item.get("change_pct") or 0) < 0)
+    stable = len(flat) - rising - falling
+
+    category_trends = build_category_trends(products)
+    anomaly_summary = build_anomaly_summary(config["days"])
+    baseline_drift = build_baseline_drift(products)
+
+    headline_parts = []
+    for ct in category_trends:
+        if ct["avg_change_pct"] is not None and abs(ct["avg_change_pct"]) >= 2:
+            direction = "上涨" if ct["avg_change_pct"] > 0 else "下跌"
+            headline_parts.append(f"{ct['category']}{direction}{abs(ct['avg_change_pct']):.1f}%")
+    headline = "，".join(headline_parts[:3]) + "。" if headline_parts else "各品类整体平稳。"
 
     return {
-        "version": "1.0.0",
+        "version": "2.6.0",
         "period": period,
         "period_label": config["label"],
         "date": today_str(),
@@ -237,12 +379,17 @@ def build_payload(period):
             "platform_record_count": len(flat),
             "rising": rising,
             "falling": falling,
+            "stable": stable,
             "status": "ok" if flat else "insufficient_data",
             "message": (
                 f"近{config['label']}共分析{len(products)}个产品、{len(flat)}个平台价格序列。"
                 if flat else f"近{config['label']}暂无可用历史价格，需先完成每日扫描和归档。"
             ),
+            "headline": headline,
         },
+        "category_trends": category_trends,
+        "anomaly_summary": anomaly_summary,
+        "baseline_drift": baseline_drift,
         "top_movers": movers,
         "products": products,
         "images": {},
@@ -287,38 +434,110 @@ def draw_row(draw, y, item, header=False):
 
 
 def render_card(payload, output_path):
-    img = Image.new("RGBA", (WIDTH, HEIGHT), "#F7FAFC")
+    summary = payload["summary"]
+    movers = payload.get("top_movers") or []
+    cat_trends = payload.get("category_trends") or []
+    anomaly = payload.get("anomaly_summary") or {}
+    drift = payload.get("baseline_drift") or {}
+
+    # 动态计算高度
+    base_h = 750
+    table_h = max(len(movers), 1) * 58 + 120
+    cat_h = (len(cat_trends) * 48 + 100) if cat_trends else 0
+    anomaly_h = (min(len(anomaly.get("items", [])), 5) * 48 + 100) if anomaly.get("total_anomalies") else 0
+    drift_h = (len(drift.get("items", [])) * 48 + 100) if drift.get("products_drifted") else 0
+    total_h = base_h + table_h + cat_h + anomaly_h + drift_h + 80
+
+    img = Image.new("RGBA", (WIDTH, total_h), "#F7FAFC")
     draw = ImageDraw.Draw(img)
     draw_header(img, draw, payload)
-    summary = payload["summary"]
+
     y = 330
-    metric(draw, 64, y, 296, "产品数", summary["product_count"], "#155E75")
-    metric(draw, 392, y, 296, "上涨序列", summary["rising"], "#047857")
-    metric(draw, 720, y, 296, "下跌序列", summary["falling"], "#B42318")
+    metric(draw, 64, y, 220, "产品数", summary["product_count"], "#155E75")
+    metric(draw, 310, y, 220, "上涨", summary["rising"], "#047857")
+    metric(draw, 556, y, 220, "下跌", summary["falling"], "#B42318")
+    metric(draw, 802, y, 220, "平稳", summary.get("stable", 0), "#475569")
     y += 168
 
+    # 趋势结论 + headline
+    headline = summary.get("headline", "")
+    conclusion_text = summary["message"] + (" " + headline if headline else "")
     rounded(draw, (64, y, 1016, y + 174), radius=8, fill="#FFFFFF", outline="#E2E8F0")
     draw.text((96, y + 36), "趋势结论", font=font(31, True), fill="#164E63")
-    draw.text((96, y + 94), summary["message"], font=font(34), fill="#111827")
+    draw.text((96, y + 94), conclusion_text[:50], font=font(30), fill="#111827")
     y += 214
 
-    rounded(draw, (64, y, 1016, y + 900), radius=8, fill="#FFFFFF", outline="#E2E8F0")
+    # 品类趋势区块
+    if cat_trends:
+        block_h = len(cat_trends) * 48 + 80
+        rounded(draw, (64, y, 1016, y + block_h), radius=8, fill="#FFFFFF", outline="#E2E8F0")
+        draw.text((96, y + 28), "品类趋势", font=font(31, True), fill="#164E63")
+        cy = y + 80
+        for ct in cat_trends:
+            cat_name = ct["category"]
+            avg_pct = ct.get("avg_change_pct")
+            trend = ct.get("trend", "")
+            arrow = "↑" if trend == "rising" else ("↓" if trend == "falling" else "→")
+            color = "#047857" if trend == "rising" else ("#B42318" if trend == "falling" else "#475569")
+            pct_str = f"{avg_pct:+.1f}%" if avg_pct is not None else "—"
+            draw.text((96, cy), f"{cat_name}", font=font(27, True), fill="#243044")
+            draw.text((320, cy), f"{arrow} {pct_str}", font=font(27, True), fill=color)
+            top = ct.get("top_mover")
+            if top:
+                draw.text((520, cy), f"最大波动: {top['product_name']} {top['change_pct']:+.1f}%", font=font(24), fill="#64748B")
+            cy += 48
+        y += block_h + 20
+
+    # 波动排行
+    table_block_h = max(len(movers), 1) * 58 + 100
+    rounded(draw, (64, y, 1016, y + table_block_h), radius=8, fill="#FFFFFF", outline="#E2E8F0")
     draw.text((96, y + 34), "波动排行", font=font(32, True), fill="#164E63")
     table_y = y + 104
     rounded(draw, (88, table_y - 38, 992, table_y + 18), radius=8, fill="#F1F5F9")
     draw_row(draw, table_y - 2, {}, header=True)
     table_y += 58
-    for idx, item in enumerate(payload.get("top_movers") or []):
+    for idx, item in enumerate(movers):
         if idx % 2 == 1:
             rounded(draw, (88, table_y - 34, 992, table_y + 12), radius=6, fill="#F8FAFC")
         draw_row(draw, table_y - 2, item)
         table_y += 58
-        if table_y > y + 850:
+        if idx >= 11:
             break
-    if not payload.get("top_movers"):
+    if not movers:
         draw.text((96, table_y + 20), "暂无历史价格趋势数据", font=font(34), fill="#64748B")
+    y += table_block_h + 20
 
-    draw.text((64, 1848), "数据来源：data/trend_history｜周报/月报独立于每日播报", font=font(26), fill="#6D7788")
+    # 异动汇总区块
+    anomaly_items = anomaly.get("items", [])[:5]
+    if anomaly.get("total_anomalies"):
+        block_h = len(anomaly_items) * 48 + 80
+        rounded(draw, (64, y, 1016, y + block_h), radius=8, fill="#FFFFFF", outline="#E2E8F0")
+        draw.text((96, y + 28), f"异动汇总（共{anomaly['total_anomalies']}次）", font=font(31, True), fill="#164E63")
+        ay = y + 80
+        for ai in anomaly_items:
+            lvl_color = {"CRITICAL": "#B42318", "ALERT": "#D97706", "S": "#B42318", "A": "#D97706"}.get(ai.get("avg_level"), "#475569")
+            draw.text((96, ay), f"{ai['product_name']}", font=font(27, True), fill="#243044")
+            draw.text((420, ay), f"{ai['anomaly_count']}次", font=font(27), fill=lvl_color)
+            draw.text((520, ay), f"主要级别: {ai['avg_level']}", font=font(24), fill="#64748B")
+            ay += 48
+        y += block_h + 20
+
+    # Baseline 漂移区块
+    drift_items = drift.get("items", [])
+    if drift.get("products_drifted"):
+        block_h = len(drift_items) * 48 + 80
+        rounded(draw, (64, y, 1016, y + block_h), radius=8, fill="#FFFFFF", outline="#E2E8F0")
+        draw.text((96, y + 28), f"基准线漂移（{drift['products_drifted']}个产品）", font=font(31, True), fill="#164E63")
+        dy = y + 80
+        for di in drift_items:
+            drift_color = "#B42318" if di["drift_pct"] < 0 else "#047857"
+            draw.text((96, dy), f"{di['product_name']}", font=font(27, True), fill="#243044")
+            draw.text((420, dy), f"{di['drift_pct']:+.1f}%", font=font(27, True), fill=drift_color)
+            draw.text((520, dy), di.get("recommendation", ""), font=font(24), fill="#64748B")
+            dy += 48
+        y += block_h + 20
+
+    draw.text((64, total_h - 52), "数据来源：data/trend_history｜周报/月报独立于每日播报", font=font(26), fill="#6D7788")
     img.convert("RGB").save(output_path, "PNG", optimize=True)
 
 

@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
+  "version": "2.6.0",
   "updated_at": "2026-04-30",
   "execution_model": "Calendar -> sub-agent -> search_web/mobile_use -> Python post-processing",
   "source_templates": {
@@ -93,6 +93,45 @@
       "python_after_tools": [
         "python3 scripts/price_data_validator.py",
         "python3 scripts/price_archiver.py archive"
+      ]
+    },
+    "baseline_update": {
+      "calendar_summary": "基准线自适应更新",
+      "schedule": "WEEKLY MO 05:30",
+      "description_template": "v2.6新增",
+      "sub_agent_tools": ["bash"],
+      "python_after_tools": [
+        "python3 scripts/update_baseline.py --mode adaptive"
+      ]
+    },
+    "weekly_trend_report": {
+      "calendar_summary": "周趋势报告",
+      "schedule": "WEEKLY MO 09:00",
+      "description_template": "v2.6新增",
+      "sub_agent_tools": ["bash"],
+      "python_after_tools": [
+        "python3 scripts/generate_periodic_trend_report.py --period weekly",
+        "python3 scripts/send_periodic_report.py --period weekly"
+      ]
+    },
+    "monthly_trend_report": {
+      "calendar_summary": "月趋势报告",
+      "schedule": "MONTHLY day1 09:00",
+      "description_template": "v2.6新增",
+      "sub_agent_tools": ["bash"],
+      "python_after_tools": [
+        "python3 scripts/generate_periodic_trend_report.py --period monthly",
+        "python3 scripts/send_periodic_report.py --period monthly"
+      ]
+    },
+    "daytime_incremental_scan": {
+      "calendar_summary": "日间增量巡检",
+      "times": ["10:15", "14:15", "18:15"],
+      "description_template": "v2.6新增",
+      "sub_agent_tools": ["search_web", "bash"],
+      "python_after_tools": [
+        "python3 scripts/fetch_tikhub_signals.py --append",
+        "python3 scripts/news_signal_filter.py"
       ]
     }
   }

@@ -21,7 +21,7 @@
     "python3 scripts/fetch_tikhub_signals.py --append",
     "python3 scripts/news_signal_filter.py",
     "python3 scripts/generate_daily_report_payload.py",
-    "python3 scripts/render_report_cards.py"
+    "python3 scripts/render_cards_html.py"
   ],
   "schedules": {
     "daily_report": {
@@ -33,7 +33,7 @@
         "python3 scripts/fetch_tikhub_signals.py --append",
         "python3 scripts/news_signal_filter.py",
         "python3 scripts/generate_daily_report_payload.py",
-        "python3 scripts/render_report_cards.py"
+        "python3 scripts/render_cards_html.py"
       ]
     },
     "daytime_anomaly_detection": {
@@ -46,7 +46,7 @@
         "python3 scripts/price_daily_recorder.py",
         "python3 scripts/price_archiver.py archive",
         "python3 scripts/generate_daily_report_payload.py",
-        "python3 scripts/render_report_cards.py"
+        "python3 scripts/render_cards_html.py"
       ]
     },
     "evening_full_scan": {
@@ -60,7 +60,7 @@
         "python3 scripts/price_daily_recorder.py",
         "python3 scripts/price_archiver.py archive",
         "python3 scripts/generate_daily_report_payload.py",
-        "python3 scripts/render_report_cards.py"
+        "python3 scripts/render_cards_html.py"
       ]
     },
     "daily_report_push": {

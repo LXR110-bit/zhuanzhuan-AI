@@ -158,7 +158,7 @@ def run_cloud_pc_pipeline(refresh_report=True):
     log_parts.append(run_command([sys.executable, str(MONITOR_SCRIPT_DIR / "output_for_daily.py")], BASE_DIR))
     if refresh_report:
         log_parts.append(run_command([sys.executable, str(SCRIPT_DIR / "generate_daily_report_payload.py")], BASE_DIR))
-        log_parts.append(run_command([sys.executable, str(SCRIPT_DIR / "render_report_cards.py")], BASE_DIR))
+        log_parts.append(run_command([sys.executable, str(SCRIPT_DIR / "render_cards_html.py")], BASE_DIR))
     MONITOR_LOG_DIR.mkdir(parents=True, exist_ok=True)
     log_file = MONITOR_LOG_DIR / f"monitor_{datetime.now().strftime('%Y-%m-%d_%H%M')}.log"
     log_file.write_text("\n".join(log_parts), encoding="utf-8")

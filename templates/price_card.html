@@ -12,36 +12,37 @@ body {
   background: #1a1a2e;
   color: #fff;
   width: 1080px;
-  min-height: 1920px;
+  height: 1920px;
+  overflow: hidden;
 }
 
 .card {
   width: 1080px;
   background: #16213e;
-  border-radius: 24px;
-  margin: 40px auto;
+  border-radius: 0;
+  margin: 0 auto;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  box-shadow: none;
 }
 
 /* 卡片1：价格播报卡 */
 .card-header {
   background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-  padding: 48px 40px 32px;
+  padding: 34px 40px 22px;
   text-align: center;
 }
 
 .card-title {
-  font-size: 32px;
+  font-size: 31px;
   font-weight: bold;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   letter-spacing: 2px;
 }
 
 .card-subtitle {
-  font-size: 20px;
+  font-size: 19px;
   color: #94a3b8;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 
 .card-meta {
@@ -51,34 +52,34 @@ body {
 
 /* 品类分组区域 */
 .table-container {
-  padding: 0 32px 32px;
+  padding: 0 32px 18px;
 }
 
 .section-label {
-  font-size: 18px;
+  font-size: 17px;
   color: #94a3b8;
-  margin: 24px 0 16px;
+  margin: 16px 0 10px;
   padding-left: 8px;
   border-left: 4px solid #00e676;
 }
 
 /* 品类分组 */
 .category-group {
-  margin-bottom: 24px;
+  margin-bottom: 13px;
 }
 
 .category-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 16px;
+  padding: 9px 14px;
   background: linear-gradient(90deg, rgba(30,58,95,0.6) 0%, rgba(30,58,95,0.2) 100%);
   border-radius: 12px 12px 0 0;
   margin-bottom: 2px;
 }
 
 .category-name {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   color: #e2e8f0;
 }
@@ -93,23 +94,23 @@ body {
 .category-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .category-table th {
   background: #1e3a5f;
   color: #94a3b8;
-  padding: 12px 10px;
+  padding: 8px 10px;
   text-align: left;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .category-table th:first-child { border-radius: 0; }
 .category-table th:last-child { border-radius: 0; }
 
 .category-table td {
-  padding: 14px 10px;
+  padding: 9px 10px;
   border-bottom: 1px solid rgba(30,58,95,0.5);
 }
 
@@ -141,9 +142,9 @@ body {
 }
 
 .baseline {
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .price {
@@ -175,7 +176,7 @@ body {
 /* 卡片2：信号速报卡 */
 .signal-header {
   background: linear-gradient(135deg, #2d1b4e 0%, #16213e 100%);
-  padding: 48px 40px 32px;
+  padding: 40px 40px 28px;
   text-align: center;
 }
 
@@ -268,7 +269,7 @@ body {
 
 /* 底部 */
 .card-footer {
-  padding: 24px 40px;
+  padding: 16px 40px;
   text-align: center;
   border-top: 1px solid #1e3a5f;
 }

@@ -67,7 +67,7 @@ cd ./运动相机追踪 && python3 scripts/watchdog.py &
 - `scripts/price_daily_recorder.py`
 - `scripts/price_archiver.py archive`
 - `scripts/generate_daily_report_payload.py`
-- `scripts/render_report_cards.py`
+- `scripts/render_cards_html.py`
 
 **三价格源覆盖率**：
 | 数据源 | 获取方式 | 覆盖率 | 适用品类 |

@@ -8,6 +8,8 @@ import argparse
 import json
 import os
 import re
+import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
@@ -33,6 +35,7 @@ PAYLOAD_FILE = BASE_DIR / "data" / "daily_report_payload.json"
 TEMPLATE_FILE = BASE_DIR / "templates" / "price_card.html"
 OUTPUT_DIR = BASE_DIR / "data" / "report_cards"
 CATEGORIES_FILE = BASE_DIR / "config" / "categories.json"
+PUSH_STATUS_FILE = BASE_DIR / "data" / "push_status.json"
 
 # 品牌词列表，用于去除机型名前缀
 BRAND_PREFIXES = ["微星", "华硕", "技嘉", "七彩虹", "影驰", "索泰", "映众", "耕升", "铭瑄", "昂达", "金士顿"]
@@ -64,6 +67,15 @@ def load_json(path):
         raise FileNotFoundError(f"文件不存在: {path}")
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+def save_json(path, data):
+    """原子写入 JSON 文件"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(".tmp")
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    tmp_path.replace(path)
 
 
 def load_template(path):
@@ -109,6 +121,13 @@ def format_baseline_date(date_str):
     if not date_str or date_str == "历史数据":
         return "历史数据"
     return f"基准：{date_str}"
+
+
+def display_value(value):
+    """HTML卡片统一空值展示。"""
+    if value in (None, "", "None", "null"):
+        return "—"
+    return str(value)
 
 
 def format_time_display(time_str):
@@ -274,20 +293,12 @@ def select_models_for_category(rows, category_name, core_model_name, model_map):
 
 def generate_category_table_header(is_night):
     """生成品类表格头部"""
-    if is_night:
-        return """<tr>
+    return """<tr>
             <th style="width:30%">机型</th>
-            <th style="width:22%">原均价</th>
-            <th style="width:18%">最新价</th>
-            <th style="width:15%">日环比</th>
-            <th style="width:15%">回收价</th>
-        </tr>"""
-    else:
-        return """<tr>
-            <th style="width:35%">机型</th>
-            <th style="width:25%">原均价</th>
-            <th style="width:20%">最新价</th>
-            <th style="width:20%">日环比</th>
+            <th style="width:18%">自由市</th>
+            <th style="width:18%">官方回</th>
+            <th style="width:18%">爱回收</th>
+            <th style="width:16%">日环比</th>
         </tr>"""
 
 
@@ -300,10 +311,10 @@ def generate_category_table_rows(rows, is_night):
     for row in rows:
         model = row.get("model", "—")
         display_name = get_model_display_name(model)
-        baseline_price = row.get("baseline_price", "—")
         baseline_date = format_baseline_date(row.get("baseline_date", ""))
-        xianyu_market = row.get("xianyu_market", "—")
-        xianyu_recycle = row.get("xianyu_recycle", "—")
+        xianyu_market = display_value(row.get("xianyu_market", "—"))
+        xianyu_recycle = display_value(row.get("xianyu_recycle", "—"))
+        aihuishou = display_value(row.get("aihuishou", "—"))
         daily_change = row.get("daily_change", "—")
         change_class = format_change_class(daily_change)
         is_core = row.get("_is_core")
@@ -315,25 +326,14 @@ def generate_category_table_rows(rows, is_night):
         elif parse_change_percent(daily_change) >= 5:
             tag_html = '<span class="model-tag model-tag-hot">异动</span>'
         
-        if is_night:
-            row_html = f"""<tr>
+        row_html = f"""<tr>
                 <td>
                     <div class="model-name">{display_name}{tag_html}</div>
                     <div class="baseline">{baseline_date}</div>
                 </td>
-                <td class="price">{baseline_price}</td>
                 <td class="price">{xianyu_market}</td>
-                <td class="{change_class}">{daily_change}</td>
                 <td class="price">{xianyu_recycle}</td>
-            </tr>"""
-        else:
-            row_html = f"""<tr>
-                <td>
-                    <div class="model-name">{display_name}{tag_html}</div>
-                    <div class="baseline">{baseline_date}</div>
-                </td>
-                <td class="price">{baseline_price}</td>
-                <td class="price">{xianyu_market}</td>
+                <td class="price">{aihuishou}</td>
                 <td class="{change_class}">{daily_change}</td>
             </tr>"""
         html_parts.append(row_html)
@@ -373,7 +373,7 @@ def generate_category_groups(rows, is_night):
         
         # 为每个选中机型判断是否有价格
         for row in selected_rows:
-            row["_has_price"] = row.get("xianyu_market") not in (None, "", "—")
+            row["_has_price"] = any(row.get(key) not in (None, "", "—") for key in ("xianyu_market", "xianyu_recycle", "aihuishou"))
             model = row.get("model", "")
             if core_model in model:
                 row["_is_core"] = True
@@ -516,6 +516,43 @@ def html_to_png_selenium(html_path, png_path, width=1080, height=1920):
     return True
 
 
+def find_chrome_binary():
+    """查找可用于命令行截图的 Chrome/Chromium。"""
+    env_path = os.environ.get("CHROME_BIN") or os.environ.get("CHROMIUM_BIN")
+    candidates = [
+        env_path,
+        shutil.which("chromium"),
+        shutil.which("chromium-browser"),
+        shutil.which("google-chrome"),
+        shutil.which("chrome"),
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    ]
+    for candidate in candidates:
+        if candidate and Path(candidate).exists():
+            return candidate
+    return None
+
+
+def html_to_png_chrome(html_path, png_path, width=1080, height=1920):
+    """使用本机 Chrome headless 将 HTML 截图为 PNG。"""
+    chrome = find_chrome_binary()
+    if not chrome:
+        return False
+    cmd = [
+        chrome,
+        "--headless=new",
+        "--disable-gpu",
+        "--hide-scrollbars",
+        "--no-sandbox",
+        f"--window-size={width},{height}",
+        f"--screenshot={png_path}",
+        f"file://{html_path}",
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return True
+
+
 def html_to_png(html_path, png_path, width=1080, height=1920):
     """将 HTML 转换为 PNG，优先使用 Playwright"""
     if PLAYWRIGHT_AVAILABLE:
@@ -531,10 +568,65 @@ def html_to_png(html_path, png_path, width=1080, height=1920):
             return html_to_png_selenium(html_path, png_path, width, height)
         except Exception as e:
             print(f"Selenium 截图失败: {e}")
+
+    print("使用 Chrome headless 截图...")
+    try:
+        if html_to_png_chrome(html_path, png_path, width, height):
+            return True
+    except Exception as e:
+        print(f"Chrome headless 截图失败: {e}")
     
     print("警告: Playwright 和 Selenium 都不可用，无法自动截图")
     print("请手动打开 HTML 文件并截图")
     return False
+
+
+def extract_body_card(html, marker, next_marker=None):
+    """从组合 HTML 中拆出单张卡片，保留 head/style。"""
+    head_end = html.find("<body>")
+    body_end = html.rfind("</body>")
+    if head_end == -1 or body_end == -1:
+        return html
+    prefix = html[: head_end + len("<body>")]
+    suffix = html[body_end:]
+    start = html.find(marker, head_end)
+    if start == -1:
+        return html
+    end = html.find(next_marker, start + len(marker)) if next_marker else body_end
+    if end == -1:
+        end = body_end
+    return prefix + "\n" + html[start:end].strip() + "\n" + suffix
+
+
+def write_html(path, html):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(html)
+
+
+def update_payload_and_status(payload_path, payload, market_path, price_path):
+    payload.setdefault("images", {})
+    payload["images"]["market_daily_card"] = str(market_path)
+    payload["images"]["price_monitor_card"] = str(price_path)
+    save_json(payload_path, payload)
+
+    if payload_path.resolve() != PAYLOAD_FILE.resolve():
+        return
+    status = load_json(PUSH_STATUS_FILE) if PUSH_STATUS_FILE.exists() else {}
+    if not status:
+        return
+    status["date"] = payload.get("date") or status.get("date")
+    status["updated_at"] = datetime.now().isoformat()
+    daily = status.setdefault("daily_report", {})
+    if daily.get("status") not in ("sent", "missed"):
+        daily["status"] = "image_ready"
+        daily["last_error"] = None
+    daily["image_required"] = True
+    daily.setdefault("images", {})
+    daily["images"]["market_daily_card"] = str(market_path)
+    daily["images"]["price_monitor_card"] = str(price_path)
+    daily["render_engine"] = "html_css_browser_screenshot"
+    save_json(PUSH_STATUS_FILE, status)
 
 
 def main():
@@ -563,20 +655,42 @@ def main():
     print("渲染 HTML (v2.5 品类分组)...")
     html_content = render_html(payload, template_html)
     
-    # 保存 HTML 文件
+    date = payload.get("date") or datetime.now().strftime("%Y-%m-%d")
+
+    # 保存 HTML 文件：组合预览 + 两张正式卡片
     html_path = output_dir / "report_cards_combined.html"
-    with open(html_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    price_html_path = output_dir / f"{date}_price_monitor_card.html"
+    market_html_path = output_dir / f"{date}_market_daily_card.html"
+    price_html = extract_body_card(
+        html_content,
+        "<!-- ========== 卡片1：价格播报卡 ========== -->",
+        "<!-- ========== 卡片2：信号速报卡 ========== -->",
+    )
+    market_html = extract_body_card(
+        html_content,
+        "<!-- ========== 卡片2：信号速报卡 ========== -->",
+    )
+    write_html(html_path, html_content)
+    write_html(price_html_path, price_html)
+    write_html(market_html_path, market_html)
     print(f"HTML 已保存: {html_path}")
     
     # 截图
     if not args.no_screenshot:
-        png_path = output_dir / "report_cards_combined.png"
+        combined_png_path = output_dir / "report_cards_combined.png"
+        price_png_path = output_dir / f"{date}_price_monitor_card.png"
+        market_png_path = output_dir / f"{date}_market_daily_card.png"
         print(f"开始截图...")
-        if html_to_png(str(html_path), str(png_path)):
-            print(f"PNG 已保存: {png_path}")
-        else:
-            print("截图失败")
+        ok = all([
+            html_to_png(str(price_html_path.resolve()), str(price_png_path.resolve())),
+            html_to_png(str(market_html_path.resolve()), str(market_png_path.resolve())),
+            html_to_png(str(html_path.resolve()), str(combined_png_path.resolve())),
+        ])
+        if not ok:
+            raise SystemExit("截图失败：未能生成 PNG 卡片")
+        update_payload_and_status(payload_file.resolve(), payload, market_png_path.resolve(), price_png_path.resolve())
+        print(f"价格PNG已保存: {price_png_path}")
+        print(f"信号PNG已保存: {market_png_path}")
 
 
 if __name__ == "__main__":

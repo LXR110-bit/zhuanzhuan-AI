@@ -10,6 +10,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 PRICE_CACHE_FILE = DATA_DIR / "price_cache.json"
+CATEGORIES_FILE = BASE_DIR / "config" / "categories.json"
 PAYLOAD_FILE = DATA_DIR / "daily_report_payload.json"
 PUSH_STATUS_FILE = DATA_DIR / "push_status.json"
 CLOUD_PC_DAILY_FILE = BASE_DIR / "cloud_pc_daily.json"
@@ -17,6 +18,7 @@ VALIDATION_REPORT_FILE = DATA_DIR / "validation_report.json"
 ANOMALY_VOTES_FILE = DATA_DIR / "anomaly_votes.json"
 NEWS_SIGNALS_FILE = DATA_DIR / "news_signals_filtered.json"
 DAILY_PRICE_DIR = DATA_DIR / "daily_price_records"
+DAILY_CATEGORY_LIMIT = 2
 
 
 def today_str():
@@ -97,6 +99,112 @@ def platform_change_text(item, platform_key):
     return pct_text(value)
 
 
+def nested_value(item, object_key, value_key):
+    value = item.get(object_key)
+    if isinstance(value, dict):
+        return value.get(value_key)
+    return value
+
+
+def text_has_price(value):
+    return value not in (None, "", "-", "—")
+
+
+def category_entries(categories_data):
+    categories = categories_data.get("categories") or {}
+    if isinstance(categories, dict):
+        return list(categories.items())
+    if isinstance(categories, list):
+        return [(item.get("name") or item.get("id") or f"品类{idx + 1}", item) for idx, item in enumerate(categories)]
+    return []
+
+
+def build_category_index(categories_data):
+    product_to_category = {}
+    ordered_categories = []
+    for category_name, category in category_entries(categories_data):
+        ordered_categories.append(category_name)
+        for item in category.get("items") or []:
+            product_id = item.get("id")
+            if not product_id:
+                continue
+            product_to_category[product_id] = category_name
+    return ordered_categories, product_to_category
+
+
+def placeholder_row(product_id, item, category_name):
+    return {
+        "product_id": product_id,
+        "model": item.get("name") or product_id,
+        "category": category_name,
+        "xianyu_market": "—",
+        "xianyu_recycle": "—",
+        "aihuishou": "—",
+        "daily_change": "—",
+        "platform_changes": {
+            "xianyu_market": "—",
+            "aihuishou": "—",
+            "xianyu_official": "—",
+        },
+        "updated_at": None,
+        "source": "category_config",
+        "status": "missing",
+        "missing_reason": "今日未获取到该代表机型价格",
+        "baseline_date": "历史数据",
+        "baseline_price": None,
+    }
+
+
+def select_daily_display_rows(rows, categories_data, per_category=DAILY_CATEGORY_LIMIT):
+    """Daily card shows representative rows only; full scan count is kept in metadata."""
+    if not categories_data:
+        return rows[:12], {
+            "mode": "fallback_first_rows",
+            "categories": 0,
+            "per_category": per_category,
+            "display_rows": min(len(rows), 12),
+            "total_rows": len(rows),
+        }
+
+    ordered_categories, product_to_category = build_category_index(categories_data)
+    rows_by_id = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        product_id = row.get("product_id")
+        if product_id:
+            row["category"] = product_to_category.get(product_id, row.get("category") or "其他")
+            rows_by_id[product_id] = row
+
+    selected = []
+    category_breakdown = []
+    for category_name, category in category_entries(categories_data):
+        category_rows = []
+        for item in category.get("items") or []:
+            product_id = item.get("id")
+            if not product_id:
+                continue
+            row = rows_by_id.get(product_id)
+            category_rows.append(row if row else placeholder_row(product_id, item, category_name))
+            if len(category_rows) >= per_category:
+                break
+        selected.extend(category_rows)
+        category_breakdown.append({
+            "category": category_name,
+            "rows": len(category_rows),
+            "missing_rows": sum(1 for row in category_rows if row.get("status") == "missing"),
+        })
+
+    return selected, {
+        "mode": "six_categories_two_models",
+        "categories": len(ordered_categories),
+        "per_category": per_category,
+        "display_rows": len(selected),
+        "total_rows": len(rows),
+        "breakdown": category_breakdown,
+    }
+
+
 def latest_daily_price_file():
     if not DAILY_PRICE_DIR.exists():
         return None
@@ -109,13 +217,27 @@ def build_rows_from_price_cache(cache, validation_report=None):
     missing = []
     validation_products = (validation_report or {}).get("products", {})
     prices = cache.get("prices") or cache.get("models") or {}
-    for product_id, item in prices.items():
+    for cache_key, item in prices.items():
+        product_id = item.get("id") or cache_key
         product_name = item.get("product_name") or item.get("name") or product_id
-        xianyu_market = item.get("xianyu_market", {}).get("avg")
-        xianyu_recycle = item.get("xianyu_official", {}).get("price")
-        aihuishou = item.get("aihuishou", {}).get("tansuo_price")
+        xianyu_market = (
+            nested_value(item, "xianyu_market", "avg")
+            or item.get("xianyu_market_price")
+            or item.get("闲鱼自由市场价格")
+            or item.get("二手均价")
+        )
+        xianyu_recycle = (
+            nested_value(item, "xianyu_official", "price")
+            or item.get("xianyu_official_price")
+            or item.get("闲鱼官方回收价格")
+        )
+        aihuishou = (
+            nested_value(item, "aihuishou", "tansuo_price")
+            or item.get("aihuishou_price")
+            or item.get("爱回收价格")
+        )
         updated = item.get("updated_at") or item.get("last_crawl") or item.get("verification_date")
-        validation_item = validation_products.get(product_id, {})
+        validation_item = validation_products.get(product_id) or validation_products.get(cache_key, {})
         platform_validation = validation_item.get("platforms", {})
         if platform_validation.get("xianyu_market", {}).get("reason"):
             xianyu_market = None
@@ -144,7 +266,7 @@ def build_rows_from_price_cache(cache, validation_report=None):
             "xianyu_market": fmt_price(xianyu_market),
             "xianyu_recycle": fmt_price(xianyu_recycle),
             "aihuishou": fmt_price(aihuishou),
-            "daily_change": pct_text(item.get("change_1d")),
+            "daily_change": pct_text(item.get("change_1d") or item.get("change_percent")),
             "platform_changes": {
                 "xianyu_market": platform_change_text(item, "xianyu_market"),
                 "aihuishou": platform_change_text(item, "aihuishou"),
@@ -166,7 +288,7 @@ def build_rows_from_price_cache(cache, validation_report=None):
 
 
 def row_has_price(row):
-    return any(row.get(key) not in (None, "", "-", "—") for key in ("xianyu_market", "xianyu_recycle", "aihuishou"))
+    return any(text_has_price(row.get(key)) for key in ("xianyu_market", "xianyu_recycle", "aihuishou"))
 
 
 def build_rows_from_cloud_pc(data):
@@ -315,10 +437,12 @@ def main():
     validation_report = load_json(VALIDATION_REPORT_FILE)
     anomaly_votes = load_json(ANOMALY_VOTES_FILE)
     news_data = load_json(NEWS_SIGNALS_FILE)
+    categories_data = load_json(CATEGORIES_FILE)
 
     rows, missing = build_rows_from_price_cache(price_cache, validation_report)
     if not rows and cloud_pc_data:
         rows = build_rows_from_cloud_pc(cloud_pc_data)
+    display_rows, display_policy = select_daily_display_rows(rows, categories_data)
 
     signals = normalize_signals(cloud_pc_data)
     signals = merge_news_signals(signals, news_data)
@@ -351,7 +475,9 @@ def main():
         "signals": signals,
         "prices": {
             "updated_at": price_cache.get("updated_at") or cloud_pc_data.get("generated_at"),
-            "rows": rows,
+            "rows": display_rows,
+            "all_rows_count": len(rows),
+            "display_policy": display_policy,
             "daily_record": str(latest_daily_price_file()) if latest_daily_price_file() else None,
         },
         "risks": {
@@ -384,6 +510,8 @@ def main():
         "output": str(output),
         "date": payload["date"],
         "rows": len(rows),
+        "display_rows": len(display_rows),
+        "display_policy": display_policy.get("mode"),
         "signals": {k: len(v) for k, v in signals.items()},
         "missing": len(missing),
     }, ensure_ascii=False, indent=2))

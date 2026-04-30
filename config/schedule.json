@@ -280,6 +280,12 @@
       "price",
       "daily_change"
     ],
+    "daily_display_policy": {
+      "mode": "six_categories_two_models",
+      "categories": 6,
+      "models_per_category": 2,
+      "description": "每日价格卡片只展示6个品类各2个代表机型；底层价格缓存和每日记录仍保留全量机型。"
+    },
     "note": "价格播报只展示每日价格和日环比，不混入资讯长文。"
   },
   "periodic_trend_report": {

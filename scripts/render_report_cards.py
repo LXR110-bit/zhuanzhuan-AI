@@ -290,44 +290,44 @@ def render_market_card(payload, output_path):
 
 
 def price_row(draw, y, row, header_row=False, has_multi_platform=False):
-    # 去掉品牌前缀，只显示产品型号，max_chars改为16
     raw_model = row.get("model") or row.get("机型") or "-"
-    model = short_text(strip_model_prefix(raw_model), 16)
+    model = strip_model_prefix(raw_model)
+    category = row.get("category")
+    if category:
+        draw.text((96, y - 9), short_text(category, 8), font=font(17, True), fill="#0F766E")
+        draw.text((96, y + 15), short_text(model, 10), font=font(22, True), fill="#243044")
+    else:
+        draw.text((96, y + 4), short_text(model, 12), font=font(23, True), fill="#243044")
+
     xianyu = row.get("xianyu_market") or row.get("闲鱼市场") or "-"
     recycle = row.get("xianyu_recycle") or row.get("闲鱼回收") or "-"
     aihuishou = row.get("aihuishou") or row.get("爱回收") or "-"
     change = short_text(row.get("daily_change") or row.get("日环比") or "-", 8)
     baseline = short_text(row.get("baseline_price") or "-", 9)
     if has_multi_platform:
-        # 三平台模式：机型/闲鱼市场/闲鱼回收/爱回收/日环比
-        values = [model, short_text(xianyu, 9), short_text(recycle, 9), short_text(aihuishou, 9), change]
-        xs = [96, 330, 520, 700, 880]
+        values = [short_text(xianyu, 10), short_text(recycle, 10), short_text(aihuishou, 10), change]
+        xs = [330, 520, 700, 880]
     else:
-        # 单平台模式：机型/原均价/最新价/日环比
-        # 列宽分配：机型280px / 原均价240px / 最新价240px / 日环比160px（总宽约920px）
-        values = [model, baseline, short_text(xianyu, 9), change]
-        xs = [80, 360, 600, 840]  # 调整列起始位置
+        values = [baseline, short_text(xianyu, 9), change]
+        xs = [360, 600, 840]
     for idx, (x, value) in enumerate(zip(xs, values)):
-        is_change_col = (has_multi_platform and idx == 4) or (not has_multi_platform and idx == 3)
+        is_change_col = (has_multi_platform and idx == 3) or (not has_multi_platform and idx == 2)
         color = change_color(value) if is_change_col and not header_row else "#243044"
-        draw.text((x, y), value, font=font(27, True if header_row or is_change_col else False), fill=color)
+        draw.text((x, y + 4), value, font=font(23, True if is_change_col else False), fill=color)
 
 
 def price_table_header(draw, y, baseline_date_hint=None, has_multi_platform=False):
-    """渲染带baseline_date标注的表头"""
     rounded(draw, (88, y - 38, 992, y + 18), radius=8, fill="#F1F5F9")
     if has_multi_platform:
-        # 三平台模式
-        headers = ["机型", "闲鱼市场", "闲鱼回收", "爱回收", "日环比"]
+        headers = ["品类/机型", "自由市", "官方回", "爱回收", "日环比"]
         xs = [96, 330, 520, 700, 880]
     else:
-        # 单平台模式：列宽分配 机型280px / 原均价240px / 最新价240px / 日环比160px
         month_label = baseline_month_label(baseline_date_hint)
         col2 = f"原均价（{month_label}）" if month_label else "原均价"
-        headers = ["机型", col2, "最新价", "日环比"]
-        xs = [80, 360, 600, 840]  # 匹配price_row中的xs
+        headers = ["品类/机型", col2, "最新价", "日环比"]
+        xs = [96, 360, 600, 840]
     for x, col in zip(xs, headers):
-        draw.text((x, y + 4), col, font=font(26, True), fill="#64748B")
+        draw.text((x, y + 4), col, font=font(25, True), fill="#64748B")
 
 
 def baseline_month_label(value):
@@ -349,6 +349,7 @@ def render_price_card(payload, output_path):
     # 友好化更新时间显示
     updated_at = format_updated_at(prices.get("updated_at")) if prices.get("updated_at") else "未更新"
     rows = prices.get("rows") or []
+    total_rows = prices.get("all_rows_count") or len(rows)
     alert_count = len(risks.get("drop_alerts") or []) + len(risks.get("rise_alerts") or [])
 
     header(img, draw, "价格监控日报", f"{date} | 价格更新 {updated_at}", "price")
@@ -360,13 +361,16 @@ def render_price_card(payload, output_path):
             if (row.get("xianyu_market") or row.get("xianyu_recycle") or row.get("aihuishou")) not in ("", "-", "—", None)
         )
         complete = f"{round(available / len(rows) * 100)}%"
-    metric(draw, 64, y, 296, "价格记录", str(len(rows)), "#0F766E")
+    metric(draw, 64, y, 296, "展示/总记录", f"{len(rows)}/{total_rows}", "#0F766E")
     metric(draw, 392, y, 296, "完成率", complete, "#1D4ED8")
     metric(draw, 720, y, 296, "异动数", str(alert_count), "#B45309")
     y += 168
 
-    rounded(draw, (64, y, 1016, y + 700), radius=8, fill="#FFFFFF", outline="#E2E8F0")
+    rounded(draw, (64, y, 1016, y + 820), radius=8, fill="#FFFFFF", outline="#E2E8F0")
     draw.text((96, y + 34), "价格总览", font=font(32, True), fill=colors["accent"])
+    policy = (prices.get("display_policy") or {}).get("mode")
+    subtitle = "6个品类各展示2个代表机型" if policy == "six_categories_two_models" else "代表机型价格"
+    draw.text((728, y + 40), subtitle, font=font(24), fill="#64748B")
     table_y = y + 102
     # 使用带baseline_date标注的表头
     baseline_date_hint = None
@@ -376,21 +380,25 @@ def render_price_card(payload, output_path):
                 baseline_date_hint = row.get("baseline_date")
                 break
     # 判断是否有三平台数据：任一行有闲鱼回收或爱回收数据
-    has_multi_platform = any(
+    has_multi_platform = policy == "six_categories_two_models" or any(
         (row.get("xianyu_recycle") or row.get("闲鱼回收")) not in (None, "", "-", "—")
         or (row.get("aihuishou") or row.get("爱回收")) not in (None, "", "-", "—")
         for row in rows
     )
     price_table_header(draw, table_y, baseline_date_hint, has_multi_platform)
     table_y += 58
-    for idx, row in enumerate(rows[:10]):
+    visible_rows = rows[:12]
+    stripe_y = table_y
+    for idx, _row in enumerate(visible_rows):
         if idx % 2 == 1:
-            rounded(draw, (88, table_y - 36, 992, table_y + 12), radius=6, fill="#F8FAFC")
+            rounded(draw, (88, stripe_y - 34, 992, stripe_y + 16), radius=6, fill="#F8FAFC")
+        stripe_y += 52
+    for row in visible_rows:
         price_row(draw, table_y - 2, row if isinstance(row, dict) else {"model": row}, has_multi_platform=has_multi_platform)
         table_y += 52
     if not rows:
         draw.text((96, table_y), "暂无价格数据", font=font(32), fill="#64748B")
-    y += 748
+    y += 868
 
     for x, title, items, accent, fill in (
         (64, "下跌预警", risks.get("drop_alerts") or [], "#B42318", "#FEF2F2"),
@@ -418,7 +426,7 @@ def render_price_card(payload, output_path):
                 line_y = draw_wrapped(draw, (x + 30, line_y), display_text, font(27), fill="#334155", chars=16, line_gap=4, max_lines=2)
                 line_y += 26
 
-    draw.text((64, 1848), "数据来源：闲鱼自由市场价格｜仅展示价格与日环比", font=font(26), fill="#6D7788")
+    draw.text((64, 1848), "数据来源：闲鱼自由市场价格 / 闲鱼官方回收价格 / 爱回收价格｜仅展示价格与日环比", font=font(26), fill="#6D7788")
     img.convert("RGB").save(output_path, "PNG", optimize=True)
 
 

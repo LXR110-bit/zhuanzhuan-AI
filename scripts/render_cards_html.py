@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-HTML+CSS 卡片渲染脚本
+HTML+CSS 卡片渲染脚本 v2.5
 将 daily_report_payload.json 数据渲染为 HTML 卡片并截图生成 PNG
+支持6品类×2机型分组展示
 """
 import argparse
 import json
@@ -31,9 +32,30 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PAYLOAD_FILE = BASE_DIR / "data" / "daily_report_payload.json"
 TEMPLATE_FILE = BASE_DIR / "templates" / "price_card.html"
 OUTPUT_DIR = BASE_DIR / "data" / "report_cards"
+CATEGORIES_FILE = BASE_DIR / "config" / "categories.json"
 
 # 品牌词列表，用于去除机型名前缀
-BRAND_PREFIXES = ["微星", "华硕", "技嘉", "七彩虹", "影驰", "索泰", "映众", "耕升", "铭瑄", "昂达"]
+BRAND_PREFIXES = ["微星", "华硕", "技嘉", "七彩虹", "影驰", "索泰", "映众", "耕升", "铭瑄", "昂达", "金士顿"]
+
+# 品类顺序和配置
+CATEGORY_ORDER = [
+    ("运动相机", "📷"),
+    ("显卡", "🖥️"),
+    ("CPU", "⚙️"),
+    ("无人机", "🚁"),
+    ("内存固态", "💾"),
+    ("智能手环", "⌚"),
+]
+
+# 品类中核心机型优先级（每个品类指定1个核心机型，必须展示）
+CORE_MODELS = {
+    "运动相机": "DJI Pocket 3",
+    "显卡": "RTX 4070",
+    "CPU": "i5 13600K",
+    "无人机": "DJI Mini 4",
+    "内存固态": "DDR5 16G",
+    "智能手环": "小米手环 10",
+}
 
 
 def load_json(path):
@@ -114,44 +136,200 @@ def dedupe_signals(signals, max_count=5):
     return result[:max_count]
 
 
-def generate_table_header(is_night):
-    """生成表格头部 HTML"""
+def parse_change_percent(change_str):
+    """解析日环比百分比，返回数值用于排序"""
+    if not change_str or change_str == "—" or change_str == "0%":
+        return 0
+    # 移除 + - % 符号
+    try:
+        num_str = change_str.replace("+", "").replace("%", "").strip()
+        return abs(float(num_str))
+    except (ValueError, TypeError):
+        return 0
+
+
+def get_model_display_name(model_name):
+    """获取显示用的机型名，去掉品牌前缀"""
+    # 先检查是否匹配核心机型
+    for core in CORE_MODELS.values():
+        if core in model_name:
+            return strip_brand_prefix(model_name)
+    # 对于运动相机/无人机，保持DJI前缀
+    if model_name.startswith("DJI ") or model_name.startswith("insta360 "):
+        return model_name
+    return strip_brand_prefix(model_name)
+
+
+def load_categories():
+    """加载品类配置"""
+    if CATEGORIES_FILE.exists():
+        return load_json(CATEGORIES_FILE)
+    return {"categories": {}}
+
+
+def build_model_to_category_map(categories_data):
+    """构建机型ID到品类名称的映射"""
+    model_map = {}
+    BRAND_WORDS = ["微星", "华硕", "技嘉", "七彩虹", "影驰", "索泰", "映众", "耕升", "铭瑄", "昂达", "金士顿", "DJI", "insta360", "AMD", "Intel"]
+    
+    for cat_name, cat_data in categories_data.get("categories", {}).items():
+        for item in cat_data.get("items", []):
+            # 基本映射
+            model_map[item["id"]] = cat_name
+            model_map[item["name"]] = cat_name
+            
+            # 去掉品牌前缀后的名称
+            stripped = item["name"]
+            for brand in BRAND_WORDS:
+                if stripped.startswith(brand):
+                    stripped = stripped[len(brand):].strip()
+                    break
+            
+            # 存储各种可能的匹配形式
+            model_map[stripped] = cat_name
+            model_map[stripped.replace(" ", "")] = cat_name
+            model_map[item["name"].replace(" ", "")] = cat_name
+            
+            # 对于微星RTX 3060 -> RTX 3060
+            if "RTX" in stripped:
+                model_map[stripped] = cat_name
+    return model_map
+
+
+def select_models_for_category(rows, category_name, core_model_name, model_map):
+    """为品类选择2个机型"""
+    # 筛选该品类的机型
+    category_rows = []
+    for row in rows:
+        model = row.get("model", "")
+        product_id = row.get("product_id", "")
+        
+        # 检查是否属于该品类 - 多种匹配方式
+        matched = False
+        for check_val in [model, product_id, model.replace(" ", ""), model.replace("微星 ", "")]:
+            if check_val in model_map and model_map[check_val] == category_name:
+                matched = True
+                break
+        
+        if matched:
+            # 检查是否有价格数据
+            has_price = row.get("xianyu_market") not in (None, "", "—")
+            row_copy = row.copy()
+            row_copy["_has_price"] = has_price
+            category_rows.append(row_copy)
+    
+    if not category_rows:
+        return []
+    
+    # 逻辑1：如果只有2个或更少，标记核心机型并返回
+    if len(category_rows) <= 2:
+        for row in category_rows:
+            model = row.get("model", "")
+            if core_model_name in model:
+                row["_is_core"] = True
+        # 确保核心机型在第一位
+        category_rows.sort(key=lambda x: (0 if x.get("_is_core") else 1))
+        return category_rows
+    
+    # 逻辑2：分离核心机型和非核心机型
+    selected = []
+    remaining = []
+    
+    for row in category_rows:
+        model = row.get("model", "")
+        if core_model_name in model:
+            row["_is_core"] = True
+            selected.append(row)
+        else:
+            remaining.append(row)
+    
+    # 逻辑3：如果已有2个选择（包含多个同名核心机型），去重
+    if len(selected) >= 2:
+        seen_models = set()
+        unique_selected = []
+        for row in selected:
+            model = row.get("model", "")
+            if model not in seen_models:
+                seen_models.add(model)
+                unique_selected.append(row)
+        return unique_selected[:2]
+    
+    # 逻辑4：选日环比绝对值最大的作为第二个
+    if remaining:
+        remaining.sort(key=lambda x: parse_change_percent(x.get("daily_change", "")), reverse=True)
+        # 去重
+        seen_models = set(r.get("model", "") for r in selected)
+        for r in remaining:
+            model = r.get("model", "")
+            if model not in seen_models:
+                selected.append(r)
+                seen_models.add(model)
+                break
+    
+    # 确保核心机型在第一位
+    selected.sort(key=lambda x: (0 if x.get("_is_core") else 1))
+    
+    return selected[:2]
+
+
+def generate_category_table_header(is_night):
+    """生成品类表格头部"""
     if is_night:
-        return """<th>机型</th><th>闲鱼市场</th><th>闲鱼回收</th><th>爱回收</th><th>日环比</th>"""
+        return """<tr>
+            <th style="width:30%">机型</th>
+            <th style="width:22%">原均价</th>
+            <th style="width:18%">最新价</th>
+            <th style="width:15%">日环比</th>
+            <th style="width:15%">回收价</th>
+        </tr>"""
     else:
-        return """<th>机型</th><th>原均价(基准期)</th><th>最新价</th><th>日环比</th>"""
+        return """<tr>
+            <th style="width:35%">机型</th>
+            <th style="width:25%">原均价</th>
+            <th style="width:20%">最新价</th>
+            <th style="width:20%">日环比</th>
+        </tr>"""
 
 
-def generate_table_rows(rows, is_night):
-    """生成表格行 HTML"""
+def generate_category_table_rows(rows, is_night):
+    """生成品类表格行"""
+    if not rows:
+        return '<tr class="empty-row"><td colspan="4">暂无数据</td></tr>'
+    
     html_parts = []
     for row in rows:
-        model = strip_brand_prefix(row.get("model", "—"))
+        model = row.get("model", "—")
+        display_name = get_model_display_name(model)
         baseline_price = row.get("baseline_price", "—")
         baseline_date = format_baseline_date(row.get("baseline_date", ""))
         xianyu_market = row.get("xianyu_market", "—")
         xianyu_recycle = row.get("xianyu_recycle", "—")
-        aihuishou = row.get("aihuishou", "—")
         daily_change = row.get("daily_change", "—")
         change_class = format_change_class(daily_change)
+        is_core = row.get("_is_core")
+        
+        # 机型标签
+        tag_html = ""
+        if is_core:
+            tag_html = '<span class="model-tag model-tag-core">核心</span>'
+        elif parse_change_percent(daily_change) >= 5:
+            tag_html = '<span class="model-tag model-tag-hot">异动</span>'
         
         if is_night:
-            # 晚间模式：5列
             row_html = f"""<tr>
                 <td>
-                    <div class="model-name">{model}</div>
+                    <div class="model-name">{display_name}{tag_html}</div>
                     <div class="baseline">{baseline_date}</div>
                 </td>
+                <td class="price">{baseline_price}</td>
                 <td class="price">{xianyu_market}</td>
-                <td class="price">{xianyu_recycle}</td>
-                <td class="price">{aihuishou}</td>
                 <td class="{change_class}">{daily_change}</td>
+                <td class="price">{xianyu_recycle}</td>
             </tr>"""
         else:
-            # 白天模式：4列
             row_html = f"""<tr>
                 <td>
-                    <div class="model-name">{model}</div>
+                    <div class="model-name">{display_name}{tag_html}</div>
                     <div class="baseline">{baseline_date}</div>
                 </td>
                 <td class="price">{baseline_price}</td>
@@ -160,6 +338,50 @@ def generate_table_rows(rows, is_night):
             </tr>"""
         html_parts.append(row_html)
     return "\n".join(html_parts)
+
+
+def generate_category_group(category_name, emoji, rows, is_night):
+    """生成单个品类分组HTML"""
+    header_html = f"""<div class="category-header">
+        <span class="category-name">{emoji} {category_name}</span>
+        <span class="category-count">{len([r for r in rows if r.get('_has_price')])}/{len(rows)} 有价</span>
+    </div>"""
+    
+    table_header = generate_category_table_header(is_night)
+    table_rows = generate_category_table_rows(rows, is_night)
+    
+    table_html = f"""<table class="category-table">
+        <thead>{table_header}</thead>
+        <tbody>{table_rows}</tbody>
+    </table>"""
+    
+    return f"""<div class="category-group">
+    {header_html}
+    {table_html}
+    </div>"""
+
+
+def generate_category_groups(rows, is_night):
+    """生成所有品类分组"""
+    categories_data = load_categories()
+    model_map = build_model_to_category_map(categories_data)
+    
+    groups_html = []
+    for category_name, emoji in CATEGORY_ORDER:
+        core_model = CORE_MODELS.get(category_name, "")
+        selected_rows = select_models_for_category(rows, category_name, core_model, model_map)
+        
+        # 为每个选中机型判断是否有价格
+        for row in selected_rows:
+            row["_has_price"] = row.get("xianyu_market") not in (None, "", "—")
+            model = row.get("model", "")
+            if core_model in model:
+                row["_is_core"] = True
+        
+        group_html = generate_category_group(category_name, emoji, selected_rows, is_night)
+        groups_html.append(group_html)
+    
+    return "\n".join(groups_html)
 
 
 def clean_signal_title(title):
@@ -213,6 +435,13 @@ def render_html(payload, template_html):
     summary = payload.get("summary", {})
     
     date = payload.get("date", datetime.now().strftime("%Y年%m月%d日"))
+    if "/" in date:
+        # 转换 2026-04-30 -> 2026年04月30日
+        try:
+            dt = datetime.strptime(date, "%Y-%m-%d")
+            date = f"{dt.year}年{dt.month}月{dt.day}日"
+        except ValueError:
+            pass
     updated_at = payload.get("generated_at", "")[:16] if payload.get("generated_at") else ""
     if updated_at:
         try:
@@ -225,9 +454,8 @@ def render_html(payload, template_html):
     night_mode = is_night_mode(rows)
     mode_label = "📊 晚间详细行情" if night_mode else "☀️ 白天行情播报"
     
-    # 生成表格
-    table_header = generate_table_header(night_mode)
-    table_rows = generate_table_rows(rows, night_mode)
+    # 生成品类分组
+    category_groups_html = generate_category_groups(rows, night_mode)
     
     # 生成信号
     s_signals = signals.get("S", [])
@@ -244,8 +472,7 @@ def render_html(payload, template_html):
         "{{date}}": date,
         "{{updated_at}}": updated_at,
         "{{mode_label}}": mode_label,
-        "{{table_header}}": table_header,
-        "{{table_rows}}": table_rows,
+        "{{category_groups}}": category_groups_html,
         "{{s_signals}}": s_html,
         "{{a_signals}}": a_html,
         "{{b_signals}}": b_html,
@@ -311,7 +538,7 @@ def html_to_png(html_path, png_path, width=1080, height=1920):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="HTML+CSS 卡片渲染脚本")
+    parser = argparse.ArgumentParser(description="HTML+CSS 卡片渲染脚本 v2.5")
     parser.add_argument("--payload", type=str, help="payload 文件路径")
     parser.add_argument("--template", type=str, help="HTML 模板路径")
     parser.add_argument("--output", type=str, help="输出目录")
@@ -333,7 +560,7 @@ def main():
     template_html = load_template(template_file)
     
     # 渲染 HTML
-    print("渲染 HTML...")
+    print("渲染 HTML (v2.5 品类分组)...")
     html_content = render_html(payload, template_html)
     
     # 保存 HTML 文件
@@ -349,12 +576,7 @@ def main():
         if html_to_png(str(html_path), str(png_path)):
             print(f"PNG 已保存: {png_path}")
         else:
-            print("截图失败，请手动截图")
-    
-    print("\n完成!")
-    print(f"输出文件: {html_path}")
-    if not args.no_screenshot:
-        print(f"PNG 文件: {output_dir / 'report_cards_combined.png'}")
+            print("截图失败")
 
 
 if __name__ == "__main__":

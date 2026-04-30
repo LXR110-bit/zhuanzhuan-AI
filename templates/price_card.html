@@ -49,7 +49,7 @@ body {
   color: #64748b;
 }
 
-/* 表格区域 */
+/* 品类分组区域 */
 .table-container {
   padding: 0 32px 32px;
 }
@@ -62,39 +62,82 @@ body {
   border-left: 4px solid #00e676;
 }
 
-table {
+/* 品类分组 */
+.category-group {
+  margin-bottom: 24px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: linear-gradient(90deg, rgba(30,58,95,0.6) 0%, rgba(30,58,95,0.2) 100%);
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 2px;
+}
+
+.category-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #e2e8f0;
+}
+
+.category-count {
+  font-size: 14px;
+  color: #64748b;
+  margin-left: auto;
+}
+
+/* 品类数据表格 */
+.category-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 18px;
+  font-size: 17px;
 }
 
-th {
+.category-table th {
   background: #1e3a5f;
   color: #94a3b8;
-  padding: 16px 12px;
+  padding: 12px 10px;
   text-align: left;
   font-weight: normal;
-  font-size: 16px;
+  font-size: 15px;
 }
 
-th:first-child { border-radius: 12px 0 0 0; }
-th:last-child { border-radius: 0 12px 0 0; }
+.category-table th:first-child { border-radius: 0; }
+.category-table th:last-child { border-radius: 0; }
 
-td {
-  padding: 14px 12px;
-  border-bottom: 1px solid #1e3a5f;
+.category-table td {
+  padding: 14px 10px;
+  border-bottom: 1px solid rgba(30,58,95,0.5);
 }
 
-tr:nth-child(even) td {
-  background: rgba(30, 58, 95, 0.3);
-}
-
-tr:last-child td:first-child { border-radius: 0 0 0 12px; }
-tr:last-child td:last-child { border-radius: 0 0 12px 0; }
+.category-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+.category-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
 
 .model-name {
   font-weight: 500;
   color: #e2e8f0;
+}
+
+.model-tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.model-tag-core {
+  background: rgba(255,183,77,0.2);
+  color: #ffb74d;
+}
+
+.model-tag-hot {
+  background: rgba(0,230,118,0.15);
+  color: #00e676;
 }
 
 .baseline {
@@ -120,6 +163,13 @@ tr:last-child td:last-child { border-radius: 0 0 12px 0; }
 
 .change-flat {
   color: #888;
+}
+
+.empty-row td {
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
 }
 
 /* 卡片2：信号速报卡 */
@@ -248,16 +298,7 @@ tr:last-child td:last-child { border-radius: 0 0 12px 0; }
   
   <div class="table-container">
     <div class="section-label">{{mode_label}}</div>
-    <table>
-      <thead>
-        <tr>
-          {{table_header}}
-        </tr>
-      </thead>
-      <tbody>
-        {{table_rows}}
-      </tbody>
-    </table>
+    {{category_groups}}
   </div>
   
   <div class="card-footer">

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1920">
+<title>回收价格日报</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #1a1a2e;
+  color: #fff;
+  width: 1080px;
+  min-height: 1920px;
+}
+
+.card {
+  width: 1080px;
+  background: #16213e;
+  border-radius: 24px;
+  margin: 40px auto;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* 卡片1：价格播报卡 */
+.card-header {
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  padding: 48px 40px 32px;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.card-subtitle {
+  font-size: 20px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.card-meta {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* 表格区域 */
+.table-container {
+  padding: 0 32px 32px;
+}
+
+.section-label {
+  font-size: 18px;
+  color: #94a3b8;
+  margin: 24px 0 16px;
+  padding-left: 8px;
+  border-left: 4px solid #00e676;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+}
+
+th {
+  background: #1e3a5f;
+  color: #94a3b8;
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 16px;
+}
+
+th:first-child { border-radius: 12px 0 0 0; }
+th:last-child { border-radius: 0 12px 0 0; }
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #1e3a5f;
+}
+
+tr:nth-child(even) td {
+  background: rgba(30, 58, 95, 0.3);
+}
+
+tr:last-child td:first-child { border-radius: 0 0 0 12px; }
+tr:last-child td:last-child { border-radius: 0 0 12px 0; }
+
+.model-name {
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.baseline {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.price {
+  color: #e2e8f0;
+  font-variant-numeric: tabular-nums;
+}
+
+.change-up {
+  color: #00e676;
+  font-weight: bold;
+}
+
+.change-down {
+  color: #ff5252;
+  font-weight: bold;
+}
+
+.change-flat {
+  color: #888;
+}
+
+/* 卡片2：信号速报卡 */
+.signal-header {
+  background: linear-gradient(135deg, #2d1b4e 0%, #16213e 100%);
+  padding: 48px 40px 32px;
+  text-align: center;
+}
+
+.signal-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.signal-container {
+  padding: 0 32px 32px;
+}
+
+.signal-box {
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.signal-s {
+  background: linear-gradient(135deg, rgba(255,82,82,0.2) 0%, rgba(239,68,68,0.1) 100%);
+  border: 1px solid rgba(255,82,82,0.4);
+  border-left: 4px solid #ff5252;
+}
+
+.signal-a {
+  background: linear-gradient(135deg, rgba(255,183,77,0.2) 0%, rgba(245,158,11,0.1) 100%);
+  border: 1px solid rgba(255,183,77,0.4);
+  border-left: 4px solid #ffb74d;
+}
+
+.signal-b {
+  background: linear-gradient(135deg, rgba(33,150,243,0.15) 0%, rgba(25,118,210,0.1) 100%);
+  border: 1px solid rgba(33,150,243,0.3);
+  border-left: 4px solid #2196f3;
+}
+
+.signal-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.signal-s .signal-label { color: #ff5252; }
+.signal-a .signal-label { color: #ffb74d; }
+.signal-b .signal-label { color: #64b5f6; }
+
+.signal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.signal-s .signal-dot { background: #ff5252; }
+.signal-a .signal-dot { background: #ffb74d; }
+.signal-b .signal-dot { background: #2196f3; }
+
+.signal-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.signal-item:last-child {
+  border-bottom: none;
+}
+
+.signal-item-title {
+  font-size: 16px;
+  color: #e2e8f0;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.signal-item-meta {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.signal-empty {
+  color: #64748b;
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* 底部 */
+.card-footer {
+  padding: 24px 40px;
+  text-align: center;
+  border-top: 1px solid #1e3a5f;
+}
+
+.footer-text {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.watermark {
+  font-size: 16px;
+  color: #475569;
+  font-weight: 500;
+}
+</style>
+</head>
+<body>
+
+<!-- ========== 卡片1：价格播报卡 ========== -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">📡 回收价格日报</div>
+    <div class="card-subtitle">{{date}}</div>
+    <div class="card-meta">数据更新于 {{updated_at}}</div>
+  </div>
+  
+  <div class="table-container">
+    <div class="section-label">{{mode_label}}</div>
+    <table>
+      <thead>
+        <tr>
+          {{table_header}}
+        </tr>
+      </thead>
+      <tbody>
+        {{table_rows}}
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="card-footer">
+    <div class="footer-text">数据来源：闲鱼市场、闲鱼回收、爱回收</div>
+    <div class="watermark">by 汤米</div>
+  </div>
+</div>
+
+<!-- ========== 卡片2：信号速报卡 ========== -->
+<div class="card">
+  <div class="signal-header">
+    <div class="signal-title">🚨 市场信号速报</div>
+    <div class="card-subtitle">{{date}}</div>
+  </div>
+  
+  <div class="signal-container">
+    <!-- S级信号 -->
+    {{s_signals}}
+    
+    <!-- A级信号 -->
+    {{a_signals}}
+    
+    <!-- B级信号 -->
+    {{b_signals}}
+  </div>
+  
+  <div class="card-footer">
+    <div class="footer-text">{{data_quality}}</div>
+    <div class="watermark">by 汤米</div>
+  </div>
+</div>
+
+</body>
+</html>

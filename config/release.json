@@ -1,7 +1,7 @@
 {
-  "version": "2.6.0",
+  "version": "2.6.1",
   "branch": "local/dev",
-  "updated_at": "2026-04-30T15:00:00+08:00",
-  "last_change": "新增周/月趋势推送、baseline自适应更新、告警去重归档，并修复alerting命令行误触发问题",
+  "updated_at": "2026-05-02T22:37:43+08:00",
+  "last_change": "归档2026-05-02待修复问题清单到issues目录",
   "version_rule": "每次提交并推送local/dev前，必须递增本文件version并更新updated_at；涉及日程主配置时同步更新config/schedule.json版本。"
 }

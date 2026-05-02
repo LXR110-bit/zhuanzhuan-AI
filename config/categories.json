@@ -44,7 +44,7 @@
     },
     "CPU": {
       "items": [
-        {"id": "i5_13600k", "name": "i5 13600K", "stop_threshold": 900, "search_keywords": ["i5 13600K", "13600K"]},
+        {"id": "i5_13600k", "name": "i5 13600K", "stop_threshold": 900, "search_keywords": ["i5 13600K 零售版", "13600K 盒装 散片"], "exclude_keywords": ["ES", "QS", "工程", "正显", "测试", "样品"]},
         {"id": "i7_13700k", "name": "i7 13700K", "stop_threshold": 1400, "search_keywords": ["i7 13700K", "13700K"]},
         {"id": "r5_5600x", "name": "5600X", "stop_threshold": 500, "search_keywords": ["5600X", "R5 5600X"]},
         {"id": "r7_5800x3d", "name": "5800X3D", "stop_threshold": 1100, "search_keywords": ["5800X3D", "R7 5800X3D"]}
@@ -54,8 +54,8 @@
     },
     "内存固态": {
       "items": [
-        {"id": "ddr5_16g", "name": "金士顿 DDR5 16G", "stop_threshold": null, "search_keywords": ["金士顿 DDR5 16G", "Kingston DDR5 16G"], "基准品牌": "金士顿", "备注": "主流品牌作为基准价"},
-        {"id": "ddr5_32g", "name": "金士顿 DDR5 32G", "stop_threshold": null, "search_keywords": ["金士顿 DDR5 32G", "Kingston DDR5 32G"], "基准品牌": "金士顿", "备注": "主流品牌作为基准价"},
+        {"id": "ddr5_16g", "name": "金士顿 DDR5 16G", "stop_threshold": null, "search_keywords": ["金士顿 DDR5 5600 16G 单条", "Kingston DDR5 5600 16G 单条"], "exclude_keywords": ["套条", "32G", "2x16", "两条"], "基准品牌": "金士顿", "备注": "主流品牌作为基准价，固定5600频率单条口径"},
+        {"id": "ddr5_32g", "name": "金士顿 DDR5 32G", "stop_threshold": null, "search_keywords": ["金士顿 DDR5 5600 32G 单条", "Kingston DDR5 5600 32G 单条"], "exclude_keywords": ["套条", "64G", "2x32", "两条"], "基准品牌": "金士顿", "备注": "主流品牌作为基准价，固定5600频率单条口径"},
         {"id": "nand_ssd", "name": "NAND 固态", "stop_threshold": null, "search_keywords": ["NAND 固态", "SSD 固态 价格", "固态硬盘 行情"]}
       ],
       "change_threshold": 15.0,
@@ -81,8 +81,8 @@
     },
     "智能手环": {
       "items": [
-        {"id": "xiaomi_band9", "name": "小米手环 9", "stop_threshold": null, "search_keywords": ["小米手环9", "小米 Band 9"]},
-        {"id": "xiaomi_band10", "name": "小米手环 10", "stop_threshold": null, "search_keywords": ["小米手环10", "小米 Band 10"]}
+        {"id": "xiaomi_band9", "name": "小米手环 9", "stop_threshold": null, "search_keywords": ["小米手环9 二手 正常成色", "小米 Band 9 二手"], "min_valid_price": 50, "exclude_keywords": ["0.1", "赠品", "刷单", "引流"]},
+        {"id": "xiaomi_band10", "name": "小米手环 10", "stop_threshold": null, "search_keywords": ["小米手环10 二手 正常成色", "小米 Band 10 二手"], "min_valid_price": 50, "exclude_keywords": ["0.1", "赠品", "刷单", "引流"]}
       ],
       "change_threshold": 10.0,
       "detection_priority": "B",

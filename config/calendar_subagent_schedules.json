@@ -1,6 +1,6 @@
 {
-  "version": "2.6.0",
-  "updated_at": "2026-04-30",
+  "version": "2.7.0",
+  "updated_at": "2026-05-02",
   "execution_model": "Calendar -> sub-agent -> search_web/mobile_use -> Python post-processing",
   "source_templates": {
     "sub_agent_execution": "扣子原价格爬取功能/sub-agent执行方式说明_20260429.md",
@@ -64,7 +64,7 @@
       "time": "21:00",
       "description_template": "日程描述模板_20260429.md#二、晚间全量检测",
       "sub_agent_tools": ["mobile_use", "search_web", "bash"],
-      "required_price_sources": ["xianyu_market", "xianyu_official", "aihuishou"],
+      "required_price_sources": ["xianyu_market", "xianyu_official", "zhuanzhuan_recycle", "aihuishou"],
       "python_after_tools": [
         "python3 scripts/price_data_validator.py",
         "python3 scripts/price_daily_recorder.py",
@@ -73,14 +73,27 @@
         "python3 scripts/render_cards_html.py"
       ]
     },
+    "zhuanzhuan_recycle_scan": {
+      "calendar_summary": "转转回收价扫描",
+      "time": "14:00",
+      "description_template": "v2.7新增",
+      "sub_agent_tools": ["mobile_use", "bash"],
+      "target_field": "prices.{product_id}.zhuanzhuan_recycle.price",
+      "note": "先关闭App弹窗；补齐转转回收价。爱回收改为周频或只跑手环/手机/平板等覆盖品类。",
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py",
+        "python3 scripts/price_daily_recorder.py"
+      ]
+    },
     "daily_report_push": {
       "calendar_summary": "日报推送",
       "time": "10:00",
       "description_template": "日程描述模板_20260429.md#五、日报推送",
       "sub_agent_tools": ["bash"],
       "push_steps": [
-        "检查 data/report_cards/ 下当天PNG卡片是否存在",
-        "存在 → 推送两张卡片到扣子主对话 + 企业微信webhook",
+        "检查 data/report_cards/report_cards_combined.png 是否存在",
+        "存在 → 优先只推送合并PNG到扣子主对话 + 企业微信webhook",
+        "缺少合并PNG但存在拆分PNG → fallback推送拆分卡片并记录异常",
         "不存在 → 在扣子主对话报告异常（06:00日报生成失败）"
       ],
       "python_after_tools": []

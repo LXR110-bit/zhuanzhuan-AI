@@ -7,7 +7,7 @@ Preferred mode:
   files in data/report_cards/
 
 Fallback mode:
-- If REPORT_CARD_BASE_URL is not set, upload SVG cards as WeCom bot files.
+- If REPORT_CARD_BASE_URL is not set, upload the combined PNG as a WeCom bot file.
 """
 import argparse
 import json
@@ -95,12 +95,17 @@ def upload_file(webhook_url, file_path):
 
 def send_news(webhook_url, payload, base_url):
     images = payload.get("images", {})
-    cards = [
-        ("市场追踪日报", images.get("market_daily_card")),
-        ("价格监控日报", images.get("price_monitor_card")),
-    ]
+    if images.get("combined_card"):
+        cards = [("今日行情日报", images.get("combined_card"))]
+    else:
+        cards = [
+            ("市场追踪日报", images.get("market_daily_card")),
+            ("价格监控日报", images.get("price_monitor_card")),
+        ]
     articles = []
     for title, path in cards:
+        if not path:
+            continue
         name = Path(path).name
         url = urllib.parse.urljoin(base_url.rstrip("/") + "/", urllib.parse.quote(name))
         articles.append({
@@ -129,7 +134,11 @@ def build_text_summary(payload, base_url=""):
 
     images = payload.get("images", {})
     if base_url:
-        for label, path in (("市场信号卡片", images.get("market_daily_card")), ("价格监控卡片", images.get("price_monitor_card"))):
+        card_links = (("日报合并卡片", images.get("combined_card")),) if images.get("combined_card") else (
+            ("市场信号卡片", images.get("market_daily_card")),
+            ("价格监控卡片", images.get("price_monitor_card")),
+        )
+        for label, path in card_links:
             if path:
                 name = Path(path).name
                 url = urllib.parse.urljoin(base_url.rstrip("/") + "/", urllib.parse.quote(name))
@@ -169,7 +178,8 @@ def send_markdown_summary(webhook_url, payload, base_url=""):
 
 def send_files(webhook_url, payload):
     images = payload.get("images", {})
-    for key in ("market_daily_card", "price_monitor_card"):
+    keys = ("combined_card",) if images.get("combined_card") else ("market_daily_card", "price_monitor_card")
+    for key in keys:
         media_id = upload_file(webhook_url, images[key])
         post_json(webhook_url, {"msgtype": "file", "file": {"media_id": media_id}})
 
@@ -221,6 +231,7 @@ def main():
             "mode": "dry_run",
             "outbox": str(outbox),
             "images": payload.get("images", {}),
+            "preferred_image": "combined_card" if payload.get("images", {}).get("combined_card") else "split_cards",
             "text_summary": build_text_summary(payload),
         }, ensure_ascii=False, indent=2))
         return

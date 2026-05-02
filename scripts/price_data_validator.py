@@ -6,6 +6,7 @@ and it marks large changes for confirmation instead of turning them into facts.
 """
 import argparse
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -21,9 +22,28 @@ ANOMALY_VOTES_FILE = DATA_DIR / "anomaly_votes.json"
 
 
 PRICE_PATHS = {
-    "xianyu_market": ("xianyu_market", "avg"),
-    "xianyu_official": ("xianyu_official", "price"),
-    "aihuishou": ("aihuishou", "tansuo_price"),
+    "xianyu_market": [
+        ("xianyu_market", "price"),
+        ("xianyu_market", "median"),
+        ("xianyu_market", "avg"),
+        ("xianyu_market_price",),
+        ("闲鱼自由市场价格",),
+        ("二手均价",),
+    ],
+    "xianyu_official": [("xianyu_official", "price")],
+    "aihuishou": [
+        ("aihuishou", "tansuo_price"),
+        ("aihuishou", "after_coupon"),
+        ("aihuishou", "base_price"),
+        ("aihuishou_price",),
+        ("爱回收价格",),
+    ],
+    "zhuanzhuan_recycle": [
+        ("zhuanzhuan_recycle", "price"),
+        ("zhuanzhuan", "price"),
+        ("zhuanzhuan_price",),
+        ("转转回收价格",),
+    ],
 }
 
 
@@ -59,13 +79,25 @@ def nested_get(data, path):
     return cur
 
 
+def nested_first(data, paths):
+    for path in paths:
+        value = nested_get(data, path)
+        if as_number(value) is not None:
+            return value
+    return None
+
+
 def as_number(value):
     if value in (None, "", "—", "-"):
         return None
     try:
         return float(value)
     except (TypeError, ValueError):
-        return None
+        numbers = re.findall(r"\d+(?:\.\d+)?", str(value).replace(",", ""))
+        if not numbers:
+            return None
+        parsed = [float(item) for item in numbers]
+        return sum(parsed[:2]) / min(len(parsed), 2)
 
 
 def is_pc_hardware(product_id, product_name):
@@ -97,8 +129,41 @@ def pct_change(current, previous):
 def has_any_price(item):
     return any(
         (value is not None and value >= 1)
-        for value in (as_number(nested_get(item, path)) for path in PRICE_PATHS.values())
+        for value in (as_number(nested_first(item, paths)) for paths in PRICE_PATHS.values())
     )
+
+
+def product_validation_rules(thresholds, product_id, product_name):
+    validation = thresholds.get("validation", {})
+    text = f"{product_id} {product_name}".lower()
+    rules = {
+        "price_min": float(validation.get("price_min", 1)),
+        "exclude_keywords": validation.get("exclude_keywords", []),
+    }
+    product_min = (validation.get("product_price_min") or {}).get(product_id)
+    if product_min is not None:
+        rules["price_min"] = float(product_min)
+    for keyword, floor in (validation.get("keyword_price_min") or {}).items():
+        if str(keyword).lower() in text:
+            rules["price_min"] = max(rules["price_min"], float(floor))
+    return rules
+
+
+def sample_text(sample):
+    if isinstance(sample, dict):
+        return " ".join(str(sample.get(key) or "") for key in ("title", "name", "desc", "description", "note"))
+    return str(sample or "")
+
+
+def has_excluded_sample(item, exclude_keywords):
+    samples = nested_get(item, ("xianyu_market", "samples")) or []
+    if not isinstance(samples, list):
+        samples = [samples]
+    for sample in samples:
+        text = sample_text(sample).lower()
+        if any(str(keyword).lower() in text for keyword in exclude_keywords):
+            return True
+    return False
 
 
 def classify_signal(vote_count, drop_pct, confidence, thresholds):
@@ -129,6 +194,7 @@ def validate_cache(cache, thresholds):
     manual_change = float(validation.get("manual_confirm_change_pct", 30.0))
     scan_date = cache.get("scan_time") or today_str()
 
+    prices = cache.get("prices") or cache.get("models") or {}
     report = {
         "version": "1.0.0",
         "date": today_str(),
@@ -140,7 +206,7 @@ def validate_cache(cache, thresholds):
         "warnings": [],
         "products": {},
         "stats": {
-            "product_count": len(cache.get("prices") or {}),
+            "product_count": len(prices),
             "valid_product_count": 0,
             "valid_price_count": 0,
         },
@@ -153,7 +219,7 @@ def validate_cache(cache, thresholds):
         "items": [],
     }
 
-    for product_id, item in (cache.get("prices") or {}).items():
+    for product_id, item in prices.items():
         product_name = item.get("product_name") or product_id
         previous = load_previous_product(product_id, scan_date)
         product_has_price = has_any_price(item)
@@ -168,9 +234,12 @@ def validate_cache(cache, thresholds):
             "platforms": {},
         }
 
-        for platform, path in PRICE_PATHS.items():
-            current = as_number(nested_get(item, path))
-            prev = as_number(nested_get(previous or {}, path))
+        rules = product_validation_rules(thresholds, product_id, product_name)
+        official_price = as_number(nested_first(item, PRICE_PATHS["xianyu_official"]))
+
+        for platform, paths in PRICE_PATHS.items():
+            current = as_number(nested_first(item, paths))
+            prev = as_number(nested_first(previous or {}, paths))
             platform_result = {
                 "price": current,
                 "previous_price": prev,
@@ -190,7 +259,8 @@ def validate_cache(cache, thresholds):
                     platform_result["reason"] = "本次扫描未获取到有效报价"
                 product_result["platforms"][platform] = platform_result
                 continue
-            if current < price_min or current > price_max:
+            platform_min = rules["price_min"] if platform == "xianyu_market" else price_min
+            if current < platform_min or current > price_max:
                 message = f"{product_name} {platform} 价格超出合理范围: {current:g}"
                 product_result["errors"].append(message)
                 report["errors"].append(message)
@@ -199,6 +269,24 @@ def validate_cache(cache, thresholds):
                 platform_result["reason"] = "价格超出合理范围，已禁止用于播报"
             else:
                 report["stats"]["valid_price_count"] += 1
+
+            suspect_market_price = (
+                platform == "xianyu_market"
+                and official_price is not None
+                and current is not None
+                and current < official_price
+            )
+            suspect_keyword = platform == "xianyu_market" and has_excluded_sample(item, rules["exclude_keywords"])
+            if suspect_market_price or suspect_keyword:
+                reason = "闲鱼市场价低于官方回收价，疑似ES/QS/样品/异常低价"
+                if suspect_keyword:
+                    reason = "闲鱼样本命中ES/QS/工程样品等排除词"
+                platform_result["reason"] = reason
+                platform_result["low_confidence"] = True
+                product_result["status"] = "low_confidence"
+                message = f"{product_name} {platform}: {reason}"
+                product_result["warnings"].append(message)
+                report["warnings"].append(message)
 
             change = pct_change(current, prev)
             platform_result["change_pct"] = round(change, 2) if change is not None else None
@@ -209,7 +297,7 @@ def validate_cache(cache, thresholds):
 
                 vote_count = 3 if abs(change) >= manual_change else 2
                 confidence = min(99, 60 + abs(change))
-                level = classify_signal(vote_count, change, confidence, thresholds)
+                level = "B" if platform_result.get("low_confidence") else classify_signal(vote_count, change, confidence, thresholds)
                 votes["items"].append({
                     "product_id": product_id,
                     "product_name": product_name,
@@ -220,6 +308,8 @@ def validate_cache(cache, thresholds):
                     "level": level,
                     "algorithms": ["consistency_check"],
                     "needs_continuous_confirmation": True,
+                    "low_confidence": bool(platform_result.get("low_confidence")),
+                    "reason": platform_result.get("reason"),
                 })
 
             if change is not None and abs(change) > manual_change:

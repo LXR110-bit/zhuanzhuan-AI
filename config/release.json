@@ -1,7 +1,7 @@
 {
-  "version": "2.6.1",
+  "version": "2.7.0",
   "branch": "local/dev",
-  "updated_at": "2026-05-02T22:37:43+08:00",
-  "last_change": "归档2026-05-02待修复问题清单到issues目录",
+  "updated_at": "2026-05-02T23:10:00+08:00",
+  "last_change": "修复2026-05-02实跑暴露的8个问题：价格验证、日环比、合并图推送、mobile_use弹窗、转转接入、爱回收降频和异常价格过滤",
   "version_rule": "每次提交并推送local/dev前，必须递增本文件version并更新updated_at；涉及日程主配置时同步更新config/schedule.json版本。"
 }

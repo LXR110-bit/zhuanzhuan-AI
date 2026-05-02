@@ -645,10 +645,11 @@ def write_html(path, html):
         f.write(html)
 
 
-def update_payload_and_status(payload_path, payload, market_path, price_path):
+def update_payload_and_status(payload_path, payload, market_path, price_path, combined_path):
     payload.setdefault("images", {})
     payload["images"]["market_daily_card"] = str(market_path)
     payload["images"]["price_monitor_card"] = str(price_path)
+    payload["images"]["combined_card"] = str(combined_path)
     save_json(payload_path, payload)
 
     if payload_path.resolve() != PAYLOAD_FILE.resolve():
@@ -666,6 +667,8 @@ def update_payload_and_status(payload_path, payload, market_path, price_path):
     daily.setdefault("images", {})
     daily["images"]["market_daily_card"] = str(market_path)
     daily["images"]["price_monitor_card"] = str(price_path)
+    daily["images"]["combined_card"] = str(combined_path)
+    daily["preferred_image"] = "combined_card"
     daily["render_engine"] = "html_css_browser_screenshot"
     save_json(PUSH_STATUS_FILE, status)
 
@@ -729,9 +732,16 @@ def main():
         ])
         if not ok:
             raise SystemExit("截图失败：未能生成 PNG 卡片")
-        update_payload_and_status(payload_file.resolve(), payload, market_png_path.resolve(), price_png_path.resolve())
+        update_payload_and_status(
+            payload_file.resolve(),
+            payload,
+            market_png_path.resolve(),
+            price_png_path.resolve(),
+            combined_png_path.resolve(),
+        )
         print(f"价格PNG已保存: {price_png_path}")
         print(f"信号PNG已保存: {market_png_path}")
+        print(f"合并PNG已保存: {combined_png_path}")
 
 
 if __name__ == "__main__":

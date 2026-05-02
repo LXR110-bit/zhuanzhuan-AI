@@ -108,6 +108,17 @@ def nested_value(item, object_key, value_key):
     return value
 
 
+def nested_first(item, object_key, value_keys):
+    value = item.get(object_key)
+    if not isinstance(value, dict):
+        return value
+    for key in value_keys:
+        found = value.get(key)
+        if found not in (None, "", "-", "—"):
+            return found
+    return None
+
+
 def text_has_price(value):
     return value not in (None, "", "-", "—")
 
@@ -223,7 +234,7 @@ def build_rows_from_price_cache(cache, validation_report=None):
         product_id = item.get("id") or cache_key
         product_name = item.get("product_name") or item.get("name") or product_id
         xianyu_market = (
-            nested_value(item, "xianyu_market", "avg")
+            nested_first(item, "xianyu_market", ("price", "median", "avg"))
             or item.get("xianyu_market_price")
             or item.get("闲鱼自由市场价格")
             or item.get("二手均价")
@@ -234,9 +245,15 @@ def build_rows_from_price_cache(cache, validation_report=None):
             or item.get("闲鱼官方回收价格")
         )
         aihuishou = (
-            nested_value(item, "aihuishou", "tansuo_price")
+            nested_first(item, "aihuishou", ("tansuo_price", "after_coupon", "base_price"))
             or item.get("aihuishou_price")
             or item.get("爱回收价格")
+        )
+        zhuanzhuan = (
+            nested_first(item, "zhuanzhuan_recycle", ("price",))
+            or nested_first(item, "zhuanzhuan", ("price",))
+            or item.get("zhuanzhuan_price")
+            or item.get("转转回收价格")
         )
         updated = item.get("updated_at") or item.get("last_crawl") or item.get("verification_date")
         validation_item = validation_products.get(product_id) or validation_products.get(cache_key, {})
@@ -257,6 +274,7 @@ def build_rows_from_price_cache(cache, validation_report=None):
             ("xianyu_market", "闲鱼自由市场价格"),
             ("xianyu_official", "闲鱼官方回收价"),
             ("aihuishou", "爱回收价"),
+            ("zhuanzhuan_recycle", "转转回收价"),
         ):
             reason = platform_validation.get(platform_key, {}).get("reason")
             if reason:
@@ -268,11 +286,13 @@ def build_rows_from_price_cache(cache, validation_report=None):
             "xianyu_market": fmt_price(xianyu_market),
             "xianyu_recycle": fmt_price(xianyu_recycle),
             "aihuishou": fmt_price(aihuishou),
+            "zhuanzhuan_recycle": fmt_price(zhuanzhuan),
             "daily_change": pct_text(item.get("change_1d") or item.get("change_percent")),
             "platform_changes": {
                 "xianyu_market": platform_change_text(item, "xianyu_market"),
                 "aihuishou": platform_change_text(item, "aihuishou"),
                 "xianyu_official": platform_change_text(item, "xianyu_official"),
+                "zhuanzhuan_recycle": platform_change_text(item, "zhuanzhuan_recycle"),
             },
             "updated_at": updated,
             "source": item.get("source", "price_cache"),
@@ -290,7 +310,7 @@ def build_rows_from_price_cache(cache, validation_report=None):
 
 
 def row_has_price(row):
-    return any(text_has_price(row.get(key)) for key in ("xianyu_market", "xianyu_recycle", "aihuishou"))
+    return any(text_has_price(row.get(key)) for key in ("xianyu_market", "xianyu_recycle", "aihuishou", "zhuanzhuan_recycle"))
 
 
 def build_rows_from_cloud_pc(data):
@@ -302,6 +322,7 @@ def build_rows_from_cloud_pc(data):
             "xianyu_market": row.get("当前价格", "-"),
             "xianyu_recycle": "-",
             "aihuishou": "-",
+            "zhuanzhuan_recycle": "-",
             "daily_change": row.get("变化", "-"),
             "updated_at": data.get("generated_at"),
             "source": "cloud_pc_daily",
@@ -507,7 +528,7 @@ def main():
         drop_alerts.append(alert)
     
     payload = {
-        "version": "2.6.0",
+        "version": "2.7.0",
         "date": today_str(),
         "generated_at": now_iso(),
         "summary": summarize(rows, signals, missing, cloud_pc_data, news_data),

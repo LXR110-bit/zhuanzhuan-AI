@@ -68,7 +68,7 @@ def check_payload(payload):
         warnings.append("payload.prices.rows is empty")
     valid_price_rows = [
         row for row in (prices.get("rows") or [])
-        if any(row.get(key) not in (None, "", "-", "—") for key in ("xianyu_market", "xianyu_recycle", "aihuishou"))
+        if any(row.get(key) not in (None, "", "-", "—") for key in ("xianyu_market", "xianyu_recycle", "aihuishou", "zhuanzhuan_recycle"))
     ]
     if prices.get("rows") and not valid_price_rows:
         errors.append("payload.prices.rows has no valid price values")
@@ -83,6 +83,8 @@ def check_payload(payload):
 def check_images(payload, required_cards):
     errors = []
     images = (payload or {}).get("images", {})
+    if has_value(images.get("combined_card")):
+        return errors
     for card in required_cards:
         if not has_value(images.get(card)):
             errors.append(f"required image missing: {card}")

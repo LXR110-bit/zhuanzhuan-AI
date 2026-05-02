@@ -7,6 +7,11 @@
     "note": "闲鱼官方回收与爱回收均按该成色口径记录，禁止混用其他成色。"
   },
   "timeout_seconds": 90,
+  "preflight_steps": [
+    "启动目标App后先关闭所有弹窗、广告、新人福利、权限提示和浮层。",
+    "若弹窗无法关闭，截图并返回status=blocked_by_popup和failure_reason，不得继续写入推测价格。",
+    "保持轻微使用痕迹/9成新口径，禁止混用其他成色。"
+  ],
   "tasks": {
     "xianyu_market": {
       "platform": "闲鱼",
@@ -15,7 +20,7 @@
         "xianyu_market.price",
         "xianyu_market.samples"
       ],
-      "template": "在闲鱼App搜索\"{search_term}\"，筛选\"轻微使用痕迹\"（对应9成新），取前5个有效商品价格，返回价格列表和中位数。禁止搜索\"成交\"关键词。超时90秒。",
+      "template": "在闲鱼App搜索\"{search_term}\"，先关闭所有弹窗；筛选\"轻微使用痕迹\"（对应9成新），排除ES/QS/工程/正显/测试/样品/赠品/0.1元引流帖，取前5个有效商品价格，返回价格列表和中位数。禁止搜索\"成交\"关键词。超时90秒。",
       "required_output_fields": [
         "search_term",
         "platform",
@@ -33,7 +38,7 @@
       "platform": "闲鱼",
       "app": "闲鱼App",
       "target_field": "xianyu_official.price",
-      "template": "在闲鱼App搜索\"{search_term}\"，进入回收服务页面，获取官方回收价格。筛选\"轻微使用痕迹\"（对应9成新），返回价格数据。超时90秒。",
+      "template": "在闲鱼App搜索\"{search_term}\"，先关闭所有弹窗；进入回收服务页面，获取官方回收价格。筛选\"轻微使用痕迹\"（对应9成新），返回价格数据。超时90秒。",
       "required_output_fields": [
         "search_term",
         "platform",
@@ -54,7 +59,7 @@
         "aihuishou.after_coupon",
         "aihuishou.tansuo_price"
       ],
-      "template": "打开爱回收App，搜索\"{search_term}\"，获取基础价、券后价、碳索家价。筛选\"轻微使用痕迹\"（对应9成新）。超时90秒。",
+      "template": "打开爱回收App，先关闭所有弹窗；搜索\"{search_term}\"，获取基础价、券后价、碳索家价。筛选\"轻微使用痕迹\"（对应9成新）。仅对手环/手机/平板等爱回收有覆盖品类执行；DIY硬件和摄影品类若未收录，写null并标注未收录。超时90秒。",
       "required_output_fields": [
         "search_term",
         "platform",
@@ -68,9 +73,26 @@
         "status",
         "failure_reason"
       ]
+    },
+    "zhuanzhuan_recycle": {
+      "platform": "转转",
+      "app": "转转App或转转回收页面",
+      "target_field": "zhuanzhuan_recycle.price",
+      "template": "打开转转App或转转回收页面，先关闭所有弹窗；搜索\"{search_term}\"，选择\"轻微使用痕迹\"（对应9成新）或最接近成色，获取转转回收报价。若该品类未收录，返回null和failure_reason。超时90秒。",
+      "required_output_fields": [
+        "search_term",
+        "platform",
+        "condition",
+        "grade",
+        "zhuanzhuan_recycle_price",
+        "currency",
+        "captured_at",
+        "status",
+        "failure_reason"
+      ]
     }
   },
-  "combined_template": "闲鱼自由市场：在闲鱼App搜索\"{search_term}\"，筛选\"轻微使用痕迹\"（对应9成新），取前5个有效商品价格，返回价格列表和中位数。禁止搜索\"成交\"关键词。超时90秒。\n闲鱼官方回收：在闲鱼App搜索\"{search_term}\"，进入回收服务页面，获取官方回收价格。筛选\"轻微使用痕迹\"（对应9成新），返回价格数据。超时90秒。\n爱回收：打开爱回收App，搜索\"{search_term}\"，获取基础价、券后价、碳索家价。筛选\"轻微使用痕迹\"（对应9成新）。超时90秒。",
+  "combined_template": "通用预处理：每次打开App后先关闭所有弹窗、广告、新人福利、权限提示和浮层；如果无法关闭，返回status=blocked_by_popup，不写入推测价格。\n闲鱼自由市场：在闲鱼App搜索\"{search_term}\"，筛选\"轻微使用痕迹\"（对应9成新），排除ES/QS/工程/正显/测试/样品/赠品/0.1元引流帖，取前5个有效商品价格，返回价格列表和中位数。禁止搜索\"成交\"关键词。超时90秒。\n闲鱼官方回收：在闲鱼App搜索\"{search_term}\"，进入回收服务页面，获取官方回收价格。筛选\"轻微使用痕迹\"（对应9成新），返回价格数据。超时90秒。\n转转回收：打开转转App或转转回收页面，搜索\"{search_term}\"，选择\"轻微使用痕迹\"或最接近成色，获取转转回收报价；未收录则写null和failure_reason。超时90秒。\n爱回收：打开爱回收App，搜索\"{search_term}\"，获取基础价、券后价、碳索家价。仅对手环/手机/平板等爱回收有覆盖品类执行；DIY硬件和摄影品类未收录时写null和failure_reason。超时90秒。",
   "write_back_contract": {
     "price_cache": "data/price_cache.json",
     "xianyu_market_path": "prices.{product_id}.xianyu_market.price",
@@ -79,6 +101,7 @@
     "aihuishou_base_path": "prices.{product_id}.aihuishou.base_price",
     "aihuishou_after_coupon_path": "prices.{product_id}.aihuishou.after_coupon",
     "aihuishou_tansuo_path": "prices.{product_id}.aihuishou.tansuo_price",
+    "zhuanzhuan_recycle_path": "prices.{product_id}.zhuanzhuan_recycle.price",
     "required_metadata": [
       "source=mobile_use",
       "condition=轻微使用痕迹",

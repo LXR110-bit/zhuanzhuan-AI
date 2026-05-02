@@ -1,6 +1,6 @@
 {
-  "version": "2.6.0",
-  "updated_at": "2026-04-30T15:00:00+08:00",
+  "version": "2.7.0",
+  "updated_at": "2026-05-02T23:10:00+08:00",
   "timezone": "Asia/Shanghai",
   "execution_model": {
     "mode": "Calendar -> sub-agent -> tool calls",
@@ -76,8 +76,7 @@
       "dedupe_key": "url_or_source_title"
     },
     "required_cards": [
-      "market_daily_card",
-      "price_monitor_card"
+      "combined_card"
     ],
     "text_fallback": "failure_notice_only",
     "retry": {
@@ -163,10 +162,11 @@
   "evening_full_scan": {
     "module_name": "晚间全量检测",
     "trigger_time": "21:00",
-    "responsibility": "A+B层22个机型三价格口径深度爬取",
+    "responsibility": "A+B层22个机型多价格口径深度爬取",
     "data_sources": [
       "mobile_use_xianyu_market",
       "mobile_use_xianyu_official",
+      "mobile_use_zhuanzhuan_recycle",
       "mobile_use_aihuishou",
       "search_web_fallback"
     ],
@@ -189,12 +189,14 @@
     "required_price_sources": [
       "xianyu_market",
       "xianyu_official",
+      "zhuanzhuan_recycle",
       "aihuishou"
     ],
     "required_cache_fields": [
       "prices.{product_id}.xianyu_market.price",
       "prices.{product_id}.xianyu_market.samples",
       "prices.{product_id}.xianyu_official.price",
+      "prices.{product_id}.zhuanzhuan_recycle.price",
       "prices.{product_id}.aihuishou.base_price",
       "prices.{product_id}.aihuishou.after_coupon",
       "prices.{product_id}.aihuishou.tansuo_price"
@@ -258,14 +260,15 @@
   "cloud_phone_quota": {
     "daily_limit": 4,
     "fixed_evening_reserved": 1,
-    "daytime_validation_limit": 2,
+    "daytime_validation_limit": 1,
     "emergency_reserved": 1,
     "evening_fixed_time": "21:00",
     "daytime_trigger_policy": "only_when_anomaly_detected",
     "forbid_use_when_remaining_quota_lte_emergency_reserved": true,
     "quota_allocation": {
       "21:00_evening_full_scan": 1,
-      "daytime_anomaly_validation": 2,
+      "14:00_zhuanzhuan_recycle_scan": 1,
+      "daytime_anomaly_validation": 1,
       "emergency_s_level_validation": 1
     },
     "template_file": "config/mobile_use_templates.json",
@@ -275,8 +278,26 @@
     "timeout_seconds_per_app": 90,
     "apps": [
       "闲鱼App",
+      "转转App",
       "爱回收App"
     ]
+  },
+  "zhuanzhuan_recycle_scan": {
+    "module_name": "转转回收价扫描",
+    "trigger_time": "14:00",
+    "responsibility": "补齐转转B端回收报价，写入price_cache用于三方/四方价格对照。",
+    "entrypoint": "Calendar description -> sub-agent",
+    "sub_agent_tools": [
+      "mobile_use",
+      "bash"
+    ],
+    "template_file": "config/mobile_use_templates.json",
+    "target_field": "prices.{product_id}.zhuanzhuan_recycle.price",
+    "post_steps": [
+      "python3 scripts/price_data_validator.py",
+      "python3 scripts/price_daily_recorder.py"
+    ],
+    "note": "占用每日4次mobile_use配额中的1次；爱回收降为周频或仅支持品类，避免继续产生大面积null。"
   },
   "baseline_update": {
     "module_name": "基准线更新",
@@ -296,12 +317,14 @@
     "record_platforms": [
       "xianyu_market",
       "xianyu_official",
-      "aihuishou"
+      "aihuishou",
+      "zhuanzhuan_recycle"
     ],
     "platform_labels": {
       "xianyu_market": "闲鱼自由市场价格",
       "xianyu_official": "闲鱼官方回收价格",
-      "aihuishou": "爱回收价格"
+      "aihuishou": "爱回收价格",
+      "zhuanzhuan_recycle": "转转回收价格"
     },
     "broadcast_fields": [
       "price",

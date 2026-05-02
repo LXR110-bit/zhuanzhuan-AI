@@ -37,6 +37,25 @@
     "price_max": 100000,
     "warn_change_pct": 20.0,
     "manual_confirm_change_pct": 30.0,
+    "exclude_keywords": ["ES", "QS", "工程", "正显", "测试", "样品", "拆机", "维修"],
+    "product_price_min": {
+      "i5_13600k": 900,
+      "i7_13700k": 1400,
+      "xiaomi_band9": 50,
+      "xiaomi_band10": 50,
+      "ddr5_16g": 120,
+      "ddr5_32g": 240
+    },
+    "keyword_price_min": {
+      "手环": 50,
+      "ddr5": 120,
+      "rtx": 300,
+      "cpu": 100
+    },
+    "official_recycle_floor_policy": {
+      "enabled": true,
+      "rule": "闲鱼自由市场价低于闲鱼官方回收价时，标记low_confidence并禁止升级为S/A级。"
+    },
     "null_display": "—",
     "null_policy": "必须标注原因，禁止推测填充",
     "normal_missing_coverage": {
@@ -92,7 +111,14 @@
     "aihuishou": {
       "method": "mobile_use/search_web",
       "coverage": "27%",
-      "applicable": "手机/平板/手环"
+      "applicable": "手机/平板/手环",
+      "frequency": "weekly_or_supported_models_only"
+    },
+    "zhuanzhuan_recycle": {
+      "method": "mobile_use",
+      "coverage": "待验证",
+      "applicable": "回收报价覆盖品类",
+      "note": "新增转转回收价字段，用于补齐B端回收价对比。"
     }
   },
   

@@ -2,6 +2,7 @@
 """Record daily platform prices and enrich price_cache with day-over-day change."""
 import argparse
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -14,9 +15,28 @@ DAILY_PRICE_DIR = DATA_DIR / "daily_price_records"
 
 
 PLATFORM_PATHS = {
-    "xianyu_market": ("xianyu_market", "avg"),
-    "aihuishou": ("aihuishou", "tansuo_price"),
-    "xianyu_official": ("xianyu_official", "price"),
+    "xianyu_market": [
+        ("xianyu_market", "price"),
+        ("xianyu_market", "median"),
+        ("xianyu_market", "avg"),
+        ("xianyu_market_price",),
+        ("闲鱼自由市场价格",),
+        ("二手均价",),
+    ],
+    "xianyu_official": [("xianyu_official", "price")],
+    "aihuishou": [
+        ("aihuishou", "tansuo_price"),
+        ("aihuishou", "after_coupon"),
+        ("aihuishou", "base_price"),
+        ("aihuishou_price",),
+        ("爱回收价格",),
+    ],
+    "zhuanzhuan_recycle": [
+        ("zhuanzhuan_recycle", "price"),
+        ("zhuanzhuan", "price"),
+        ("zhuanzhuan_price",),
+        ("转转回收价格",),
+    ],
 }
 
 
@@ -52,6 +72,14 @@ def nested_get(data, path):
     return cur
 
 
+def nested_first(data, paths):
+    for path in paths:
+        value = nested_get(data, path)
+        if as_number(value) is not None:
+            return value
+    return None
+
+
 def nested_set(data, path, value):
     cur = data
     for key in path[:-1]:
@@ -65,7 +93,11 @@ def as_number(value):
     try:
         return float(value)
     except (TypeError, ValueError):
-        return None
+        numbers = re.findall(r"\d+(?:\.\d+)?", str(value).replace(",", ""))
+        if not numbers:
+            return None
+        parsed = [float(item) for item in numbers]
+        return sum(parsed[:2]) / min(len(parsed), 2)
 
 
 def pct_change(current, previous):
@@ -84,6 +116,27 @@ def previous_product(product_id, scan_date):
         data = load_json(path)
         return data.get("data") or data
     return None
+
+
+def previous_daily_product(product_id, scan_date):
+    if not DAILY_PRICE_DIR.exists():
+        return None
+    for path in sorted(DAILY_PRICE_DIR.glob("*.json"), reverse=True):
+        if path.stem >= scan_date:
+            continue
+        data = load_json(path)
+        for item in data.get("records") or []:
+            if item.get("product_id") == product_id:
+                return item
+    return None
+
+
+def previous_platform_price(prev_history, prev_daily, platform, paths):
+    value = as_number(nested_first(prev_history or {}, paths))
+    if value is not None:
+        return value
+    platform_record = ((prev_daily or {}).get("platforms") or {}).get(platform) or {}
+    return as_number(platform_record.get("price"))
 
 
 def infer_baseline_date(product_id, current_date):
@@ -112,6 +165,7 @@ def build_daily_record(cache):
 
     for product_id, item in prices.items():
         prev = previous_product(product_id, scan_date)
+        prev_daily = previous_daily_product(product_id, scan_date)
         platform_records = {}
         representative_change = None
 
@@ -121,9 +175,9 @@ def build_daily_record(cache):
             if inferred_date:
                 item["baseline_date"] = inferred_date
 
-        for platform, path in PLATFORM_PATHS.items():
-            current = as_number(nested_get(item, path))
-            previous = as_number(nested_get(prev or {}, path))
+        for platform, paths in PLATFORM_PATHS.items():
+            current = as_number(nested_first(item, paths))
+            previous = previous_platform_price(prev, prev_daily, platform, paths)
             change = pct_change(current, previous)
             platform_records[platform] = {
                 "price": current,
@@ -131,8 +185,13 @@ def build_daily_record(cache):
                 "change_1d": round(change, 2) if change is not None else None,
             }
             if current is not None and change is not None:
-                nested_set(item, path[:-1] + ("change_1d",), round(change, 2))
-            if representative_change is None and change is not None and platform in ("xianyu_market", "aihuishou", "xianyu_official"):
+                nested_set(item, paths[0][:-1] + ("change_1d",), round(change, 2))
+            if representative_change is None and change is not None and platform in (
+                "xianyu_market",
+                "xianyu_official",
+                "aihuishou",
+                "zhuanzhuan_recycle",
+            ):
                 representative_change = change
 
         item["change_1d_by_platform"] = {

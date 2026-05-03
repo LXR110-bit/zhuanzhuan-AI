@@ -1,8 +1,8 @@
 {
   "version": "2.8.0",
-  "generated_at": "2026-05-03T07:15:33+08:00",
+  "generated_at": "2026-05-03T20:40:28.281317",
   "source": "xianyu_mobile_huishou",
-  "data_freshness": "today",
+  "data_freshness": "evening",
   "prices": {
     "dji_pocket3": {
       "name": "DJI Pocket 3",
@@ -23,7 +23,8 @@
         "price": 1641,
         "currency": "CNY",
         "source": "xianyu_official_mobile",
-        "collected_at": "2026-05-03T17:57:00+08:00"
+        "collected_at": "2026-05-03T17:57:00+08:00",
+        "change_1d": 53.22
       },
       "aihuishou": {
         "base_price": 1800,
@@ -35,7 +36,7 @@
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": 0.0,
-        "xianyu_official": 71.8,
+        "xianyu_official": 53.22,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
@@ -72,7 +73,7 @@
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": 2.86,
-        "xianyu_official": 0.0,
+        "xianyu_official": null,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
@@ -109,7 +110,7 @@
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": -39.58,
-        "xianyu_official": 0.0,
+        "xianyu_official": null,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
@@ -145,7 +146,7 @@
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": null,
-        "xianyu_official": 0.0,
+        "xianyu_official": null,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
@@ -182,7 +183,7 @@
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": -37.5,
-        "xianyu_official": 0.0,
+        "xianyu_official": null,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
@@ -218,7 +219,7 @@
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": null,
-        "xianyu_official": 0.0,
+        "xianyu_official": null,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
@@ -244,9 +245,12 @@
         "currency": "CNY"
       },
       "aihuishou": {
-        "base_price": null,
+        "base_price": 993,
         "after_coupon": null,
-        "currency": "CNY"
+        "currency": "CNY",
+        "range": "727-1260",
+        "source": "aihuishou_mobile",
+        "collected_at": "2026-05-03T20:39:00+08:00"
       },
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
@@ -276,9 +280,12 @@
         "currency": "CNY"
       },
       "aihuishou": {
-        "base_price": null,
+        "base_price": 862,
         "after_coupon": null,
-        "currency": "CNY"
+        "currency": "CNY",
+        "range": "767-958",
+        "source": "aihuishou_mobile",
+        "collected_at": "2026-05-03T20:39:00+08:00"
       },
       "change_1d_by_platform": {
         "xianyu_market": null,
@@ -307,9 +314,11 @@
         "currency": "CNY"
       },
       "aihuishou": {
-        "base_price": null,
+        "base_price": 4140,
         "after_coupon": null,
-        "currency": "CNY"
+        "currency": "CNY",
+        "source": "aihuishou_mobile",
+        "collected_at": "2026-05-03T20:39:00+08:00"
       },
       "change_1d_by_platform": {
         "xianyu_market": null,
@@ -334,7 +343,14 @@
         "base_price": 3180,
         "currency": "CNY",
         "collected_at": "2026-05-03T19:25:27+08:00"
-      }
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": null
     },
     "ddr4_16g": {
       "xianyu_market": {
@@ -351,7 +367,14 @@
         "base_price": 278,
         "currency": "CNY",
         "collected_at": "2026-05-03T19:25:27+08:00"
-      }
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": null
     }
   },
   "metadata": {

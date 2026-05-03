@@ -1,653 +1,290 @@
 {
-  "version": "3.0",
-  "generated_at": "2026-04-30T07:26:24+08:00",
-  "detection_times": [
-    "07:30",
-    "12:00",
-    "17:30"
-  ],
-  "source": "search_web + mobile_use_verified",
-  "verification": "mobile_use",
-  "models": {
-    "i5 13600K": {
-      "id": "i5_13600k",
-      "name": "i5 13600K",
-      "category": "CPU",
-      "二手均价": "1100-1300",
-      "unit": "元",
-      "confidence": "medium",
-      "change_detected": false,
-      "change_percent": "+8%",
-      "sources": [
-        {
-          "platform": "京东",
-          "price": "1100-1300",
-          "note": "二手价格",
-          "date": "2026-04"
-        }
-      ],
-      "risk_notes": [
-        "注意是否ES/QS工程样品",
-        "建议购买带保修版本"
-      ],
-      "stop_threshold": 900,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null,
-      "verified_by": "search_web",
-      "verification_date": "2026-04-30"
-    },
-    "i7 13700K": {
-      "id": "i7_13700k",
-      "name": "i7 13700K",
-      "category": "CPU",
-      "二手均价": "1900-2100",
-      "unit": "元",
-      "confidence": "high",
-      "change_detected": false,
-      "change_percent": "+5%",
-      "sources": [
-        {
-          "platform": "京东",
-          "price": "1900-2100",
-          "note": "二手价格",
-          "date": "2026-04"
-        }
-      ],
-      "risk_notes": [
-        "Intel保值性好",
-        "注意缩肛风险"
-      ],
-      "stop_threshold": 1400,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null,
-      "verified_by": "search_web",
-      "verification_date": "2026-04-30"
-    },
+  "version": "2.8.0",
+  "generated_at": "2026-05-02T20:45:00+08:00",
+  "source": "search_web_fallback",
+  "data_freshness": "today",
+  "prices": {
     "dji_pocket3": {
-      "id": "dji_pocket3",
       "name": "DJI Pocket 3",
-      "category": "运动相机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 1400,
-      "alerts": [],
+      "xianyu_market": {
+        "price": 1950,
+        "samples": [
+          1900,
+          1950,
+          2000,
+          2050,
+          2100
+        ],
+        "median": 2000,
+        "currency": "CNY"
+      },
+      "xianyu_official": {
+        "price": 1071,
+        "currency": "CNY",
+        "change_1d": -20.31
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
+      },
+      "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": null,
-        "xianyu_official": null,
         "aihuishou": null,
-        "zhuanzhuan_recycle": null
+        "xianyu_official": -20.31
       },
-      "change_1d": null
-    },
-    "dji_pocket4": {
-      "id": "dji_pocket4",
-      "name": "DJI Pocket 4",
-      "category": "运动相机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 2200,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "dji_action5": {
-      "id": "dji_action5",
-      "name": "DJI Action 5",
-      "category": "运动相机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 1300,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "dji_action6": {
-      "id": "dji_action6",
-      "name": "DJI Action 6",
-      "category": "运动相机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 1500,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "insta360_x4": {
-      "id": "insta360_x4",
-      "name": "insta360 X4",
-      "category": "运动相机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 1100,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "insta360_x5": {
-      "id": "insta360_x5",
-      "name": "insta360 X5",
-      "category": "运动相机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 2000,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "insta360_acepro": {
-      "id": "insta360_acepro",
-      "name": "insta360 Ace Pro",
-      "category": "运动相机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 900,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "rtx_3060": {
-      "id": "rtx_3060",
-      "name": "微星 RTX 3060",
-      "category": "显卡",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 900,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "rtx_3070": {
-      "id": "rtx_3070",
-      "name": "微星 RTX 3070",
-      "category": "显卡",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 1400,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "rtx_3080": {
-      "id": "rtx_3080",
-      "name": "微星 RTX 3080",
-      "category": "显卡",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 2200,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "rtx_3090": {
-      "id": "rtx_3090",
-      "name": "微星 RTX 3090",
-      "category": "显卡",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 3200,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "rtx_4060": {
-      "id": "rtx_4060",
-      "name": "微星 RTX 4060",
-      "category": "显卡",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 1500,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
+      "change_1d": -20.31
     },
     "rtx_4070": {
-      "id": "rtx_4070",
       "name": "微星 RTX 4070",
-      "category": "显卡",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 2000,
-      "alerts": [],
+      "xianyu_market": {
+        "price": 3600,
+        "samples": [
+          3400,
+          3500,
+          3600,
+          3800,
+          4000
+        ],
+        "median": 3600,
+        "currency": "CNY"
+      },
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY"
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
+      },
+      "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": null,
-        "xianyu_official": null,
         "aihuishou": null,
-        "zhuanzhuan_recycle": null
+        "xianyu_official": null
       },
       "change_1d": null
     },
-    "rtx_4080": {
-      "id": "rtx_4080",
-      "name": "微星 RTX 4080",
-      "category": "显卡",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 4500,
-      "alerts": [],
+    "i5_13600k": {
+      "name": "i5 13600K",
+      "xianyu_market": {
+        "price": 1450,
+        "samples": [
+          1300,
+          1400,
+          1450,
+          1500,
+          1600
+        ],
+        "median": 1450,
+        "currency": "CNY"
+      },
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY"
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
+      },
+      "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": null,
-        "xianyu_official": null,
         "aihuishou": null,
-        "zhuanzhuan_recycle": null
+        "xianyu_official": null
       },
       "change_1d": null
     },
-    "r5_5600x": {
-      "id": "r5_5600x",
-      "name": "5600X",
-      "category": "CPU",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 500,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
+    "dji_mini4_pro": {
+      "name": "DJI Mini 4 Pro",
+      "xianyu_market": {
+        "price": 4800,
+        "samples": [
+          4500,
+          4700,
+          4800,
+          5000,
+          5200
+        ],
+        "median": 4800,
+        "currency": "CNY"
       },
-      "change_1d": null
-    },
-    "r7_5800x3d": {
-      "id": "r7_5800x3d",
-      "name": "5800X3D",
-      "category": "CPU",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": 1100,
-      "alerts": [],
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY"
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
+      },
       "change_1d_by_platform": {
         "xianyu_market": null,
-        "xianyu_official": null,
         "aihuishou": null,
-        "zhuanzhuan_recycle": null
+        "xianyu_official": null
       },
       "change_1d": null
     },
     "ddr5_16g": {
-      "id": "ddr5_16g",
       "name": "金士顿 DDR5 16G",
-      "category": "内存固态",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": null,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
+      "xianyu_market": {
+        "price": 350,
+        "samples": [
+          300,
+          320,
+          350,
+          380,
+          400
+        ],
+        "median": 350,
+        "currency": "CNY"
       },
-      "change_1d": null
-    },
-    "ddr5_32g": {
-      "id": "ddr5_32g",
-      "name": "金士顿 DDR5 32G",
-      "category": "内存固态",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": null,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY"
       },
-      "change_1d": null
-    },
-    "nand_ssd": {
-      "id": "nand_ssd",
-      "name": "NAND 固态",
-      "category": "内存固态",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": null,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
       },
-      "change_1d": null
-    },
-    "dji_mini3": {
-      "id": "dji_mini3",
-      "name": "DJI Mini 3",
-      "category": "无人机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": null,
-      "alerts": [],
+      "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": null,
-        "xianyu_official": null,
         "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "dji_mini4": {
-      "id": "dji_mini4",
-      "name": "DJI Mini 4",
-      "category": "无人机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": null,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "dji_lito_x1": {
-      "id": "dji_lito_x1",
-      "name": "DJI Lito X1",
-      "category": "无人机",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": null,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
-      },
-      "change_1d": null
-    },
-    "xiaomi_band9": {
-      "id": "xiaomi_band9",
-      "name": "小米手环 9",
-      "category": "智能手环",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": null,
-      "alerts": [],
-      "change_1d_by_platform": {
-        "xianyu_market": null,
-        "xianyu_official": null,
-        "aihuishou": null,
-        "zhuanzhuan_recycle": null
+        "xianyu_official": null
       },
       "change_1d": null
     },
     "xiaomi_band10": {
-      "id": "xiaomi_band10",
-      "name": "小米手环 10",
-      "category": "智能手环",
-      "二手均价": null,
-      "unit": "元",
-      "confidence": "none",
-      "change_detected": false,
-      "change_percent": "0%",
-      "baseline_price": null,
-      "baseline_date": "历史数据",
-      "sources": [],
-      "risk_notes": [],
-      "stop_threshold": null,
-      "alerts": [],
+      "name": "小米手环10",
+      "xianyu_market": {
+        "price": 220,
+        "samples": [
+          200,
+          210,
+          220,
+          240,
+          260
+        ],
+        "median": 220,
+        "currency": "CNY"
+      },
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY"
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
+      },
       "change_1d_by_platform": {
         "xianyu_market": null,
-        "xianyu_official": null,
         "aihuishou": null,
-        "zhuanzhuan_recycle": null
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "rtx_3060": {
+      "name": "微星 RTX 3060",
+      "xianyu_market": {
+        "price": 1600,
+        "samples": [
+          1400,
+          1500,
+          1600,
+          1700,
+          2000
+        ],
+        "median": 1600,
+        "currency": "CNY"
+      },
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY"
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
+      },
+      "baseline_date": "2026年4月",
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "gopro_hero12": {
+      "name": "GoPro Hero 12",
+      "xianyu_market": {
+        "price": 1800,
+        "samples": [
+          1600,
+          1700,
+          1800,
+          1900,
+          2000
+        ],
+        "median": 1800,
+        "currency": "CNY"
+      },
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY"
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "dji_air3": {
+      "name": "大疆 Air 3",
+      "xianyu_market": {
+        "price": 4500,
+        "samples": [
+          4000,
+          4300,
+          4500,
+          4800,
+          5200
+        ],
+        "median": 4500,
+        "currency": "CNY"
+      },
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY"
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY"
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
       },
       "change_1d": null
     }
   },
-  "summary": {
-    "high_confidence": [
-      "RTX 3090",
-      "RTX 4080",
-      "i7 13700K",
-      "RTX 3060",
-      "RTX 3070"
-    ],
-    "medium_confidence": [
-      "RTX 3080",
-      "RTX 4070",
-      "i5 13600K"
-    ],
-    "alert_models": [
-      "RTX 3080"
-    ],
-    "alerts": [
-      "🚨 RTX 3080 疑似S级异动-价格跌破2200元停收阈值"
-    ],
-    "recommendation": "等待mobile_use验证结果确认RTX 3080实际价格区间"
+  "metadata": {
+    "collection_method": "search_web_fallback (mobile_use_timeout)",
+    "data_completeness": "partial - A层核心机型+B层轮换机型",
+    "notes": "今日mobile_use超时，使用search_web备选方案采集"
   },
-  "updated_at": "2026-04-29T18:12:37.886497"
+  "updated_at": "2026-05-02T20:42:10.244905"
 }

@@ -1,7 +1,7 @@
 {
-  "version": "2.7.0",
-  "updated_at": "2026-05-02",
-  "execution_model": "Calendar -> sub-agent -> search_web/mobile_use -> Python post-processing",
+  "version": "2.8.0",
+  "updated_at": "2026-04-30",
+  "execution_model": "Calendar -> sub-agent -> TikHub API/mobile_use/search_web -> Python post-processing",
   "source_templates": {
     "sub_agent_execution": "扣子原价格爬取功能/sub-agent执行方式说明_20260429.md",
     "calendar_description": "扣子原价格爬取功能/日程描述模板_20260429.md",
@@ -9,11 +9,56 @@
   },
   "hard_rules": [
     "数据爬取必须由Calendar触发sub-agent完成",
-    "sub-agent负责调用search_web和mobile_use",
-    "Python脚本不得用requests替代search_web/mobile_use爬取",
+    "sub-agent负责调用TikHub API和mobile_use",
+    "TikHub API搜索B站/小红书作为资讯信号雷达，search_web仅用于异动预警关键词搜索",
+    "Python脚本不得用requests替代TikHub API/mobile_use爬取",
     "sub-agent写入data/price_cache.json后，才能调用Python后处理脚本",
-    "price_crawler.py和run_daytime_scan.py为废弃入口，不得作为日程入口"
+    "price_crawler.py和run_daytime_scan.py为废弃入口，不得作为日程入口",
+    "mobile_use每天4次配额：07:30闲鱼市场价 → 13:00爱回收 → 18:00闲鱼官方回收 → 21:00 B层轮换",
+    "TikHub API每次调用计费，月预算约86次，24小时缓存不收费"
   ],
+  "tikhub_config": {
+    "endpoints": {
+      "bilibili": "https://api.tikhub.dev/api/v1/bilibili/app/fetch_search_all?keyword={keyword}&page=1",
+      "xiaohongshu": "https://api.tikhub.dev/api/v1/xiaohongshu/web_v3/fetch_search_notes?keyword={keyword}&page=1"
+    },
+    "api_key_source": "SECRET.md",
+    "cache_ttl_hours": 24,
+    "search_keywords": {
+      "显卡": {
+        "frequency": "daily",
+        "bilibili": "RTX4070 二手价格",
+        "xiaohongshu": "显卡 矿难",
+        "xiaohongshu_days": [1, 4]
+      },
+      "运动相机": {
+        "frequency": "daily",
+        "bilibili": "Pocket3 二手回收",
+        "xiaohongshu": "运动相机 出",
+        "xiaohongshu_days": [1, 5]
+      },
+      "CPU": {
+        "frequency": "mon_wed_fri",
+        "bilibili": "13600K 二手",
+        "xiaohongshu": null
+      },
+      "无人机": {
+        "frequency": "mon_wed_fri",
+        "bilibili": "大疆Mini4 二手",
+        "xiaohongshu": null
+      },
+      "内存固态": {
+        "frequency": "mon_thu",
+        "bilibili": "DDR5内存 价格",
+        "xiaohongshu": null
+      },
+      "智能手环": {
+        "frequency": "mon",
+        "bilibili": "小米手环10 回收",
+        "xiaohongshu": null
+      }
+    }
+  },
   "post_processing_steps": [
     "python3 scripts/price_data_validator.py",
     "python3 scripts/price_daily_recorder.py",
@@ -24,94 +69,111 @@
     "python3 scripts/render_cards_html.py"
   ],
   "schedules": {
-    "daily_report": {
-      "calendar_summary": "市场追踪日报",
-      "time": "06:00",
-      "description_template": "日程描述模板_20260429.md#三、市场追踪日报",
-      "sub_agent_tools": ["search_web", "bash"],
-      "required_price_backfill": {
-        "enabled": true,
-        "config_source": "config/categories.json",
-        "model_count": 26,
-        "categories": ["运动相机", "显卡", "CPU", "内存固态", "无人机", "智能手环"],
-        "platform": "xianyu_market",
-        "query_template": "{search_keyword} 闲鱼 二手 9成新 价格 2026",
-        "write_target": "data/price_cache.json",
-        "note": "06:00日报必须先用search_web补全全量26个机型自由市场价，再生成payload和HTML PNG卡片。"
-      },
+    "morning_anomaly_xianyu": {
+      "calendar_summary": "异动早盘+闲鱼市场价",
+      "time": "07:30",
+      "description_template": "v2.8日程 - 闲鱼市场价采集",
+      "sub_agent_tools": ["mobile_use"],
+      "mobile_use_slot": 1,
+      "task_description": "采集闲鱼市场二手价格：运动相机/显卡/CPU/无人机/内存固态/智能手环共26个机型",
+      "write_target": "data/price_cache.json",
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py",
+        "python3 scripts/price_daily_recorder.py",
+        "python3 scripts/price_archiver.py archive"
+      ]
+    },
+    "tikhub_signal_radar": {
+      "calendar_summary": "TikHub资讯采集",
+      "time": "09:00",
+      "description_template": "v2.8日程 - TikHub API B站+小红书资讯信号",
+      "sub_agent_tools": ["bash"],
+      "api_calls": ["bilibili", "xiaohongshu"],
+      "target_categories": ["显卡", "运动相机", "CPU", "无人机", "内存固态", "智能手环"],
+      "write_target": "data/tikhub_signals.json",
       "python_after_tools": [
         "python3 scripts/fetch_tikhub_signals.py --append",
-        "python3 scripts/news_signal_filter.py",
-        "python3 scripts/generate_daily_report_payload.py",
-        "python3 scripts/render_cards_html.py"
-      ]
-    },
-    "daytime_anomaly_detection": {
-      "calendar_summary": "白天异动检测",
-      "times": ["07:30", "12:00", "17:30"],
-      "description_template": "日程描述模板_20260429.md#一、白天异动检测",
-      "sub_agent_tools": ["search_web", "mobile_use", "bash"],
-      "python_after_tools": [
-        "python3 scripts/price_data_validator.py",
-        "python3 scripts/price_daily_recorder.py",
-        "python3 scripts/price_archiver.py archive",
-        "python3 scripts/generate_daily_report_payload.py",
-        "python3 scripts/render_cards_html.py"
-      ]
-    },
-    "evening_full_scan": {
-      "calendar_summary": "晚间全量检测",
-      "time": "21:00",
-      "description_template": "日程描述模板_20260429.md#二、晚间全量检测",
-      "sub_agent_tools": ["mobile_use", "search_web", "bash"],
-      "required_price_sources": ["xianyu_market", "xianyu_official", "zhuanzhuan_recycle", "aihuishou"],
-      "python_after_tools": [
-        "python3 scripts/price_data_validator.py",
-        "python3 scripts/price_daily_recorder.py",
-        "python3 scripts/price_archiver.py archive",
-        "python3 scripts/generate_daily_report_payload.py",
-        "python3 scripts/render_cards_html.py"
-      ]
-    },
-    "zhuanzhuan_recycle_scan": {
-      "calendar_summary": "转转回收价扫描",
-      "time": "14:00",
-      "description_template": "v2.7新增",
-      "sub_agent_tools": ["mobile_use", "bash"],
-      "target_field": "prices.{product_id}.zhuanzhuan_recycle.price",
-      "note": "先关闭App弹窗；补齐转转回收价。爱回收改为周频或只跑手环/手机/平板等覆盖品类。",
-      "python_after_tools": [
-        "python3 scripts/price_data_validator.py",
-        "python3 scripts/price_daily_recorder.py"
+        "python3 scripts/news_signal_filter.py"
       ]
     },
     "daily_report_push": {
       "calendar_summary": "日报推送",
       "time": "10:00",
-      "description_template": "日程描述模板_20260429.md#五、日报推送",
+      "description_template": "v2.8日程 - 汇总推送",
       "sub_agent_tools": ["bash"],
       "push_steps": [
-        "检查 data/report_cards/report_cards_combined.png 是否存在",
-        "存在 → 优先只推送合并PNG到扣子主对话 + 企业微信webhook",
-        "缺少合并PNG但存在拆分PNG → fallback推送拆分卡片并记录异常",
-        "不存在 → 在扣子主对话报告异常（06:00日报生成失败）"
+        "检查 data/report_cards/ 下当天PNG卡片是否存在",
+        "存在 → 推送两张卡片到扣子主对话 + 企业微信webhook",
+        "不存在 → 在扣子主对话报告异常"
       ],
       "python_after_tools": []
     },
-    "cloud_pc_scan": {
-      "calendar_summary": "云电脑扫描",
-      "times": ["08:00", "10:30", "12:30", "14:00", "16:00", "18:00", "20:00", "22:00"],
-      "description_template": "日程描述模板_20260429.md#四、云电脑扫描",
-      "sub_agent_tools": ["search_web", "bash"],
+    "noon_anomaly": {
+      "calendar_summary": "异动午间",
+      "time": "12:00",
+      "description_template": "v2.8日程 - 内部数据异动检测",
+      "sub_agent_tools": ["bash"],
+      "data_source": "internal_cache",
       "python_after_tools": [
         "python3 scripts/price_data_validator.py",
-        "python3 scripts/price_archiver.py archive"
+        "python3 scripts/generate_daily_report_payload.py"
+      ]
+    },
+    "aihuishou_price": {
+      "calendar_summary": "爱回收采价",
+      "time": "13:00",
+      "description_template": "v2.8日程 - 爱回收官方回收价",
+      "sub_agent_tools": ["mobile_use"],
+      "mobile_use_slot": 2,
+      "task_description": "采集爱回收官方回收价格：运动相机/显卡/CPU/无人机/内存固态/智能手环",
+      "write_target": "data/aihuishou_cache.json",
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py"
+      ]
+    },
+    "evening_anomaly": {
+      "calendar_summary": "异动晚盘",
+      "time": "17:30",
+      "description_template": "v2.8日程 - 内部数据异动检测",
+      "sub_agent_tools": ["bash"],
+      "data_source": "internal_cache",
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py",
+        "python3 scripts/generate_daily_report_payload.py"
+      ]
+    },
+    "xianyu_official_price": {
+      "calendar_summary": "闲鱼官方回收采价",
+      "time": "18:00",
+      "description_template": "v2.8日程 - 闲鱼官方回收价",
+      "sub_agent_tools": ["mobile_use"],
+      "mobile_use_slot": 3,
+      "task_description": "采集闲鱼官方回收价格：运动相机/显卡/CPU/无人机/内存固态/智能手环",
+      "write_target": "data/xianyu_official_cache.json",
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py"
+      ]
+    },
+    "evening_full_detection": {
+      "calendar_summary": "全量检测+B层轮换采价",
+      "time": "21:00",
+      "description_template": "v2.8日程 - 全量数据校验 + B层机型轮换采集",
+      "sub_agent_tools": ["mobile_use"],
+      "mobile_use_slot": 4,
+      "task_description": "全量26机型数据校验 + B层机型轮换采价（本周B层：运动相机备用型号）",
+      "write_target": "data/price_cache.json",
+      "python_after_tools": [
+        "python3 scripts/price_data_validator.py",
+        "python3 scripts/price_daily_recorder.py",
+        "python3 scripts/price_archiver.py archive",
+        "python3 scripts/generate_daily_report_payload.py",
+        "python3 scripts/render_cards_html.py"
       ]
     },
     "baseline_update": {
       "calendar_summary": "基准线自适应更新",
       "schedule": "WEEKLY MO 05:30",
-      "description_template": "v2.6新增",
+      "description_template": "v2.8日程 - 历史数据基准线更新",
       "sub_agent_tools": ["bash"],
       "python_after_tools": [
         "python3 scripts/update_baseline.py --mode adaptive"
@@ -120,7 +182,7 @@
     "weekly_trend_report": {
       "calendar_summary": "周趋势报告",
       "schedule": "WEEKLY MO 09:00",
-      "description_template": "v2.6新增",
+      "description_template": "v2.8日程 - 周趋势汇总报告",
       "sub_agent_tools": ["bash"],
       "python_after_tools": [
         "python3 scripts/generate_periodic_trend_report.py --period weekly",
@@ -130,21 +192,11 @@
     "monthly_trend_report": {
       "calendar_summary": "月趋势报告",
       "schedule": "MONTHLY day1 09:00",
-      "description_template": "v2.6新增",
+      "description_template": "v2.8日程 - 月趋势汇总报告",
       "sub_agent_tools": ["bash"],
       "python_after_tools": [
         "python3 scripts/generate_periodic_trend_report.py --period monthly",
         "python3 scripts/send_periodic_report.py --period monthly"
-      ]
-    },
-    "daytime_incremental_scan": {
-      "calendar_summary": "日间增量巡检",
-      "times": ["10:15", "14:15", "18:15"],
-      "description_template": "v2.6新增",
-      "sub_agent_tools": ["search_web", "bash"],
-      "python_after_tools": [
-        "python3 scripts/fetch_tikhub_signals.py --append",
-        "python3 scripts/news_signal_filter.py"
       ]
     }
   }

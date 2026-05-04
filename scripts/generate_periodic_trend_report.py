@@ -23,9 +23,16 @@ WIDTH = 1080
 HEIGHT = 1920
 MARGIN = 64
 FONT_CANDIDATES = [
-    "/System/Library/Fonts/PingFang.ttc",
+    "/System/Library/Fonts/Hiragino Sans GB.ttc",
     "/System/Library/Fonts/STHeiti Medium.ttc",
+    "/System/Library/Fonts/STHeiti Light.ttc",
+    "/System/Library/Fonts/Supplemental/Songti.ttc",
+    "/System/Library/Fonts/PingFang.ttc",
     "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
+    "/Library/Fonts/Arial Unicode.ttf",
+    "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+    "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+    "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
 ]
 
 PLATFORMS = {
@@ -111,7 +118,17 @@ def font(size, bold=False):
                 return ImageFont.truetype(path, size=size, index=1 if bold and path.endswith(".ttc") else 0)
             except OSError:
                 continue
-    return ImageFont.load_default(size=size)
+    raise RuntimeError(
+        "No CJK-capable font found for trend card rendering; install a Chinese font "
+        "or add its path to FONT_CANDIDATES."
+    )
+
+
+def assert_cjk_font_available():
+    probe_font = font(32, True)
+    mask = probe_font.getmask("价格趋势周报")
+    if mask.getbbox() is None:
+        raise RuntimeError("Selected font cannot render Chinese trend card text.")
 
 
 def hex_rgb(value):
@@ -437,7 +454,7 @@ def metric(draw, x, y, w, label, value, accent):
 
 
 def draw_row(draw, y, item, header=False):
-    xs = [92, 294, 430, 570, 710, 840]
+    xs = [92, 310, 470, 610, 750, 880]
     if header:
         values = ["产品", "平台", "当前", "均值", "涨跌", "趋势"]
     else:
@@ -570,6 +587,7 @@ def main():
     parser.add_argument("--output-dir", default=str(OUTPUT_DIR))
     args = parser.parse_args()
 
+    assert_cjk_font_available()
     output_dir = Path(args.output_dir)
     payload = build_payload(args.period)
     payload_path = output_dir / f"{payload['date']}_{args.period}_trend_payload.json"

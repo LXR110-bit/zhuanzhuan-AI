@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Send weekly/monthly trend report cards via WeCom webhook."""
 import argparse
+import base64
+import hashlib
 import json
 import os
 import uuid
@@ -80,6 +82,19 @@ def upload_file(webhook_url, file_path):
     return data["media_id"]
 
 
+def post_image(webhook_url, file_path):
+    file_path = Path(file_path)
+    file_bytes = file_path.read_bytes()
+    payload = {
+        "msgtype": "image",
+        "image": {
+            "base64": base64.b64encode(file_bytes).decode("ascii"),
+            "md5": hashlib.md5(file_bytes).hexdigest(),
+        },
+    }
+    return post_json(webhook_url, payload)
+
+
 def build_text_summary(payload):
     summary = payload.get("summary", {})
     period_label = payload.get("period_label", "")
@@ -126,13 +141,15 @@ def mark_periodic_status(period, status_value, error=None):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--period", choices=["weekly", "monthly"], required=True)
+    parser.add_argument("--output-dir", default=str(OUTPUT_DIR))
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--webhook-url", default=os.environ.get("WECOM_WEBHOOK_URL", ""))
     args = parser.parse_args()
 
+    output_dir = Path(args.output_dir)
     today = datetime.now().strftime("%Y-%m-%d")
-    payload_file = OUTPUT_DIR / f"{today}_{args.period}_trend_payload.json"
-    image_file = OUTPUT_DIR / f"{today}_{args.period}_trend_card.png"
+    payload_file = output_dir / f"{today}_{args.period}_trend_payload.json"
+    image_file = output_dir / f"{today}_{args.period}_trend_card.png"
 
     if not payload_file.exists():
         raise SystemExit(f"payload not found: {payload_file}")
@@ -158,8 +175,11 @@ def main():
             "markdown": {"content": text[:4000]},
         })
         if image_file.exists():
-            media_id = upload_file(args.webhook_url, image_file)
-            post_json(args.webhook_url, {"msgtype": "file", "file": {"media_id": media_id}})
+            try:
+                post_image(args.webhook_url, image_file)
+            except Exception:
+                media_id = upload_file(args.webhook_url, image_file)
+                post_json(args.webhook_url, {"msgtype": "file", "file": {"media_id": media_id}})
         mark_periodic_status(args.period, "sent")
         print(json.dumps({"ok": True, "period": args.period, "mode": "sent"}, ensure_ascii=False, indent=2))
     except Exception as exc:

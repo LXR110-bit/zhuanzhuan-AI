@@ -234,7 +234,7 @@ def build_rows_from_price_cache(cache, validation_report=None):
         product_id = item.get("id") or cache_key
         product_name = item.get("product_name") or item.get("name") or product_id
         xianyu_market = (
-            nested_first(item, "xianyu_market", ("price", "median", "avg"))
+            nested_first(item, "xianyu_market", ("price", "median", "avg", "avg_price"))
             or item.get("xianyu_market_price")
             or item.get("闲鱼自由市场价格")
             or item.get("二手均价")

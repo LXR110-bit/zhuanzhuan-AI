@@ -186,9 +186,11 @@ def get_date_list(days: int) -> List[str]:
 def get_price_value(data: Dict, price_type: str = "aihuishou") -> Optional[float]:
     """从产品数据中提取价格"""
     if price_type == "aihuishou":
-        return data.get("aihuishou", {}).get("tansuo_price")
+        block = data.get("aihuishou", {})
+        return block.get("tansuo_price") or block.get("base_price") or block.get("after_coupon")
     elif price_type == "xianyu_avg":
-        return data.get("xianyu_market", {}).get("avg")
+        block = data.get("xianyu_market", {})
+        return block.get("price") or block.get("median") or block.get("avg") or block.get("avg_price")
     elif price_type == "official":
         return data.get("official")
     return None

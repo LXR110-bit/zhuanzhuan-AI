@@ -26,6 +26,7 @@ PRICE_PATHS = {
         ("xianyu_market", "price"),
         ("xianyu_market", "median"),
         ("xianyu_market", "avg"),
+        ("xianyu_market", "avg_price"),
         ("xianyu_market_price",),
         ("闲鱼自由市场价格",),
         ("二手均价",),

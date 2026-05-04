@@ -1,6 +1,6 @@
 {
-  "version": "2.8.0",
-  "updated_at": "2026-04-30",
+  "version": "2.8.1",
+  "updated_at": "2026-05-04",
   "execution_model": "Calendar -> sub-agent -> TikHub API/mobile_use/search_web -> Python post-processing",
   "source_templates": {
     "sub_agent_execution": "扣子原价格爬取功能/sub-agent执行方式说明_20260429.md",
@@ -80,7 +80,9 @@
       "python_after_tools": [
         "python3 scripts/price_data_validator.py",
         "python3 scripts/price_daily_recorder.py",
-        "python3 scripts/price_archiver.py archive"
+        "python3 scripts/price_archiver.py archive",
+        "python3 scripts/generate_daily_report_payload.py",
+        "python3 scripts/render_cards_html.py"
       ]
     },
     "tikhub_signal_radar": {

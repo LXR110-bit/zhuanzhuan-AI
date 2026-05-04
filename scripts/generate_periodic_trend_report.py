@@ -29,9 +29,24 @@ FONT_CANDIDATES = [
 ]
 
 PLATFORMS = {
-    "xianyu_market": ("闲鱼自由市场", ("xianyu_market", "avg")),
-    "xianyu_official": ("闲鱼官方回收", ("xianyu_official", "price")),
-    "aihuishou": ("爱回收", ("aihuishou", "tansuo_price")),
+    "xianyu_market": (
+        "闲鱼自由市场",
+        (
+            ("xianyu_market", "price"),
+            ("xianyu_market", "median"),
+            ("xianyu_market", "avg"),
+            ("xianyu_market", "avg_price"),
+        ),
+    ),
+    "xianyu_official": ("闲鱼官方回收", (("xianyu_official", "price"),)),
+    "aihuishou": (
+        "爱回收",
+        (
+            ("aihuishou", "tansuo_price"),
+            ("aihuishou", "base_price"),
+            ("aihuishou", "after_coupon"),
+        ),
+    ),
 }
 
 PERIODS = {
@@ -70,6 +85,14 @@ def nested_get(data, path):
             return None
         cur = cur.get(key)
     return cur
+
+
+def nested_first(data, paths):
+    for path in paths:
+        value = as_number(nested_get(data, path))
+        if value is not None:
+            return value
+    return None
 
 
 def as_number(value):
@@ -173,13 +196,13 @@ def direction(change_pct, slope_value):
 def summarize_product(product_id, history):
     platform_rows = []
     product_name = product_id
-    for platform_key, (label, path) in PLATFORMS.items():
+    for platform_key, (label, paths) in PLATFORMS.items():
         values = []
         dates = []
         for item in history:
             data = item["data"]
             product_name = data.get("product_name") or data.get("model") or product_name
-            value = as_number(nested_get(data, path))
+            value = nested_first(data, paths)
             if value is not None:
                 values.append(value)
                 dates.append(item["date"])

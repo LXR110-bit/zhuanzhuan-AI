@@ -55,7 +55,12 @@ def baseline_key(product_id):
 
 def market_price(item):
     for path in (
+        ("xianyu_market", "price"),
+        ("xianyu_market", "median"),
         ("xianyu_market", "avg"),
+        ("xianyu_market", "avg_price"),
+        ("aihuishou", "base_price"),
+        ("aihuishou", "after_coupon"),
         ("xianyu_official", "price"),
         ("aihuishou", "tansuo_price"),
     ):
@@ -125,7 +130,12 @@ def load_trend_prices(product_dir, days=ROLLING_WINDOW_DAYS):
         raw = load_json(f)
         data = raw.get("data") or raw
         for path in (
+            ("xianyu_market", "price"),
+            ("xianyu_market", "median"),
             ("xianyu_market", "avg"),
+            ("xianyu_market", "avg_price"),
+            ("aihuishou", "base_price"),
+            ("aihuishou", "after_coupon"),
             ("aihuishou", "tansuo_price"),
             ("xianyu_official", "price"),
         ):

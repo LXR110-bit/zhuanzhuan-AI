@@ -26,6 +26,10 @@ from datetime import datetime
 from pathlib import Path
 
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_CACHE_PATH = BASE_DIR / "data" / "price_cache.json"
+
+
 def generate_samples(new_price: float) -> list:
     """生成5个围绕新价格的样本"""
     # 样本间隔为新价格的2-5%
@@ -125,7 +129,7 @@ def main():
     parser.add_argument("--platform", type=str, default="xianyu_market",
                         choices=["xianyu_market", "xianyu_official", "aihuishou"],
                         help="写入的目标平台字段（默认xianyu_market）")
-    parser.add_argument("--cache", type=str, default="./行情价格追踪/data/price_cache.json", help="price_cache.json路径")
+    parser.add_argument("--cache", type=str, default=str(DEFAULT_CACHE_PATH), help="price_cache.json路径")
     
     args = parser.parse_args()
     

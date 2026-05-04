@@ -19,7 +19,12 @@ TREND_HISTORY = os.path.join(DATA_DIR, "trend_history")
 ARCHIVE_DAYS = 60  # 保留天数
 
 PRICE_PATHS = [
+    ("xianyu_market", "price"),
+    ("xianyu_market", "median"),
     ("xianyu_market", "avg"),
+    ("xianyu_market", "avg_price"),
+    ("aihuishou", "base_price"),
+    ("aihuishou", "after_coupon"),
     ("xianyu_official", "price"),
     ("aihuishou", "tansuo_price"),
 ]
@@ -164,8 +169,21 @@ def generate_trend_report(product_id, days=7):
     for item in reversed(history):  # 从旧到新排列
         data = item['data']
         date = item['date']
-        aihuishou = data.get('aihuishou', {}).get('tansuo_price', 'N/A')
-        xianyu_avg = data.get('xianyu_market', {}).get('avg', 'N/A')
+        aihuishou_block = data.get('aihuishou', {})
+        xianyu_block = data.get('xianyu_market', {})
+        aihuishou = (
+            aihuishou_block.get('tansuo_price')
+            or aihuishou_block.get('base_price')
+            or aihuishou_block.get('after_coupon')
+            or 'N/A'
+        )
+        xianyu_avg = (
+            xianyu_block.get('price')
+            or xianyu_block.get('median')
+            or xianyu_block.get('avg')
+            or xianyu_block.get('avg_price')
+            or 'N/A'
+        )
         trend = data.get('trend', 'N/A')
         report_lines.append(f"| {date} | {aihuishou} | {xianyu_avg} | {trend} |")
     

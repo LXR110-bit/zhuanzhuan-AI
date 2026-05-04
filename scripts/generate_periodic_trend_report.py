@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Generate weekly/monthly 7d/30d price trend report payload and PNG card. v2.6"""
+"""Generate weekly/monthly 7d/30d price trend report payload and HTML-screenshot PNG card."""
 import argparse
+import html
 import json
-import math
 import statistics
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from render_cards_html import html_to_png
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,22 +18,10 @@ CATEGORIES_FILE = BASE_DIR / "config" / "categories.json"
 BASELINE_FILE = BASE_DIR / "config" / "baseline.json"
 ANOMALY_ARCHIVE_DIR = DATA_DIR / "anomaly_votes_archive"
 OUTPUT_DIR = DATA_DIR / "periodic_reports"
+TEMPLATE_FILE = BASE_DIR / "templates" / "periodic_trend_card.html"
 
 WIDTH = 1080
 HEIGHT = 1920
-MARGIN = 64
-FONT_CANDIDATES = [
-    "/System/Library/Fonts/Hiragino Sans GB.ttc",
-    "/System/Library/Fonts/STHeiti Medium.ttc",
-    "/System/Library/Fonts/STHeiti Light.ttc",
-    "/System/Library/Fonts/Supplemental/Songti.ttc",
-    "/System/Library/Fonts/PingFang.ttc",
-    "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
-    "/Library/Fonts/Arial Unicode.ttf",
-    "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-    "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-    "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
-]
 
 PLATFORMS = {
     "xianyu_market": (
@@ -111,53 +99,6 @@ def as_number(value):
         return None
 
 
-def font(size, bold=False):
-    for path in FONT_CANDIDATES:
-        if Path(path).exists():
-            try:
-                return ImageFont.truetype(path, size=size, index=1 if bold and path.endswith(".ttc") else 0)
-            except OSError:
-                continue
-    raise RuntimeError(
-        "No CJK-capable font found for trend card rendering; install a Chinese font "
-        "or add its path to FONT_CANDIDATES."
-    )
-
-
-def assert_cjk_font_available():
-    probe_font = font(32, True)
-    mask = probe_font.getmask("价格趋势周报")
-    if mask.getbbox() is None:
-        raise RuntimeError("Selected font cannot render Chinese trend card text.")
-
-
-def hex_rgb(value):
-    value = value.lstrip("#")
-    return tuple(int(value[i:i + 2], 16) for i in (0, 2, 4))
-
-
-def gradient(size, left, right):
-    w, h = size
-    img = Image.new("RGB", size, left)
-    draw = ImageDraw.Draw(img)
-    l = hex_rgb(left)
-    r = hex_rgb(right)
-    for x in range(w):
-        t = x / max(w - 1, 1)
-        color = tuple(int(l[i] * (1 - t) + r[i] * t) for i in range(3))
-        draw.line((x, 0, x, h), fill=color)
-    return img
-
-
-def rounded(draw, xy, radius=8, fill="#FFFFFF", outline=None, width=1):
-    draw.rounded_rectangle(xy, radius=radius, fill=fill, outline=outline, width=width)
-
-
-def text_size(draw, text, fnt):
-    box = draw.textbbox((0, 0), str(text), font=fnt)
-    return box[2] - box[0], box[3] - box[1]
-
-
 def short_text(text, max_chars=14):
     text = str(text or "—")
     return text if len(text) <= max_chars else text[: max_chars - 1] + "…"
@@ -175,10 +116,25 @@ def fmt_pct(value):
     return f"{value:+.1f}%"
 
 
-def change_color(value):
-    if value is None:
-        return "#475569"
-    return "#047857" if value > 0 else "#B42318" if value < 0 else "#475569"
+def change_class(value):
+    if value is None or abs(value) < 0.05:
+        return "change-flat"
+    return "change-up" if value > 0 else "change-down"
+
+
+def escape(value):
+    return html.escape(str(value if value is not None else ""), quote=True)
+
+
+def load_template(path=TEMPLATE_FILE):
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
+def write_text(path, content):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
 
 
 def load_product_history(product_dir, days):
@@ -436,172 +392,151 @@ def build_payload(period):
     }
 
 
-def draw_header(img, draw, payload):
-    band = gradient((WIDTH, 350), "#164E63", "#7C3AED").convert("RGBA")
-    mask = Image.new("L", (WIDTH, 350), 0)
-    md = ImageDraw.Draw(mask)
-    md.polygon([(0, 0), (WIDTH, 0), (WIDTH, 286), (850, 318), (580, 292), (300, 334), (0, 304)], fill=255)
-    img.alpha_composite(Image.composite(band, Image.new("RGBA", band.size, (0, 0, 0, 0)), mask), (0, 0))
-    title = PERIODS[payload["period"]]["title"]
-    draw.text((MARGIN, 84), title, font=font(62, True), fill="#FFFFFF")
-    draw.text((MARGIN + 2, 158), f"{payload['date']} | 周期 {payload['period_label']}", font=font(30), fill="#E0F2FE")
+def trend_class(trend):
+    return {
+        "rising": "change-up",
+        "falling": "change-down",
+        "stable": "change-flat",
+        "insufficient_data": "change-flat",
+    }.get(trend, "change-flat")
 
 
-def metric(draw, x, y, w, label, value, accent):
-    rounded(draw, (x, y, x + w, y + 124), radius=8, fill="#FFFFFF", outline="#E2E8F0")
-    draw.text((x + 24, y + 28), label, font=font(27, True), fill="#64748B")
-    draw.text((x + 24, y + 72), str(value), font=font(44, True), fill=accent)
+def render_category_rows(payload):
+    rows = []
+    for item in payload.get("category_trends") or []:
+        top = item.get("top_mover") or {}
+        avg = item.get("avg_change_pct")
+        rows.append(
+            "<div class=\"category-row\">"
+            f"<div class=\"category-name\">{escape(item.get('category') or '其他')}</div>"
+            f"<div class=\"category-change {trend_class(item.get('trend'))}\">{fmt_pct(avg)}</div>"
+            f"<div class=\"category-top\">最大波动：{escape(short_text(top.get('product_name') or '—', 18))} {escape(fmt_pct(top.get('change_pct')))}</div>"
+            "</div>"
+        )
+    return "\n".join(rows) or "<div class=\"empty-state\">暂无品类趋势数据</div>"
 
 
-def draw_row(draw, y, item, header=False):
-    xs = [92, 310, 470, 610, 750, 880]
-    if header:
-        values = ["产品", "平台", "当前", "均值", "涨跌", "趋势"]
-    else:
-        values = [
-            short_text(item.get("product_name"), 12),
-            item.get("platform_label"),
-            fmt_price(item.get("current_price")),
-            fmt_price(item.get("avg_price")),
-            fmt_pct(item.get("change_pct")),
-            item.get("trend"),
-        ]
-    for idx, value in enumerate(values):
-        color = "#243044"
-        if idx == 4 and not header:
-            color = change_color(item.get("change_pct"))
-        draw.text((xs[idx], y), str(value), font=font(26, header or idx == 4), fill=color)
-
-
-def render_card(payload, output_path):
-    summary = payload["summary"]
-    movers = payload.get("top_movers") or []
-    cat_trends = payload.get("category_trends") or []
-    anomaly = payload.get("anomaly_summary") or {}
-    drift = payload.get("baseline_drift") or {}
-
-    # 动态计算高度
-    base_h = 750
-    table_h = max(len(movers), 1) * 58 + 120
-    cat_h = (len(cat_trends) * 48 + 100) if cat_trends else 0
-    anomaly_h = (min(len(anomaly.get("items", [])), 5) * 48 + 100) if anomaly.get("total_anomalies") else 0
-    drift_h = (len(drift.get("items", [])) * 48 + 100) if drift.get("products_drifted") else 0
-    total_h = base_h + table_h + cat_h + anomaly_h + drift_h + 80
-
-    img = Image.new("RGBA", (WIDTH, total_h), "#F7FAFC")
-    draw = ImageDraw.Draw(img)
-    draw_header(img, draw, payload)
-
-    y = 330
-    metric(draw, 64, y, 220, "产品数", summary["product_count"], "#155E75")
-    metric(draw, 310, y, 220, "上涨", summary["rising"], "#047857")
-    metric(draw, 556, y, 220, "下跌", summary["falling"], "#B42318")
-    metric(draw, 802, y, 220, "平稳", summary.get("stable", 0), "#475569")
-    y += 168
-
-    # 趋势结论 + headline
-    headline = summary.get("headline", "")
-    conclusion_text = summary["message"] + (" " + headline if headline else "")
-    rounded(draw, (64, y, 1016, y + 174), radius=8, fill="#FFFFFF", outline="#E2E8F0")
-    draw.text((96, y + 36), "趋势结论", font=font(31, True), fill="#164E63")
-    draw.text((96, y + 94), conclusion_text[:50], font=font(30), fill="#111827")
-    y += 214
-
-    # 品类趋势区块
-    if cat_trends:
-        block_h = len(cat_trends) * 48 + 80
-        rounded(draw, (64, y, 1016, y + block_h), radius=8, fill="#FFFFFF", outline="#E2E8F0")
-        draw.text((96, y + 28), "品类趋势", font=font(31, True), fill="#164E63")
-        cy = y + 80
-        for ct in cat_trends:
-            cat_name = ct["category"]
-            avg_pct = ct.get("avg_change_pct")
-            trend = ct.get("trend", "")
-            arrow = "↑" if trend == "rising" else ("↓" if trend == "falling" else "→")
-            color = "#047857" if trend == "rising" else ("#B42318" if trend == "falling" else "#475569")
-            pct_str = f"{avg_pct:+.1f}%" if avg_pct is not None else "—"
-            draw.text((96, cy), f"{cat_name}", font=font(27, True), fill="#243044")
-            draw.text((320, cy), f"{arrow} {pct_str}", font=font(27, True), fill=color)
-            top = ct.get("top_mover")
-            if top:
-                draw.text((520, cy), f"最大波动: {top['product_name']} {top['change_pct']:+.1f}%", font=font(24), fill="#64748B")
-            cy += 48
-        y += block_h + 20
-
-    # 波动排行
-    table_block_h = max(len(movers), 1) * 58 + 100
-    rounded(draw, (64, y, 1016, y + table_block_h), radius=8, fill="#FFFFFF", outline="#E2E8F0")
-    draw.text((96, y + 34), "波动排行", font=font(32, True), fill="#164E63")
-    table_y = y + 104
-    rounded(draw, (88, table_y - 38, 992, table_y + 18), radius=8, fill="#F1F5F9")
-    draw_row(draw, table_y - 2, {}, header=True)
-    table_y += 58
-    for idx, item in enumerate(movers):
-        if idx % 2 == 1:
-            rounded(draw, (88, table_y - 34, 992, table_y + 12), radius=6, fill="#F8FAFC")
-        draw_row(draw, table_y - 2, item)
-        table_y += 58
-        if idx >= 11:
-            break
+def render_mover_rows(payload):
+    movers = (payload.get("top_movers") or [])[:6]
     if not movers:
-        draw.text((96, table_y + 20), "暂无历史价格趋势数据", font=font(34), fill="#64748B")
-    y += table_block_h + 20
+        return "<tr><td colspan=\"6\" class=\"empty-row\">暂无历史价格趋势数据</td></tr>"
+    rows = []
+    for item in movers:
+        rows.append(
+            "<tr>"
+            f"<td class=\"product-name\">{escape(short_text(item.get('product_name'), 14))}</td>"
+            f"<td>{escape(item.get('platform_label') or '—')}</td>"
+            f"<td>{escape(fmt_price(item.get('current_price')))}</td>"
+            f"<td>{escape(fmt_price(item.get('avg_price')))}</td>"
+            f"<td class=\"{change_class(item.get('change_pct'))}\">{escape(fmt_pct(item.get('change_pct')))}</td>"
+            f"<td>{escape(item.get('trend') or '—')}</td>"
+            "</tr>"
+        )
+    return "\n".join(rows)
 
-    # 异动汇总区块
-    anomaly_items = anomaly.get("items", [])[:5]
-    if anomaly.get("total_anomalies"):
-        block_h = len(anomaly_items) * 48 + 80
-        rounded(draw, (64, y, 1016, y + block_h), radius=8, fill="#FFFFFF", outline="#E2E8F0")
-        draw.text((96, y + 28), f"异动汇总（共{anomaly['total_anomalies']}次）", font=font(31, True), fill="#164E63")
-        ay = y + 80
-        for ai in anomaly_items:
-            lvl_color = {"CRITICAL": "#B42318", "ALERT": "#D97706", "S": "#B42318", "A": "#D97706"}.get(ai.get("avg_level"), "#475569")
-            draw.text((96, ay), f"{ai['product_name']}", font=font(27, True), fill="#243044")
-            draw.text((420, ay), f"{ai['anomaly_count']}次", font=font(27), fill=lvl_color)
-            draw.text((520, ay), f"主要级别: {ai['avg_level']}", font=font(24), fill="#64748B")
-            ay += 48
-        y += block_h + 20
 
-    # Baseline 漂移区块
-    drift_items = drift.get("items", [])
-    if drift.get("products_drifted"):
-        block_h = len(drift_items) * 48 + 80
-        rounded(draw, (64, y, 1016, y + block_h), radius=8, fill="#FFFFFF", outline="#E2E8F0")
-        draw.text((96, y + 28), f"基准线漂移（{drift['products_drifted']}个产品）", font=font(31, True), fill="#164E63")
-        dy = y + 80
-        for di in drift_items:
-            drift_color = "#B42318" if di["drift_pct"] < 0 else "#047857"
-            draw.text((96, dy), f"{di['product_name']}", font=font(27, True), fill="#243044")
-            draw.text((420, dy), f"{di['drift_pct']:+.1f}%", font=font(27, True), fill=drift_color)
-            draw.text((520, dy), di.get("recommendation", ""), font=font(24), fill="#64748B")
-            dy += 48
-        y += block_h + 20
+def render_anomaly_block(payload):
+    anomaly = payload.get("anomaly_summary") or {}
+    if not anomaly.get("total_anomalies"):
+        return ""
+    rows = []
+    for item in (anomaly.get("items") or [])[:5]:
+        rows.append(
+            "<div class=\"mini-row\">"
+            f"<span>{escape(short_text(item.get('product_name'), 18))}</span>"
+            f"<strong>{escape(item.get('anomaly_count'))}次</strong>"
+            f"<em>主要级别：{escape(item.get('avg_level') or 'INFO')}</em>"
+            "</div>"
+        )
+    return (
+        "<section class=\"panel compact\">"
+        f"<h2>异动汇总（共{escape(anomaly.get('total_anomalies'))}次）</h2>"
+        f"{''.join(rows)}"
+        "</section>"
+    )
 
-    draw.text((64, total_h - 52), "数据来源：data/trend_history｜周报/月报独立于每日播报", font=font(26), fill="#6D7788")
-    img.convert("RGB").save(output_path, "PNG", optimize=True)
+
+def render_drift_block(payload):
+    drift = payload.get("baseline_drift") or {}
+    if not drift.get("products_drifted"):
+        return ""
+    rows = []
+    for item in (drift.get("items") or [])[:5]:
+        rows.append(
+            "<div class=\"mini-row\">"
+            f"<span>{escape(short_text(item.get('product_name'), 18))}</span>"
+            f"<strong class=\"{change_class(item.get('drift_pct'))}\">{escape(fmt_pct(item.get('drift_pct')))}</strong>"
+            f"<em>{escape(item.get('recommendation') or '')}</em>"
+            "</div>"
+        )
+    return (
+        "<section class=\"panel compact\">"
+        f"<h2>基准线漂移（{escape(drift.get('products_drifted'))}个产品）</h2>"
+        f"{''.join(rows)}"
+        "</section>"
+    )
+
+
+def render_html(payload, template_html):
+    summary = payload["summary"]
+    conclusion = summary.get("message") or ""
+    if summary.get("headline"):
+        conclusion = f"{conclusion} {summary['headline']}".strip()
+    replacements = {
+        "{{title}}": escape(PERIODS[payload["period"]]["title"]),
+        "{{date}}": escape(payload.get("date")),
+        "{{period_label}}": escape(payload.get("period_label")),
+        "{{product_count}}": escape(summary.get("product_count", 0)),
+        "{{rising}}": escape(summary.get("rising", 0)),
+        "{{falling}}": escape(summary.get("falling", 0)),
+        "{{stable}}": escape(summary.get("stable", 0)),
+        "{{conclusion}}": escape(conclusion),
+        "{{category_rows}}": render_category_rows(payload),
+        "{{mover_rows}}": render_mover_rows(payload),
+        "{{anomaly_block}}": render_anomaly_block(payload),
+        "{{drift_block}}": render_drift_block(payload),
+        "{{source}}": escape(payload.get("source") or "data/trend_history"),
+    }
+    rendered = template_html
+    for key, value in replacements.items():
+        rendered = rendered.replace(key, str(value))
+    return rendered
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--period", choices=sorted(PERIODS), required=True)
     parser.add_argument("--output-dir", default=str(OUTPUT_DIR))
+    parser.add_argument("--template", default=str(TEMPLATE_FILE))
+    parser.add_argument("--no-screenshot", action="store_true")
     args = parser.parse_args()
 
-    assert_cjk_font_available()
     output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
     payload = build_payload(args.period)
     payload_path = output_dir / f"{payload['date']}_{args.period}_trend_payload.json"
+    html_path = (output_dir / f"{payload['date']}_{args.period}_trend_card.html").resolve()
     image_path = (output_dir / f"{payload['date']}_{args.period}_trend_card.png").resolve()
+    payload.setdefault("html", {})
+    payload["html"]["trend_card"] = str(html_path)
     payload["images"]["trend_card"] = str(image_path)
+
+    template_html = load_template(Path(args.template))
+    card_html = render_html(payload, template_html)
+    write_text(html_path, card_html)
+    if not args.no_screenshot and not html_to_png(str(html_path), str(image_path), WIDTH, HEIGHT):
+        raise SystemExit("截图失败：未能生成趋势报告 PNG")
+
     save_json(payload_path, payload)
-    render_card(payload, image_path)
     print(json.dumps({
         "ok": True,
         "period": args.period,
         "payload": str(payload_path.resolve()),
+        "html": str(html_path),
         "trend_card": str(image_path),
         "status": payload["summary"]["status"],
         "products": payload["summary"]["product_count"],
+        "render_engine": "html_css_browser_screenshot",
     }, ensure_ascii=False, indent=2))
 
 

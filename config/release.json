@@ -1,7 +1,7 @@
 {
-  "version": "2.8.1",
+  "version": "2.8.2",
   "branch": "local/dev",
-  "updated_at": "2026-05-04T00:00:00+08:00",
-  "last_change": "修复v2.8采价写入路径、avg_price兼容、10点日报图片生成和周/月趋势图片内联推送",
+  "updated_at": "2026-05-04T09:30:00+08:00",
+  "last_change": "统一图片生成链路为HTML/CSS浏览器截图；周/月趋势报告迁移为HTML模板截图，旧日报PIL入口改为HTML渲染兼容包装",
   "version_rule": "每次提交并推送local/dev前，必须递增本文件version并更新updated_at；涉及日程主配置时同步更新config/schedule.json版本。"
 }

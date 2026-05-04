@@ -1,6 +1,6 @@
 {
-  "version": "2.8.1",
-  "updated_at": "2026-05-04T00:00:00+08:00",
+  "version": "2.8.2",
+  "updated_at": "2026-05-04T09:30:00+08:00",
   "timezone": "Asia/Shanghai",
   "execution_model": {
     "mode": "Calendar -> sub-agent -> tool calls",
@@ -347,7 +347,8 @@
       "period_days": 7,
       "entrypoint": "python3 scripts/generate_periodic_trend_report.py --period weekly",
       "push_entrypoint": "python3 scripts/send_periodic_report.py --period weekly",
-      "output": "data/periodic_reports/YYYY-MM-DD_weekly_trend_card.png"
+      "output": "data/periodic_reports/YYYY-MM-DD_weekly_trend_card.png",
+      "render_engine": "html_css_browser_screenshot"
     },
     "monthly": {
       "trigger": "每月1日 09:00",
@@ -356,7 +357,8 @@
       "period_days": 30,
       "entrypoint": "python3 scripts/generate_periodic_trend_report.py --period monthly",
       "push_entrypoint": "python3 scripts/send_periodic_report.py --period monthly",
-      "output": "data/periodic_reports/YYYY-MM-DD_monthly_trend_card.png"
+      "output": "data/periodic_reports/YYYY-MM-DD_monthly_trend_card.png",
+      "render_engine": "html_css_browser_screenshot"
     },
     "data_source": "data/trend_history/",
     "note": "周一09:00在baseline更新(06:00)之后执行，确保使用最新基准线。"

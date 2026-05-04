@@ -1,5 +1,5 @@
 {
-  "version": "2.8.1",
+  "version": "2.8.2",
   "updated_at": "2026-05-04",
   "execution_model": "Calendar -> sub-agent -> TikHub API/mobile_use/search_web -> Python post-processing",
   "source_templates": {

@@ -89,6 +89,10 @@ def update_product(data: dict, product_id: str, new_price: float, platform: str 
     old_price = product[platform].get(price_key, new_price)
     change_1d = calculate_change_1d(old_price, new_price)
     
+    # 保存旧价格作为prev_price，用于下次对比和审计
+    if old_price != new_price and old_price > 0:
+        product[platform]["prev_price"] = old_price
+    
     # 更新平台字段
     product[platform][price_key] = new_price
     product[platform]["currency"] = "CNY"
@@ -170,9 +174,19 @@ def main():
         print("❌ 没有价格数据")
         sys.exit(1)
     
+    # 过滤0值和负值（爱回收等平台返回0表示无法估价，不应覆盖旧数据）
+    filtered = {k: v for k, v in prices.items() if v is not None and v > 0}
+    skipped = {k: v for k, v in prices.items() if v is None or v <= 0}
+    if skipped:
+        print(f"⚠️  跳过{len(skipped)}个无效价格（≤0或null）：{list(skipped.keys())}")
+    
+    if not filtered:
+        print("❌ 所有价格均为0或null，不更新cache")
+        sys.exit(0)
+    
     print(f"\n📊 价格更新脚本 ({args.platform})")
     print(f"=" * 50)
-    print(f"待更新产品数: {len(prices)}")
+    print(f"待更新产品数: {len(filtered)}（原始{len(prices)}个，过滤{len(skipped)}个）")
     print(f"-" * 50)
     
     # 读取cache
@@ -186,7 +200,7 @@ def main():
     
     # 更新每个产品
     updated_products = []
-    for product_id, new_price in prices.items():
+    for product_id, new_price in filtered.items():
         if product_id in cache_data["prices"]:
             cache_data = update_product(cache_data, product_id, new_price, platform=args.platform)
             updated_products.append(product_id)

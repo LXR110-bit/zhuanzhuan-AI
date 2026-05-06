@@ -174,8 +174,25 @@ def main():
         print("❌ 没有价格数据")
         sys.exit(1)
     
-    # 过滤0值和负值（爱回收等平台返回0表示无法估价，不应覆盖旧数据）
-    filtered = {k: v for k, v in prices.items() if v is not None and v > 0}
+    # 过滤0值、负值和明显异常低价（爱回收等平台返回0/极低价表示无法估价，不应覆盖旧数据）
+    MIN_PRICE_BY_PRODUCT = {
+        "dji_mini4_pro": 500,   # 低于500视为异常（爱回收¥2等）
+        "dji_pocket3": 500,
+        "rtx_4070": 500,
+        "i5_13600k": 200,
+        "rtx_3060": 300,
+        "xiaomi_band10": 30,
+    }
+    def is_valid_price(product_id, price):
+        if price is None or price <= 0:
+            return False
+        min_price = MIN_PRICE_BY_PRODUCT.get(product_id, 1)
+        if price < min_price:
+            print(f"  ⚠️  {product_id} 价格 ¥{price} 低于最低阈值 ¥{min_price}，视为异常低价跳过")
+            return False
+        return True
+    
+    filtered = {k: v for k, v in prices.items() if is_valid_price(k, v)}
     skipped = {k: v for k, v in prices.items() if v is None or v <= 0}
     if skipped:
         print(f"⚠️  跳过{len(skipped)}个无效价格（≤0或null）：{list(skipped.keys())}")

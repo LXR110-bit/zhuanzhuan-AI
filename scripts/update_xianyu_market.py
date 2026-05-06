@@ -179,9 +179,16 @@ def main():
         "dji_mini4_pro": 500,   # 低于500视为异常（爱回收¥2等）
         "dji_pocket3": 500,
         "rtx_4070": 500,
-        "i5_13600k": 200,
+        "rtx_3070": 400,
         "rtx_3060": 300,
+        "i5_13600k": 200,
+        "i7_13700k": 300,
+        "ddr5_16g": 50,
+        "ddr5_32g": 80,
+        "dji_mini3": 400,
+        "dji_mini4": 400,
         "xiaomi_band10": 30,
+        "xiaomi_band9": 20,
     }
     def is_valid_price(product_id, price):
         if price is None or price <= 0:

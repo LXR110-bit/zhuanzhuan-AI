@@ -507,6 +507,48 @@
         "zhuanzhuan_recycle": null
       },
       "change_1d": 0.0
+    },
+    "rtx_3070": {
+      "xianyu_market": {},
+      "xianyu_official": {},
+      "aihuishou": {},
+      "change_1d_by_platform": {},
+      "change_1d": 0
+    },
+    "i7_13700k": {
+      "xianyu_market": {},
+      "xianyu_official": {},
+      "aihuishou": {},
+      "change_1d_by_platform": {},
+      "change_1d": 0
+    },
+    "ddr5_32g": {
+      "xianyu_market": {},
+      "xianyu_official": {},
+      "aihuishou": {},
+      "change_1d_by_platform": {},
+      "change_1d": 0
+    },
+    "dji_mini3": {
+      "xianyu_market": {},
+      "xianyu_official": {},
+      "aihuishou": {},
+      "change_1d_by_platform": {},
+      "change_1d": 0
+    },
+    "dji_mini4": {
+      "xianyu_market": {},
+      "xianyu_official": {},
+      "aihuishou": {},
+      "change_1d_by_platform": {},
+      "change_1d": 0
+    },
+    "xiaomi_band9": {
+      "xianyu_market": {},
+      "xianyu_official": {},
+      "aihuishou": {},
+      "change_1d_by_platform": {},
+      "change_1d": 0
     }
   },
   "metadata": {

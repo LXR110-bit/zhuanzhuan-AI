@@ -168,6 +168,20 @@ def build_text_summary(payload, base_url=""):
 
     if not added:
         lines.append("今日暂无带原文链接的行情信号。")
+
+    # Append a compact "原文链接" section for easy clicking
+    link_items = []
+    for level in ("S", "A", "B"):
+        for item in (signals.get(level) or [])[:5]:
+            url = signal_url(item)
+            if url and url.startswith("http"):
+                title = (item.get("title") or "信号")[:20]
+                link_items.append(f"[{title}]({url})")
+    if link_items:
+        lines.append("")
+        lines.append("📋 原文链接：")
+        lines.append(" | ".join(link_items))
+
     return "\n".join(line for line in lines if line is not None)
 
 

@@ -179,6 +179,36 @@ def format_http_error(exc: HTTPError) -> dict:
     }
 
 
+def fix_platform_url(url: str, raw: dict, platform: str) -> str:
+    """Convert deep-link or missing URLs to clickable web URLs."""
+    if not url:
+        # Try to construct from raw data
+        if platform == "bilibili":
+            bvid = first_value(raw, ["bvid", "BV"])
+            aid = first_value(raw, ["aid", "avid"])
+            if bvid and str(bvid).startswith("BV"):
+                return f"https://www.bilibili.com/video/{bvid}"
+            if aid:
+                return f"https://www.bilibili.com/video/av{aid}"
+        elif platform == "xiaohongshu":
+            note_id = first_value(raw, ["note_id", "id", "noteId"])
+            if note_id:
+                return f"https://www.xiaohongshu.com/explore/{note_id}"
+        return ""
+    # B站: bilibili://video/12345 → https://www.bilibili.com/video/av12345
+    if platform == "bilibili" and url.startswith("bilibili://video/"):
+        bvid = first_value(raw, ["bvid", "BV"])
+        aid_str = url.split("bilibili://video/")[1].split("?")[0]
+        if bvid and str(bvid).startswith("BV"):
+            return f"https://www.bilibili.com/video/{bvid}"
+        if aid_str:
+            return f"https://www.bilibili.com/video/av{aid_str}"
+    # 抖音: aweme:// → 保留为空（无法转为web链接）
+    if url.startswith("aweme://"):
+        return ""
+    return url
+
+
 def normalize_item(record, source, query, max_age_days):
     pub_time = parse_timestamp(record.get("published_raw"))
     if pub_time is None:
@@ -192,9 +222,11 @@ def normalize_item(record, source, query, max_age_days):
     if pub_time < datetime.now() - timedelta(days=max_age_days):
         return None
 
+    raw = record.get("raw") or {}
+    url = fix_platform_url(record.get("url") or "", raw, source["platform"])
     domain = ""
-    if record.get("url"):
-        domain = urlparse(record["url"]).netloc
+    if url:
+        domain = urlparse(url).netloc
     title = record.get("title") or f"{source['platform']} signal: {query}"
     return {
         "title": title,
@@ -203,14 +235,14 @@ def normalize_item(record, source, query, max_age_days):
         "platform": source["platform"],
         "source_id": source["id"],
         "query": query,
-        "url": record.get("url") or "",
+        "url": url,
         "domain": domain,
         "author": record.get("author") or "",
         "published_at": pub_time.strftime("%Y-%m-%d %H:%M:%S"),
         "publish_time_quality": time_quality,
         "level": source.get("level") or "B",
         "credibility": source.get("credibility_weight"),
-        "raw": record.get("raw"),
+        "raw": raw,
     }
 
 

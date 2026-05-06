@@ -128,10 +128,17 @@ def signal_summary(item):
 def _short_title(item, max_len=16):
     """Get a short display title for link section."""
     title = item.get("title") or "信号"
-    # Clean up generic titles
-    for prefix in ("douyin signal: ", "bilibili signal: "):
-        if title.lower().startswith(prefix):
-            title = title[len(prefix):]
+    # Clean up generic titles (大小写兼容)
+    prefixes = [
+        "douyin signal: ", "Douyin signal: ",
+        "bilibili signal: ", "Bilibili signal: ",
+        "xiaohongshu signal: ", "Xiaohongshu signal: ",
+        "weibo signal: ", "Weibo signal: ",
+    ]
+    for prefix in prefixes:
+        if title.lower().startswith(prefix.lower()):
+            title = title[len(prefix):].strip()
+            break
     return title[:max_len]
 
 

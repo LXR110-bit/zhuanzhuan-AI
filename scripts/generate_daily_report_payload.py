@@ -362,10 +362,11 @@ def merge_news_signals(signals, news_data):
         source_url = item.get("url") or item.get("source_url") or item.get("link") or ""
         published_at = pub_time.strftime("%Y-%m-%d %H:%M:%S")
         publish_date = pub_time.strftime("%Y-%m-%d")
+        raw_source = item.get("source") or "news_signals"
         signals[level].append({
-            "title": title,
+            "title": clean_signal_title(title),
             "summary": summary_text,
-            "source": item.get("source") or "news_signals",
+            "source": _display_source(raw_source),
             "url": source_url,
             "domain": item.get("domain") or "",
             "author": item.get("author") or "",
@@ -377,6 +378,74 @@ def merge_news_signals(signals, news_data):
     return signals
 
 
+# product_id → 中文显示名
+PRODUCT_DISPLAY_NAMES = {
+    "dji_pocket3": "DJI Pocket 3", "dji_pocket4": "DJI Pocket 4",
+    "dji_action5": "DJI Action 5", "dji_action6": "DJI Action 6",
+    "insta360_x4": "insta360 X4", "insta360_x5": "insta360 X5",
+    "insta360_acepro": "insta360 Ace Pro",
+    "rtx_3060": "RTX 3060", "rtx_3070": "RTX 3070", "rtx_3080": "RTX 3080",
+    "rtx_3090": "RTX 3090", "rtx_4060": "RTX 4060", "rtx_4070": "RTX 4070",
+    "rtx_4080": "RTX 4080",
+    "i5_13600k": "i5 13600K", "i7_13700k": "i7 13700K",
+    "r5_5600x": "5600X", "r7_5800x3d": "5800X3D",
+    "ddr5_16g": "DDR5 16G", "ddr5_32g": "DDR5 32G", "ddr4_16g": "DDR4 16G",
+    "nand_ssd": "NAND 固态",
+    "dji_mini3": "DJI Mini 3", "dji_mini4": "DJI Mini 4",
+    "dji_mini4_pro": "DJI Mini 4 Pro", "dji_lito_x1": "DJI Lito X1",
+    "xiaomi_band9": "小米手环 9", "xiaomi_band10": "小米手环 10",
+}
+
+# platform key → 中文显示名
+PLATFORM_DISPLAY_NAMES = {
+    "xianyu_market": "闲鱼市场",
+    "xianyu_recycle": "闲鱼回收",
+    "aihuishou": "爱回收",
+}
+
+# source → 中文显示名
+SOURCE_DISPLAY_NAMES = {
+    "anomaly_votes": "异动检测",
+    "tikhub:douyin": "抖音",
+    "tikhub:xiaohongshu": "小红书",
+    "tikhub:bilibili": "B站",
+    "tikhub:weibo": "微博",
+}
+
+
+def _display_product(product_id_or_name):
+    """将 product_id 或 product_name 转为中文显示名"""
+    return PRODUCT_DISPLAY_NAMES.get(product_id_or_name,
+           PRODUCT_DISPLAY_NAMES.get(product_id_or_name.lower().replace(" ", "_"),
+           product_id_or_name))
+
+
+def _display_platform(platform_key):
+    """将 platform key 转为中文显示名"""
+    return PLATFORM_DISPLAY_NAMES.get(platform_key, platform_key)
+
+
+def _display_source(source_key):
+    """将 source key 转为中文显示名"""
+    return SOURCE_DISPLAY_NAMES.get(source_key, source_key)
+
+
+def clean_signal_title(title):
+    """清理信号标题中的英文前缀"""
+    if not title:
+        return title
+    prefixes = [
+        "douyin signal: ", "Douyin signal: ",
+        "bilibili signal: ", "Bilibili signal: ",
+        "xiaohongshu signal: ", "Xiaohongshu signal: ",
+        "weibo signal: ", "Weibo signal: ",
+    ]
+    for prefix in prefixes:
+        if title.startswith(prefix):
+            return title[len(prefix):].strip()
+    return title
+
+
 def merge_anomaly_votes(signals, anomaly_votes):
     for item in (anomaly_votes.get("items") or [])[:20]:
         level = item.get("level", "B")
@@ -384,13 +453,12 @@ def merge_anomaly_votes(signals, anomaly_votes):
             level = "B"
         change = item.get("change_pct")
         change_text = f"{change:+.1f}%" if isinstance(change, (int, float)) else str(change or "异动")
-        title = (
-            f"{item.get('product_name') or item.get('product_id')} "
-            f"{item.get('platform')} {change_text}"
-        )
+        product = _display_product(item.get('product_name') or item.get('product_id'))
+        platform = _display_platform(item.get('platform'))
+        title = f"{product} {platform} {change_text}"
         signals[level].append({
             "title": title,
-            "source": "anomaly_votes",
+            "source": _display_source("anomaly_votes"),
             "raw": item,
         })
     return signals

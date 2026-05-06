@@ -422,11 +422,16 @@ def generate_category_groups(rows, is_night):
 
 
 def clean_signal_title(title):
-    """清理信号标题，去除平台前缀"""
-    prefixes = ["douyin signal: ", "bilibili signal: ", "xiaohongshu signal: "]
+    """清理信号标题，去除平台前缀（大小写兼容）"""
+    prefixes = [
+        "douyin signal: ", "Douyin signal: ",
+        "bilibili signal: ", "Bilibili signal: ",
+        "xiaohongshu signal: ", "Xiaohongshu signal: ",
+        "weibo signal: ", "Weibo signal: ",
+    ]
     for prefix in prefixes:
-        if title.startswith(prefix):
-            return title[len(prefix):]
+        if title.lower().startswith(prefix.lower()):
+            return title[len(prefix):].strip()
     return title
 
 

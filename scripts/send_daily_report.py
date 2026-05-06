@@ -125,6 +125,34 @@ def signal_summary(item):
     return item.get("summary") or item.get("description") or (item.get("raw") or {}).get("summary") or item.get("title") or ""
 
 
+def _short_title(item, max_len=16):
+    """Get a short display title for link section."""
+    title = item.get("title") or "信号"
+    # Clean up generic titles
+    for prefix in ("douyin signal: ", "bilibili signal: "):
+        if title.lower().startswith(prefix):
+            title = title[len(prefix):]
+    return title[:max_len]
+
+
+def _clean_url(url):
+    """Strip tracking params from URLs to keep markdown within 4096 bytes."""
+    if not url:
+        return url
+    # douyin: keep only /share/note/ID part
+    if "iesdouyin.com/share/note/" in url:
+        import re
+        m = re.search(r"(https://www\.iesdouyin\.com/share/note/\d+)", url)
+        if m:
+            return m.group(1)
+    # bilibili: already clean
+    # xiaohongshu: already clean
+    # Generic: strip query params if URL is very long
+    if len(url) > 200 and "?" in url:
+        return url.split("?")[0]
+    return url
+
+
 def build_text_summary(payload, base_url=""):
     lines = [
         f"📊 今日行情日报（{payload.get('date')}）",
@@ -146,6 +174,15 @@ def build_text_summary(payload, base_url=""):
         lines.append("")
 
     signals = payload.get("signals", {})
+    # Collect clickable links across all levels
+    link_items = []
+    for level in ("S", "A", "B"):
+        for item in (signals.get(level) or [])[:5]:
+            url = signal_url(item)
+            if url and url.startswith("http"):
+                link_items.append((_short_title(item), url))
+
+    # Signal listing (compact, no full URLs)
     added = 0
     for level in ("S", "A", "B"):
         items = signals.get(level) or []
@@ -154,35 +191,34 @@ def build_text_summary(payload, base_url=""):
         lines.append(f"{level}级信号：")
         for item in items[:5]:
             title = item.get("title") or "未命名信号"
-            summary = signal_summary(item)
             source = item.get("source") or "未知来源"
             published = item.get("published_at") or item.get("publish_date") or ""
             url = signal_url(item)
-            lines.append(f"- {title}")
-            if summary and summary != title:
-                lines.append(f"  摘要：{summary}")
-            lines.append(f"  来源：{source}" + (f"｜时间：{published}" if published else ""))
-            lines.append(f"  原文：{url or '无原文链接'}")
+            # Mark signals with clickable links
+            link_mark = "🔗" if (url and url.startswith("http")) else ""
+            lines.append(f"- {link_mark}{title}")
+            lines.append(f"  来源：{source}" + (f"｜{published}" if published else ""))
             added += 1
         lines.append("")
 
     if not added:
-        lines.append("今日暂无带原文链接的行情信号。")
+        lines.append("今日暂无行情信号。")
 
-    # Append a compact "原文链接" section for easy clicking
-    link_items = []
-    for level in ("S", "A", "B"):
-        for item in (signals.get(level) or [])[:5]:
-            url = signal_url(item)
-            if url and url.startswith("http"):
-                title = (item.get("title") or "信号")[:20]
-                link_items.append(f"[{title}]({url})")
+    # Compact clickable links section
     if link_items:
-        lines.append("")
         lines.append("📋 原文链接：")
-        lines.append(" | ".join(link_items))
+        for title, url in link_items:
+            clean_url = _clean_url(url)
+            lines.append(f"[{title}]({clean_url})")
 
-    return "\n".join(line for line in lines if line is not None)
+    # Enforce 4096 byte limit for WeCom markdown
+    text = "\n".join(line for line in lines if line is not None)
+    encoded = text.encode("utf-8")
+    if len(encoded) > 4096:
+        # Truncate from the end of links section
+        text = encoded[:4080].decode("utf-8", errors="ignore")
+        text += "\n...(更多链接见卡片)"
+    return text
 
 
 def send_markdown_summary(webhook_url, payload, base_url=""):

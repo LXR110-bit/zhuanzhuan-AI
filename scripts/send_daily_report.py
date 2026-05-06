@@ -153,6 +153,54 @@ def _clean_url(url):
     return url
 
 
+def _format_action_item(action):
+    """格式化单个动作建议为可读文本"""
+    product = action.get("product_name") or action.get("product_id", "未知")
+    direction = action.get("direction", "监控")
+    change_pct = action.get("change_pct")
+    confidence = action.get("confidence_level", "单源")
+    auto_confirm = action.get("auto_confirm", True)
+    
+    # 构建动作前缀
+    if direction == "上调":
+        prefix = "⬆️ 上调"
+    elif direction == "下调":
+        prefix = "⬇️ 下调"
+    else:
+        prefix = "👁️ 监控"
+    
+    # 构建变动百分比
+    pct_str = ""
+    if change_pct is not None:
+        pct_str = f"{change_pct:+.1f}%"
+    
+    # 构建确认状态
+    confirm_str = "" if auto_confirm else "【需人工确认】"
+    
+    # 召回画像匹配
+    recall_match = action.get("recall_profile_match")
+    recall_str = ""
+    if recall_match:
+        profile_names = {
+            "android_high_value": "安卓手机→电脑办公",
+            "iphone_high_value": "苹果手机→电脑办公",
+            "non_apple_laptop": "非苹果笔记本→电脑办公",
+        }
+        recall_str = f"|📱{profile_names.get(recall_match, recall_match)}召回"
+    
+    # 组合完整描述
+    parts = [prefix]
+    if pct_str:
+        parts.append(pct_str)
+    parts.append(f"{product}")
+    if confirm_str:
+        parts.append(confirm_str)
+    if recall_str:
+        parts.append(recall_str)
+    
+    return " ".join(parts)
+
+
 def build_text_summary(payload, base_url=""):
     lines = [
         f"📊 今日行情日报（{payload.get('date')}）",
@@ -171,6 +219,39 @@ def build_text_summary(payload, base_url=""):
                 name = Path(path).name
                 url = urllib.parse.urljoin(base_url.rstrip("/") + "/", urllib.parse.quote(name))
                 lines.append(f"{label}：{url}")
+        lines.append("")
+
+    # ===== 建议动作部分 =====
+    action_items = payload.get("action_items", [])
+    if action_items:
+        lines.append("🚨 建议动作：")
+        # 按置信度和方向排序
+        sorted_actions = sorted(action_items, key=lambda x: (
+            -x.get("confidence_score", 0),
+            x.get("direction", "")
+        ))
+        for i, action in enumerate(sorted_actions[:8], 1):
+            action_text = _format_action_item(action)
+            lines.append(f"{i}. {action_text}")
+        
+        # 统计汇总
+        up_count = sum(1 for a in action_items if a.get("direction") == "上调")
+        down_count = sum(1 for a in action_items if a.get("direction") == "下调")
+        monitor_count = sum(1 for a in action_items if a.get("direction") == "监控")
+        need_confirm = sum(1 for a in action_items if not a.get("auto_confirm", True))
+        
+        summary_parts = []
+        if up_count:
+            summary_parts.append(f"建议上调{up_count}条")
+        if down_count:
+            summary_parts.append(f"建议下调{down_count}条")
+        if monitor_count:
+            summary_parts.append(f"建议监控{monitor_count}条")
+        if need_confirm:
+            summary_parts.append(f"需人工确认{need_confirm}条")
+        
+        if summary_parts:
+            lines.append(f"📈 汇总：{' | '.join(summary_parts)}")
         lines.append("")
 
     signals = payload.get("signals", {})

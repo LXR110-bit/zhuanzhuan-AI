@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from price_history_analyzer import build_all_products_history
+from action_engine import ActionEngine
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -527,12 +528,30 @@ def main():
                 alert["baseline_price"] = model_data.get("baseline_price")
         drop_alerts.append(alert)
     
+    # 生成动作建议 (action_items)
+    action_items = []
+    try:
+        engine = ActionEngine()
+        # 构建扩展的payload信息用于action_engine
+        extended_payload = {
+            "signals": signals,
+            "news_signals": news_data,
+            "prices": rows,
+        }
+        action_items = engine.generate_actions_from_payload(extended_payload)
+        # 转换为可序列化的dict列表
+        action_items = [action.to_dict() for action in action_items]
+        engine.save_actions(action_items)
+    except Exception as exc:
+        print(f"[warn] action engine failed: {exc}", file=sys.stderr)
+    
     payload = {
-        "version": "2.7.0",
+        "version": "2.8.0",
         "date": today_str(),
         "generated_at": now_iso(),
         "summary": summarize(rows, signals, missing, cloud_pc_data, news_data),
         "signals": signals,
+        "action_items": action_items,
         "prices": {
             "updated_at": price_cache.get("updated_at") or cloud_pc_data.get("generated_at"),
             "rows": display_rows,
@@ -574,6 +593,7 @@ def main():
         "display_rows": len(display_rows),
         "display_policy": display_policy.get("mode"),
         "signals": {k: len(v) for k, v in signals.items()},
+        "action_items_count": len(action_items),
         "missing": len(missing),
     }, ensure_ascii=False, indent=2))
 

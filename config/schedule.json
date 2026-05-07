@@ -85,7 +85,7 @@
     },
     "late_push_policy": {
       "enabled": true,
-      "deadline": "10:30",
+      "deadline": "11:00",
       "after_deadline": "send_failure_notice_and_mark_missed"
     }
   },

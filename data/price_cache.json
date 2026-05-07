@@ -1,32 +1,33 @@
 {
   "version": "2.8.0",
-  "generated_at": "2026-05-06T13:23:18.983",
+  "generated_at": "2026-05-07T10:34:41.882",
   "source": "xianyu_mobile_huishou",
-  "data_freshness": "afternoon",
+  "data_freshness": "morning",
   "prices": {
     "dji_pocket3": {
       "name": "DJI Pocket 3",
       "xianyu_market": {
-        "price": 1485,
+        "price": 2000,
         "samples": [
-          1395.9,
-          1440.5,
-          1485,
-          1529.5,
-          1574.1
+          1880.0,
+          1940.0,
+          2000,
+          2060.0,
+          2120.0
         ],
-        "median": 1485,
+        "median": 2000,
         "currency": "CNY",
-        "change_1d": 0.0,
-        "collected_at": "2026-05-06T07:12:03+08:00",
-        "prev_price": 1485
+        "change_1d": 30.46,
+        "collected_at": "2026-05-07T10:34:41+08:00",
+        "prev_price": 1533
       },
       "xianyu_official": {
-        "price": 1641,
+        "price": 1650,
         "currency": "CNY",
         "source": "xianyu_official_mobile",
-        "collected_at": "2026-05-03T17:57:00+08:00",
-        "change_1d": 0.0
+        "collected_at": "2026-05-06T18:53:33+08:00",
+        "change_1d": 0.55,
+        "prev_price": 1641
       },
       "aihuishou": {
         "base_price": 1640,
@@ -39,36 +40,37 @@
       },
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
-        "xianyu_official": 0.0,
-        "aihuishou": 0.0,
+        "xianyu_market": 30.46,
+        "xianyu_official": 0.55,
+        "aihuishou": -8.89,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0
+      "change_1d": 30.46
     },
     "rtx_4070": {
       "name": "微星 RTX 4070",
       "xianyu_market": {
-        "price": 2063,
+        "price": 2799,
         "samples": [
-          1939.2,
-          2001.1,
-          2063,
-          2124.9,
-          2186.8
+          2631.1,
+          2715.0,
+          2799,
+          2883.0,
+          2966.9
         ],
-        "median": 2063,
+        "median": 2799,
         "currency": "CNY",
-        "change_1d": 0.0,
-        "collected_at": "2026-05-06T07:12:03+08:00",
-        "prev_price": 2063
+        "change_1d": 25.68,
+        "collected_at": "2026-05-07T10:34:41+08:00",
+        "prev_price": 2227
       },
       "xianyu_official": {
-        "price": 2628,
+        "price": 2616,
         "currency": "CNY",
         "source": "xianyu_official_mobile",
-        "collected_at": "2026-05-05T18:43:00+08:00",
-        "change_1d": 0.0
+        "collected_at": "2026-05-06T18:53:33+08:00",
+        "change_1d": -0.46,
+        "prev_price": 2628
       },
       "aihuishou": {
         "base_price": 2616,
@@ -81,36 +83,37 @@
       },
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
-        "xianyu_official": 0.0,
-        "aihuishou": 0.0,
+        "xianyu_market": 25.68,
+        "xianyu_official": -0.46,
+        "aihuishou": -4.18,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0
+      "change_1d": 25.68
     },
     "i5_13600k": {
       "name": "i5 13600K",
       "xianyu_market": {
-        "price": 693,
+        "price": 1240,
         "samples": [
-          651.4,
-          672.2,
-          693,
-          713.8,
-          734.6
+          1165.6,
+          1202.8,
+          1240,
+          1277.2,
+          1314.4
         ],
-        "median": 693,
+        "median": 1240,
         "currency": "CNY",
-        "change_1d": 0.0,
-        "collected_at": "2026-05-06T07:13:01+08:00",
-        "prev_price": 693
+        "change_1d": 81.55,
+        "collected_at": "2026-05-07T10:34:41+08:00",
+        "prev_price": 683
       },
       "xianyu_official": {
-        "price": 863,
+        "price": 887,
         "currency": "CNY",
         "source": "xianyu_official_mobile",
-        "collected_at": "2026-05-03T17:57:00+08:00",
-        "change_1d": 0.0
+        "collected_at": "2026-05-06T18:53:33+08:00",
+        "change_1d": 2.78,
+        "prev_price": 863
       },
       "aihuishou": {
         "base_price": 887,
@@ -123,12 +126,12 @@
       },
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
-        "xianyu_official": 0.0,
-        "aihuishou": 0.0,
+        "xianyu_market": 81.55,
+        "xianyu_official": 2.78,
+        "aihuishou": 5.6,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0
+      "change_1d": 81.55
     },
     "dji_mini4_pro": {
       "name": "DJI Mini 4 Pro",
@@ -143,7 +146,7 @@
         ],
         "median": 3742,
         "currency": "CNY",
-        "change_1d": 0.0,
+        "change_1d": -25.61,
         "collected_at": "2026-05-06T07:12:03+08:00",
         "prev_price": 3742
       },
@@ -165,12 +168,12 @@
       },
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
+        "xianyu_market": -25.61,
         "xianyu_official": 0.0,
         "aihuishou": 0.0,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0
+      "change_1d": -25.61
     },
     "ddr5_16g": {
       "name": "金士顿 DDR5 16G",
@@ -214,26 +217,27 @@
     "xiaomi_band10": {
       "name": "小米手环10",
       "xianyu_market": {
-        "price": 115,
+        "price": 180,
         "samples": [
-          108.1,
-          111.5,
-          115,
-          118.5,
-          121.9
+          169.2,
+          174.6,
+          180,
+          185.4,
+          190.8
         ],
-        "median": 115,
+        "median": 180,
         "currency": "CNY",
         "change_1d": 0.0,
-        "collected_at": "2026-05-06T07:12:03+08:00",
+        "collected_at": "2026-05-07T10:34:41+08:00",
         "prev_price": 115
       },
       "xianyu_official": {
-        "price": 107,
+        "price": 108,
         "currency": "CNY",
         "source": "xianyu_official_mobile",
-        "collected_at": "2026-05-03T17:57:00+08:00",
-        "change_1d": 0.0
+        "collected_at": "2026-05-06T18:53:33+08:00",
+        "change_1d": 0.93,
+        "prev_price": 107
       },
       "aihuishou": {
         "after_coupon": null,
@@ -246,7 +250,7 @@
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
         "xianyu_market": 0.0,
-        "xianyu_official": 0.0,
+        "xianyu_official": 0.93,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
@@ -255,18 +259,19 @@
     "rtx_3060": {
       "name": "微星 RTX 3060",
       "xianyu_market": {
-        "price": 1600,
+        "price": 1750,
         "samples": [
-          1400,
-          1500,
-          1600,
-          1700,
-          2000
+          1645.0,
+          1697.5,
+          1750,
+          1802.5,
+          1855.0
         ],
-        "median": 1600,
+        "median": 1750,
         "currency": "CNY",
-        "change_1d": 0.0,
-        "prev_price": 1600
+        "change_1d": 160.42,
+        "prev_price": 672,
+        "collected_at": "2026-05-06T21:56:36+08:00"
       },
       "xianyu_official": {
         "price": null,
@@ -283,12 +288,12 @@
       },
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
+        "xianyu_market": 160.42,
         "xianyu_official": null,
         "aihuishou": 0.0,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0
+      "change_1d": 160.42
     },
     "gopro_hero12": {
       "name": "GoPro Hero 12",
@@ -367,14 +372,26 @@
       "xianyu_market": {
         "avg_price": 4642,
         "currency": "CNY",
-        "collected_at": "2026-05-03T19:25:27+08:00",
-        "change_1d": 0.0
+        "collected_at": "2026-05-07T10:34:41+08:00",
+        "change_1d": 16.31,
+        "price": 4400,
+        "samples": [
+          4136.0,
+          4268.0,
+          4400,
+          4532.0,
+          4664.0
+        ],
+        "median": 4400,
+        "prev_price": 3783
       },
       "xianyu_official": {
-        "price": 2748,
+        "price": 2604,
         "currency": "CNY",
-        "collected_at": "2026-05-03T19:25:27+08:00",
-        "change_1d": 0.0
+        "collected_at": "2026-05-06T18:53:33+08:00",
+        "change_1d": -5.24,
+        "prev_price": 2748,
+        "source": "xianyu_official_mobile"
       },
       "aihuishou": {
         "base_price": 3180,
@@ -383,36 +400,38 @@
         "change_1d": 0.0
       },
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
-        "xianyu_official": 0.0,
+        "xianyu_market": 16.31,
+        "xianyu_official": -5.24,
         "aihuishou": 0.0,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0,
+      "change_1d": 16.31,
       "baseline_date": "2026年5月"
     },
     "ddr4_16g": {
       "name": "金士顿 DDR4 16G",
       "xianyu_market": {
-        "price": 157,
+        "price": 346,
         "samples": [
-          147.6,
-          152.3,
-          157,
-          161.7,
-          166.4
+          325.2,
+          335.6,
+          346,
+          356.4,
+          366.8
         ],
-        "median": 157,
+        "median": 346,
         "currency": "CNY",
-        "change_1d": 0.0,
-        "collected_at": "2026-05-06T07:12:03+08:00",
-        "prev_price": 157
+        "change_1d": 112.27,
+        "collected_at": "2026-05-07T10:34:41+08:00",
+        "prev_price": 163
       },
       "xianyu_official": {
-        "price": 198,
+        "price": 220,
         "currency": "CNY",
-        "collected_at": "2026-05-03T19:25:27+08:00",
-        "change_1d": 0.0
+        "collected_at": "2026-05-06T18:53:33+08:00",
+        "change_1d": 11.11,
+        "prev_price": 198,
+        "source": "xianyu_official_mobile"
       },
       "aihuishou": {
         "currency": "CNY",
@@ -423,12 +442,12 @@
         "base_price": 220
       },
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
-        "xianyu_official": 0.0,
+        "xianyu_market": 112.27,
+        "xianyu_official": 11.11,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0,
+      "change_1d": 112.27,
       "baseline_date": "2026年5月"
     },
     "dji_action5": {
@@ -445,17 +464,17 @@
         "median": 1510,
         "currency": "CNY",
         "collected_at": "2026-05-05T21:58:11+08:00",
-        "change_1d": 0.0,
+        "change_1d": -28.03,
         "prev_price": 1510
       },
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
+        "xianyu_market": -28.03,
         "xianyu_official": null,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0
+      "change_1d": -28.03
     },
     "insta360_x4": {
       "name": "insta360 X4",
@@ -496,59 +515,134 @@
         "median": 2812,
         "currency": "CNY",
         "collected_at": "2026-05-05T21:58:11+08:00",
-        "change_1d": 0.0,
+        "change_1d": -6.24,
         "prev_price": 2812
       },
       "baseline_date": "2026年4月",
       "change_1d_by_platform": {
-        "xianyu_market": 0.0,
+        "xianyu_market": -6.24,
         "xianyu_official": null,
         "aihuishou": null,
         "zhuanzhuan_recycle": null
       },
-      "change_1d": 0.0
+      "change_1d": -6.24
     },
     "rtx_3070": {
       "xianyu_market": {},
       "xianyu_official": {},
       "aihuishou": {},
-      "change_1d_by_platform": {},
-      "change_1d": 0
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": null,
+      "baseline_date": "2026年4月"
     },
     "i7_13700k": {
       "xianyu_market": {},
       "xianyu_official": {},
       "aihuishou": {},
-      "change_1d_by_platform": {},
-      "change_1d": 0
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": null,
+      "baseline_date": "2026年4月"
     },
     "ddr5_32g": {
       "xianyu_market": {},
       "xianyu_official": {},
       "aihuishou": {},
-      "change_1d_by_platform": {},
-      "change_1d": 0
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": null
     },
     "dji_mini3": {
       "xianyu_market": {},
       "xianyu_official": {},
       "aihuishou": {},
-      "change_1d_by_platform": {},
-      "change_1d": 0
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": null
     },
     "dji_mini4": {
       "xianyu_market": {},
       "xianyu_official": {},
       "aihuishou": {},
-      "change_1d_by_platform": {},
-      "change_1d": 0
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": null
     },
     "xiaomi_band9": {
       "xianyu_market": {},
       "xianyu_official": {},
       "aihuishou": {},
-      "change_1d_by_platform": {},
-      "change_1d": 0
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": null
+    },
+    "dji_action6": {
+      "name": "DJI Action 6",
+      "xianyu_market": {
+        "price": 1656,
+        "samples": [
+          1560,
+          1608,
+          1656,
+          1704,
+          1752
+        ],
+        "median": 1656,
+        "currency": "CNY",
+        "change_1d": 0,
+        "collected_at": "2026-05-06T21:53:00+08:00",
+        "prev_price": 1656
+      },
+      "xianyu_official": {
+        "price": null,
+        "currency": "CNY",
+        "source": "xianyu_official_mobile",
+        "collected_at": "2026-05-06T21:53:00+08:00",
+        "change_1d": null,
+        "prev_price": null
+      },
+      "aihuishou": {
+        "base_price": null,
+        "after_coupon": null,
+        "currency": "CNY",
+        "source": "aihuishou_mobile_v2",
+        "collected_at": "2026-05-06T21:53:00+08:00",
+        "change_1d": null,
+        "prev_price": null
+      },
+      "baseline_date": "2026年4月",
+      "change_1d_by_platform": {
+        "xianyu_market": -44.76,
+        "xianyu_official": null,
+        "aihuishou": null,
+        "zhuanzhuan_recycle": null
+      },
+      "change_1d": -44.76
     }
   },
   "metadata": {
@@ -558,7 +652,7 @@
     "aihuishou_collection_note": "DDR5搜成显卡无效；小米手环10选错频道搜不到",
     "aihuishou_v2_note": "使用精确搜索路径重跑，DDR5用金士顿DDR5替代"
   },
-  "updated_at": "2026-05-06T13:23:18+08:00",
+  "updated_at": "2026-05-07T10:34:41+08:00",
   "platforms": {
     "xianyu_official": {
       "products": {

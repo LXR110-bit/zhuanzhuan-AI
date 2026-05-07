@@ -17,9 +17,9 @@
         ],
         "median": 2000,
         "currency": "CNY",
-        "change_1d": 30.46,
+        "change_1d": 0.0,
         "collected_at": "2026-05-07T11:06:12+08:00",
-        "prev_price": 1533
+        "prev_price": 2000
       },
       "xianyu_official": {
         "price": 1650,
@@ -60,9 +60,9 @@
         ],
         "median": 2799,
         "currency": "CNY",
-        "change_1d": 25.68,
+        "change_1d": 0.0,
         "collected_at": "2026-05-07T11:06:28+08:00",
-        "prev_price": 2227
+        "prev_price": 2799
       },
       "xianyu_official": {
         "price": 2616,
@@ -146,7 +146,7 @@
         ],
         "median": 3742,
         "currency": "CNY",
-        "change_1d": -25.61,
+        "change_1d": 0.0,
         "collected_at": "2026-05-06T07:12:03+08:00",
         "prev_price": 3742
       },
@@ -269,8 +269,8 @@
         ],
         "median": 1750,
         "currency": "CNY",
-        "change_1d": 160.42,
-        "prev_price": 672,
+        "change_1d": 0.0,
+        "prev_price": 1750,
         "collected_at": "2026-05-06T21:56:36+08:00"
       },
       "xianyu_official": {
@@ -373,7 +373,7 @@
         "avg_price": 4642,
         "currency": "CNY",
         "collected_at": "2026-05-07T10:34:41+08:00",
-        "change_1d": 16.31,
+        "change_1d": 0.0,
         "price": 4400,
         "samples": [
           4136.0,
@@ -383,7 +383,7 @@
           4664.0
         ],
         "median": 4400,
-        "prev_price": 3783
+        "prev_price": 4400
       },
       "xianyu_official": {
         "price": 2604,
@@ -421,9 +421,9 @@
         ],
         "median": 346,
         "currency": "CNY",
-        "change_1d": 112.27,
+        "change_1d": 0.0,
         "collected_at": "2026-05-07T10:34:41+08:00",
-        "prev_price": 163
+        "prev_price": 346
       },
       "xianyu_official": {
         "price": 220,
@@ -464,7 +464,7 @@
         "median": 1510,
         "currency": "CNY",
         "collected_at": "2026-05-05T21:58:11+08:00",
-        "change_1d": -28.03,
+        "change_1d": 0.0,
         "prev_price": 1510
       },
       "baseline_date": "2026年4月",

@@ -134,6 +134,7 @@ def main():
                         choices=["xianyu_market", "xianyu_official", "aihuishou"],
                         help="写入的目标平台字段（默认xianyu_market）")
     parser.add_argument("--cache", type=str, default=str(DEFAULT_CACHE_PATH), help="price_cache.json路径")
+    parser.add_argument("--skip-validation", action="store_true", help="跳过行情价合理性校验，强制写入")
     
     args = parser.parse_args()
     
@@ -222,9 +223,50 @@ def main():
         print(f"❌ 读取cache失败: {e}")
         sys.exit(1)
     
+    # 行情价合理性校验（Opus方案B - 校验层）
+    # 行情价应该 ≥ 官方回收价，如果低于说明可能取错了数据源
+    def validate_market_price(product_id, new_price, cache_data, platform):
+        """校验行情价合理性，返回 (is_valid, reason)"""
+        if platform != "xianyu_market":
+            return True, "非行情价，跳过校验"
+        
+        product = cache_data.get("prices", {}).get(product_id, {})
+        if not product:
+            return True, "新产品无基线，跳过校验"
+        
+        # 校验1：行情价不应低于闲鱼官方回收价（C2C市场价≥官方回收价是基本常识）
+        # 如果行情价低于官方回收价，几乎可以确定取的是搜索列表价而非行情tab价
+        xo_price = product.get("xianyu_official", {}).get("price")
+        if xo_price and xo_price > 0 and new_price < xo_price * 0.85:
+            return False, f"行情价¥{new_price}低于官方回收价¥{xo_price}的85%，疑似取错数据源（搜索列表价而非行情tab价）"
+        
+        # 校验2：行情价不应低于爱回收价（同理，C2C市场价≥回收价）
+        ah_price = product.get("aihuishou", {}).get("base_price")
+        if ah_price and ah_price > 0 and new_price < ah_price * 0.85:
+            return False, f"行情价¥{new_price}低于爱回收价¥{ah_price}的85%，疑似取错数据源"
+        
+        # 校验3：日环比不应超过±50%（正常行情不会一天波动50%）
+        prev_price = product.get("xianyu_market", {}).get("prev_price") or product.get("xianyu_market", {}).get("price")
+        if prev_price and prev_price > 0:
+            change = abs(new_price - prev_price) / prev_price
+            if change > 0.5:
+                return False, f"日环比{change:+.1%}超过±50%，疑似异常（前值¥{prev_price}→新值¥{new_price}）"
+        
+        return True, "校验通过"
+    
     # 更新每个产品
     updated_products = []
     for product_id, new_price in filtered.items():
+        # 写入前校验
+        if not args.skip_validation:
+            is_valid, reason = validate_market_price(product_id, new_price, cache_data, args.platform)
+            if not is_valid:
+                print(f"  🚫 {product_id} 校验失败: {reason}")
+                print(f"     如确认价格正确，请使用 --skip-validation 参数强制写入")
+                continue
+            else:
+                print(f"  ✅ {product_id} 校验通过: {reason}")
+        
         if product_id in cache_data["prices"]:
             cache_data = update_product(cache_data, product_id, new_price, platform=args.platform)
             updated_products.append(product_id)

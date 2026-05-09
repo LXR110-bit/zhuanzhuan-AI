@@ -489,11 +489,13 @@ class ActionEngine:
         
         # 检查价格变动阈值
         if "drop_threshold" in conditions and isinstance(change_pct, (int, float)):
-            if change_pct >= conditions["drop_threshold"]:
+            if change_pct <= conditions["drop_threshold"]:
                 return True
+            return False
         if "rise_threshold" in conditions and isinstance(change_pct, (int, float)):
             if change_pct >= conditions["rise_threshold"]:
                 return True
+            return False
         
         # 检查异动阈值
         if "anomaly_threshold" in conditions and isinstance(change_pct, (int, float)):

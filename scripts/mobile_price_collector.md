@@ -15,7 +15,7 @@
 1. 明确的搜索关键词
 2. "搜索后，找到顶部导航tab：全部 | AI智搜 | 个人闲置 | 严选 | 行情 | 用户，点击'行情'"
 3. "行情页面会显示'近7日成交均价'和价格趋势图，读取这个均价数字"
-4. 写入命令：`cd ./行情价格追踪 && python3 scripts/update_xianyu_market.py --prices '{"product_id": 价格}' --platform xianyu_market`
+4. 写入命令：`cd /Users/lilixiaoran/工作/转转/行情追踪AI助手 && python3 scripts/update_xianyu_market.py --prices '{"product_id": 价格}' --platform xianyu_market`
 5. 显卡类必须加"搜完后弹出包装选项，选'无包装'"
 
 ### 机型搜索关键词与product_id对照表
@@ -71,7 +71,7 @@
 ## 写入验证
 写入后检查：
 ```bash
-cat ./行情价格追踪/data/price_cache.json | python3 -c "
+cat /Users/lilixiaoran/工作/转转/行情追踪AI助手/data/price_cache.json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 xm = data['prices']['{product_id}']['xianyu_market']
@@ -93,9 +93,9 @@ print(f'{product_id}: ¥{xm[\"price\"]} change={xm[\"change_1d\"]}%')
 5. 行情页面会显示"近7日成交均价"大字价格和趋势图，读取这个均价数字
 6. 截图保存行情页面
 7. 执行写入命令：
-   cd ./行情价格追踪 && python3 scripts/update_xianyu_market.py --prices '{"dji_pocket3": 价格数字}' --platform xianyu_market
+   cd /Users/lilixiaoran/工作/转转/行情追踪AI助手 && python3 scripts/update_xianyu_market.py --prices '{"dji_pocket3": 价格数字}' --platform xianyu_market
 8. 验证写入：
-   cat ./行情价格追踪/data/price_cache.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['prices']['dji_pocket3']['xianyu_market']['price'])"
+   cat /Users/lilixiaoran/工作/转转/行情追踪AI助手/data/price_cache.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['prices']['dji_pocket3']['xianyu_market']['price'])"
 
 ⚠️ 关键注意：
 - 必须点"行情"tab！搜索列表里的"7日均价"不是目标价格

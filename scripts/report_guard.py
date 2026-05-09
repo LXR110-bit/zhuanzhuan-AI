@@ -120,7 +120,8 @@ def check_before_push():
             f"push_status.date must be {today_str()}, got {status.get('date')}"
         )
 
-    if push_status.get("sent") is True:
+    sent_at = push_status.get("sent_at", "")
+    if push_status.get("sent") is True and sent_at.startswith(today_str()):
         errors.append("daily report already sent")
 
     if push_time:

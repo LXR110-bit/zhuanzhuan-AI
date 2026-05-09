@@ -121,21 +121,64 @@ class WeeklyPriceAnalyzer:
         """从数据中提取产品价格"""
         prices = {}
         
-        # 尝试多种数据结构
-        for key in ["prices", "models", "products"]:
-            if key in data and isinstance(data[key], dict):
-                for pid, pdata in data[key].items():
-                    if isinstance(pdata, dict):
-                        price = (
-                            pdata.get("xianyu_market_price")
-                            or pdata.get("price")
-                            or pdata.get("median")
-                            or pdata.get("avg")
-                        )
-                        if price and isinstance(price, (int, float)):
-                            prices[pid] = price
+        # 新格式：records数组结构
+        if "records" in data and isinstance(data["records"], list):
+            for record in data["records"]:
+                if not isinstance(record, dict):
+                    continue
+                product_id = record.get("product_id")
+                if not product_id:
+                    continue
+                
+                # 优先取闲鱼市场价
+                platform_data = record.get("platforms", {})
+                xianyu_market = platform_data.get("xianyu_market", {})
+                price = xianyu_market.get("price") if isinstance(xianyu_market, dict) else None
+                
+                # fallback：尝试其他平台
+                if not price or not isinstance(price, (int, float)):
+                    for platform in ["xianyu_official", "aihuishou", "zhuanzhuan_recycle"]:
+                        platform_info = platform_data.get(platform, {})
+                        if isinstance(platform_info, dict):
+                            price = platform_info.get("price")
+                            if price and isinstance(price, (int, float)):
+                                break
+                
+                if price and isinstance(price, (int, float)):
+                    prices[product_id] = price
+        
+        # 旧格式兼容：prices/models/products 顶层key
+        else:
+            for key in ["prices", "models", "products"]:
+                if key in data and isinstance(data[key], dict):
+                    for pid, pdata in data[key].items():
+                        if isinstance(pdata, dict):
+                            price = (
+                                pdata.get("xianyu_market_price")
+                                or pdata.get("price")
+                                or pdata.get("median")
+                                or pdata.get("avg")
+                            )
+                            if price and isinstance(price, (int, float)):
+                                prices[pid] = price
         
         return prices
+    
+    def _get_product_name_from_data(self, data: Dict, product_id: str) -> str:
+        """从数据中获取产品名称（支持新旧格式）"""
+        # 新格式：records数组结构
+        if "records" in data and isinstance(data["records"], list):
+            for record in data["records"]:
+                if isinstance(record, dict) and record.get("product_id") == product_id:
+                    return record.get("product_name") or product_id
+        # 旧格式兼容：prices/models/products 顶层key
+        else:
+            for key in ["prices", "models", "products"]:
+                if key in data and isinstance(data[key], dict):
+                    pdata = data[key].get(product_id)
+                    if pdata and isinstance(pdata, dict):
+                        return pdata.get("product_name") or pdata.get("name") or product_id
+        return product_id
     
     def analyze(self) -> List[ProductTrend]:
         """分析本周价格趋势"""
@@ -182,20 +225,11 @@ class WeeklyPriceAnalyzer:
                 else:
                     trend.trend_direction = "stable"
                 
-                # 更新产品名称
+                # 更新产品名称（使用通用方法，支持新旧格式）
                 if trend.daily_changes:
                     first_entry = trend.daily_changes[0]
                     data = self.daily_data.get(first_entry["date"], {})
-                    for key in ["prices", "models", "products"]:
-                        if key in data and isinstance(data[key], dict):
-                            pdata = data[key].get(trend.product_id)
-                            if pdata:
-                                trend.product_name = (
-                                    pdata.get("product_name")
-                                    or pdata.get("name")
-                                    or trend.product_id
-                                )
-                                break
+                    trend.product_name = self._get_product_name_from_data(data, trend.product_id)
         
         # 排序并返回
         return sorted(

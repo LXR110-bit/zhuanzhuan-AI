@@ -22,7 +22,7 @@
       "platform": "douyin",
       "scope": "/api/v1/douyin/search/",
       "method": "POST",
-      "endpoint": "/api/v1/douyin/search/fetch_general_search_v1",
+      "endpoint": "/api/v1/douyin/search/fetch_video_search_v2",
       "query_param": "keyword",
       "default_params": {
         "cursor": "0",

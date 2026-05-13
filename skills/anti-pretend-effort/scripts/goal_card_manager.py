@@ -5,23 +5,37 @@
 """
 
 import json
-import sys
 import os
+import sys
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
 
 CST = timezone(timedelta(hours=8))
-# 优先从环境变量获取工作目录，默认相对路径
-WORK_DIR = os.environ.get("WORK_DIR", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
-BASE_DIR = os.path.join(WORK_DIR, "反假装努力")
+SCRIPT_DIR = Path(__file__).resolve().parent
+SKILL_DIR = SCRIPT_DIR.parent
+
+
+def resolve_base_dir():
+    goal_card_dir = os.environ.get("GOAL_CARD_DIR")
+    if goal_card_dir:
+        return Path(goal_card_dir).expanduser().resolve()
+    work_dir = os.environ.get("WORK_DIR")
+    if work_dir:
+        return Path(work_dir).expanduser().resolve() / "反假装努力"
+    return SKILL_DIR / "data" / "goal_cards"
+
+
+BASE_DIR = resolve_base_dir()
 
 def get_today_file():
     today = datetime.now(CST).strftime("%Y-%m-%d")
-    return os.path.join(BASE_DIR, f"{today}.json")
+    return BASE_DIR / f"{today}.json"
 
 def load_data(filepath=None):
     if filepath is None:
         filepath = get_today_file()
-    if os.path.exists(filepath):
+    filepath = Path(filepath)
+    if filepath.exists():
         with open(filepath, 'r', encoding='utf-8') as f:
             return json.load(f)
     return {"goal_cards": [], "reviews": []}
@@ -29,9 +43,12 @@ def load_data(filepath=None):
 def save_data(data, filepath=None):
     if filepath is None:
         filepath = get_today_file()
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, 'w', encoding='utf-8') as f:
+    filepath = Path(filepath)
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = filepath.with_suffix(".tmp")
+    with open(tmp_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+    tmp_path.replace(filepath)
 
 def get_active_goal(data):
     for card in data.get("goal_cards", []):

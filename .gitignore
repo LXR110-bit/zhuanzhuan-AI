@@ -8,6 +8,9 @@ __pycache__/
 logs/
 *.log
 
+# Skill runtime state
+skills/*/data/
+
 # Deprecated Python crawling entrypoints must not return to scripts/
 scripts/price_crawler.py
 scripts/run_daytime_scan.py

@@ -54,7 +54,11 @@
 
 ## goal_card JSON格式
 
-文件路径：`./反假装努力/{YYYY-MM-DD}.json`
+默认文件路径：`./skills/anti-pretend-effort/data/goal_cards/{YYYY-MM-DD}.json`
+
+可用环境变量覆盖：
+- `GOAL_CARD_DIR`：直接指定 goal_card JSON 目录。
+- `WORK_DIR`：兼容旧版本，写入 `{WORK_DIR}/反假装努力/`。
 
 ```json
 {
@@ -110,4 +114,4 @@ active → abandoned（老板改需求/优先级变了，记录原因）
 - 不要一次发太多追问，五题已经够重了
 - 三问判定不要太频繁骚扰，心跳30分钟一次够了
 - 主人说"先不搞了"直接abandoned，不强推
-- JSON文件读写用edit_file工具，不要用write_file覆盖
+- JSON 文件由 `scripts/goal_card_manager.py` 原子写入；agent 负责交互式追问，不要把五题流程做成固定模板填空。

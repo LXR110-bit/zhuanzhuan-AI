@@ -11,6 +11,7 @@ import os
 import re
 import shutil
 import subprocess
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -582,20 +583,31 @@ def find_chrome_binary():
 
 def html_to_png_chrome(html_path, png_path, width=1080, height=1920):
     """使用本机 Chrome headless 将 HTML 截图为 PNG。"""
+    if os.environ.get("CODEX_SANDBOX") and os.environ.get("ALLOW_SYSTEM_CHROME_SCREENSHOT") != "1":
+        print("跳过系统 Chrome 截图：当前在 Codex 沙盒内，直接启动 /Applications/Google Chrome 可能触发 macOS 崩溃报告。")
+        print("如确需在 Codex 内截图，请用提升权限运行，或设置 ALLOW_SYSTEM_CHROME_SCREENSHOT=1 后手动执行。")
+        return False
     chrome = find_chrome_binary()
     if not chrome:
         return False
-    cmd = [
-        chrome,
-        "--headless=new",
-        "--disable-gpu",
-        "--hide-scrollbars",
-        "--no-sandbox",
-        f"--window-size={width},{height}",
-        f"--screenshot={png_path}",
-        f"file://{html_path}",
-    ]
-    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with tempfile.TemporaryDirectory(prefix="zz-chrome-profile-") as user_data_dir:
+        cmd = [
+            chrome,
+            "--headless=new",
+            "--disable-gpu",
+            "--disable-dev-shm-usage",
+            "--disable-crash-reporter",
+            "--disable-breakpad",
+            "--hide-scrollbars",
+            "--no-first-run",
+            "--no-default-browser-check",
+            "--no-sandbox",
+            f"--user-data-dir={user_data_dir}",
+            f"--window-size={width},{height}",
+            f"--screenshot={png_path}",
+            f"file://{html_path}",
+        ]
+        subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return True
 
 

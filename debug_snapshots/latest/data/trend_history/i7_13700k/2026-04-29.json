@@ -1,0 +1,62 @@
+{
+  "archived_at": "2026-04-29T11:21:28.327562",
+  "scan_time": "2026-04-29",
+  "product_id": "i7_13700k",
+  "data": {
+    "product_id": "i7_13700k",
+    "product_name": "i7 13700K",
+    "updated_at": "2026-04-28",
+    "source": "coze_original_price_cache",
+    "note": "微博数据约2100元，+40%，首次异动，待确认",
+    "status": "pending_confirm",
+    "platforms": {
+      "xianyu_market": {
+        "price": 2100.0,
+        "source": "coze_search_web",
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm"
+      },
+      "xianyu_official": {
+        "price": 1499.5,
+        "source": "coze_mobile_use",
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm"
+      },
+      "aihuishou": {
+        "price": null,
+        "source": "coze_mobile_use_or_search_web",
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm"
+      }
+    },
+    "xianyu_market": {
+      "avg": 2100.0,
+      "last_crawl": "2026-04-28",
+      "status": "pending_confirm",
+      "source": "coze_search_web"
+    },
+    "xianyu_official": {
+      "price": 1499.5,
+      "last_crawl": "2026-04-28",
+      "status": "pending_confirm",
+      "source": "coze_mobile_use"
+    },
+    "aihuishou": {
+      "tansuo_price": null,
+      "last_crawl": "2026-04-28",
+      "status": "no_price",
+      "source": "coze_mobile_use_or_search_web"
+    },
+    "latest_prices": {
+      "market_price": 2100.0,
+      "official_recycle_price": 1499.5,
+      "recycle_price": null
+    },
+    "change_1d_by_platform": {
+      "xianyu_market": null,
+      "aihuishou": null,
+      "xianyu_official": null
+    },
+    "change_1d": null
+  }
+}

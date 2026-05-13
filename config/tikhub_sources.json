@@ -1,0 +1,165 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-29",
+  "enabled": true,
+  "base_url_env": "TIKHUB_BASE_URL",
+  "api_key_env": "TIKHUB_API_KEY",
+  "timeout_seconds": 45,
+  "max_items_per_source": 8,
+  "max_age_days": 7,
+  "output": "data/news_signals.json",
+  "platform_priority": [
+    "douyin",
+    "xiaohongshu",
+    "bilibili",
+    "weibo",
+    "toutiao"
+  ],
+  "sources": [
+    {
+      "id": "douyin_market",
+      "enabled": true,
+      "platform": "douyin",
+      "scope": "/api/v1/douyin/search/",
+      "method": "POST",
+      "endpoint": "/api/v1/douyin/search/fetch_video_search_v2",
+      "query_param": "keyword",
+      "default_params": {
+        "cursor": "0",
+        "sort_type": "0",
+        "publish_time": "0",
+        "count": 5
+      },
+      "queries": [
+        "华强北 今日行情 数码 回收",
+        "二手数码 回收商 报价",
+        "大疆 Pocket 回收 最新报价",
+        "GoPro 二手 价格",
+        "显卡 降价 二手 行情",
+        "存储涨价囤货",
+        "显卡涨价预警",
+        "以旧换新补贴 国补",
+        "运动相机 新品 发布 预售",
+        "拇指相机 新品",
+        "大疆 新品 发布会",
+        "显卡 新品 发布 RTX",
+        "无人机 新品 发布",
+        "智能手环 新品 发布"
+      ],
+      "level": "A",
+      "credibility_weight": 0.78
+    },
+    {
+      "id": "xiaohongshu_market",
+      "enabled": true,
+      "platform": "xiaohongshu",
+      "scope": "/api/v1/xiaohongshu/web_v3/",
+      "method": "GET",
+      "endpoint": "/api/v1/xiaohongshu/web_v3/fetch_search_notes",
+      "query_param": "keyword",
+      "default_params": {
+        "page": 1,
+        "sort": "time_descending",
+        "note_type": "0"
+      },
+      "queries": [
+        "大疆 Pocket 回收",
+        "影石 X5 二手",
+        "运动相机 二手行情",
+        "数码产品 以旧换新",
+        "华强北 回收 行情",
+        "大疆以旧换新",
+        "运动相机怎么选",
+        "运动相机 新品 预售",
+        "拇指相机 开箱",
+        "大疆 新品 上市",
+        "无人机 新品 评测",
+        "智能手环 新品 上市"
+      ],
+      "level": "B",
+      "credibility_weight": 0.72
+    },
+    {
+      "id": "bilibili_reviews",
+      "enabled": true,
+      "platform": "bilibili",
+      "scope": "/api/v1/bilibili/app/",
+      "method": "GET",
+      "endpoint": "/api/v1/bilibili/app/fetch_search_all",
+      "query_param": "keyword",
+      "default_params": {
+        "page": 1
+      },
+      "queries": [
+        "RTX 4070 二手 价格",
+        "DDR5 内存 价格",
+        "DJI Pocket 4 评测",
+        "Insta360 X5 评测",
+        "存储涨价预警",
+        "DDR5涨价",
+        "SSD价格走势",
+        "显卡矿潮",
+        "运动相机 新品 发布 2025",
+        "拇指相机 评测 新品",
+        "RTX 新品 发布",
+        "无人机 新品 发布"
+      ],
+      "level": "B",
+      "credibility_weight": 0.7
+    },
+    {
+      "id": "weibo_events",
+      "enabled": true,
+      "platform": "weibo",
+      "scope": "/api/v1/weibo/web/",
+      "method": "GET",
+      "endpoint": "/api/v1/weibo/web/fetch_search",
+      "query_param": "keyword",
+      "default_params": {},
+      "queries": [
+        "大疆 降价",
+        "影石 新品",
+        "NVIDIA 显卡 降价",
+        "以旧换新 补贴 数码",
+        "美光 存储涨价",
+        "NAND 闪存 行情",
+        "NAND Flash涨价",
+        "DRAM现货价",
+        "存储芯片缺货",
+        "台积电产能",
+        "英伟达供货",
+        "大疆新品发布",
+        "以旧换新政策 国补",
+        "回收宝调价",
+        "爱回收降价",
+        "运动相机 新品 预售",
+        "追觅 光子跃迁",
+        "大疆 Pocket 新品",
+        "影石 新品 发布",
+        "智能手环 新品 发布 小米"
+      ],
+      "level": "A",
+      "credibility_weight": 0.75
+    },
+    {
+      "id": "toutiao_news",
+      "enabled": false,
+      "platform": "toutiao",
+      "scope": "/api/v1/toutiao/web/",
+      "method": "GET",
+      "endpoint": "/api/v1/toutiao/web/search",
+      "queries": [
+        "二手数码 行情 今日",
+        "回收价 今日",
+        "官方降价 今日",
+        "新品发布 回收价 波动",
+        "运动相机 新品 发布 预售",
+        "数码 新品 上市 2025",
+        "显卡 新品 RTX 发布",
+        "无人机 新品 发布"
+      ],
+      "level": "B",
+      "credibility_weight": 0.68
+    }
+  ]
+}

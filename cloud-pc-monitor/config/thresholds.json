@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-26",
+  "confidence": {
+    "trigger_cloud_phone": 70,
+    "direct_record": 90,
+    "weights": {
+      "data_source": 0.25,
+      "sample_size": 0.20,
+      "consistency": 0.20,
+      "trend": 0.20,
+      "cross_validation": 0.15
+    }
+  },
+  "anomaly": {
+    "algorithms": {
+      "three_sigma": 0.25,
+      "trend_break": 0.25,
+      "distribution_shift": 0.20,
+      "isolation_forest": 0.15,
+      "iqr": 0.15
+    },
+    "vote_threshold": 3
+  },
+  "batch": {
+    "min_models_for_batch": 3,
+    "min_hours_since_last": 2
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-26",
+  "layer_a": [
+    {
+      "name": "RTX 3070",
+      "search_keywords": ["RTX 3070", "3070显卡"],
+      "stop_collect_threshold": 900,
+      "alert_threshold_pct": 15
+    },
+    {
+      "name": "RTX 3090",
+      "search_keywords": ["RTX 3090", "3090显卡"],
+      "stop_collect_threshold": 2000,
+      "alert_threshold_pct": 15
+    },
+    {
+      "name": "Pocket 3",
+      "search_keywords": ["大疆Pocket 3", "Pocket3"],
+      "stop_collect_threshold": 1400,
+      "alert_threshold_pct": 10
+    },
+    {
+      "name": "i5 13600K",
+      "search_keywords": ["i5 13600K", "13600K"],
+      "stop_collect_threshold": null,
+      "alert_threshold_pct": 20
+    },
+    {
+      "name": "i7 13700K",
+      "search_keywords": ["i7 13700K", "13700K"],
+      "stop_collect_threshold": null,
+      "alert_threshold_pct": 20
+    },
+    {
+      "name": "Insta360 X4",
+      "search_keywords": ["Insta360 X4", "影石X4"],
+      "stop_collect_threshold": null,
+      "alert_threshold_pct": 15
+    },
+    {
+      "name": "Insta360 X5",
+      "search_keywords": ["Insta360 X5", "影石X5"],
+      "stop_collect_threshold": null,
+      "alert_threshold_pct": 15
+    },
+    {
+      "name": "DDR5 16G",
+      "search_keywords": ["DDR5 16G", "DDR5内存"],
+      "stop_collect_threshold": null,
+      "alert_threshold_pct": 20
+    }
+  ],
+  "layer_b": [
+    {"name": "RTX 4060", "search_keywords": ["RTX 4060", "4060显卡"]},
+    {"name": "RTX 4070", "search_keywords": ["RTX 4070", "4070显卡"]},
+    {"name": "RTX 4080", "search_keywords": ["RTX 4080", "4080显卡"]},
+    {"name": "RX 6600", "search_keywords": ["RX 6600", "AMD 6600"]},
+    {"name": "RX 7600", "search_keywords": ["RX 7600", "AMD 7600"]},
+    {"name": "Pocket 2", "search_keywords": ["大疆Pocket 2", "Pocket2"]},
+    {"name": "Action 4", "search_keywords": ["大疆Action 4", "Action4"]},
+    {"name": "Action 5", "search_keywords": ["大疆Action 5", "Action5"]},
+    {"name": "GoPro 11", "search_keywords": ["GoPro 11", "GoPro11"]},
+    {"name": "GoPro 12", "search_keywords": ["GoPro 12", "GoPro12"]},
+    {"name": "Insta360 X3", "search_keywords": ["Insta360 X3", "影石X3"]},
+    {"name": "DJI Mini 3", "search_keywords": ["DJI Mini 3", "大疆Mini3"]},
+    {"name": "DJI Mini 4", "search_keywords": ["DJI Mini 4", "大疆Mini4"]},
+    {"name": "DDR5 32G", "search_keywords": ["DDR5 32G", "DDR5内存 32G"]}
+  ]
+}

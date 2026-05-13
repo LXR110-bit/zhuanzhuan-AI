@@ -1,0 +1,5 @@
+记忆文件/SECRET.md
+.env
+logs/
+__pycache__/
+*.pyc

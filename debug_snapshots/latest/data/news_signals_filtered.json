@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "date": "2026-04-29",
+  "generated_at": "2026-04-29T10:47:30.281418",
+  "max_age_days": 7,
+  "items": [],
+  "dropped": [],
+  "summary": {
+    "input": 0,
+    "kept": 0,
+    "dropped": 0,
+    "history_size": 0
+  }
+}

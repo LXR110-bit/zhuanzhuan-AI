@@ -1,0 +1,58 @@
+{
+  "generated_at": "2026-04-29T16:57:38",
+  "snapshot_dir": "debug_snapshots/latest",
+  "copied": {
+    "runtime_files": [
+      "data/price_cache.json",
+      "data/daily_report_payload.json",
+      "data/validation_report.json",
+      "data/anomaly_votes.json",
+      "data/push_status.json",
+      "data/progress.json",
+      "data/daytime_scan_status.json",
+      "data/cloud_pc_scan_status.json",
+      "data/news_signals.json",
+      "data/news_signals_filtered.json",
+      "data/latest.json",
+      "cloud_pc_daily.json"
+    ],
+    "daily_price_records": [
+      "data/daily_price_records/2026-04-29.json"
+    ],
+    "periodic_reports": [
+      "data/periodic_reports/2026-04-29_monthly_trend_payload.json",
+      "data/periodic_reports/2026-04-29_weekly_trend_payload.json"
+    ],
+    "trend_history": [
+      "data/trend_history/ddr5_16g/2026-04-29.json",
+      "data/trend_history/dji_action5/2026-04-29.json",
+      "data/trend_history/dji_action6/2026-04-29.json",
+      "data/trend_history/dji_lito_x1/2026-04-29.json",
+      "data/trend_history/dji_pocket3/2026-04-29.json",
+      "data/trend_history/dji_pocket4/2026-04-29.json",
+      "data/trend_history/djilito1/2026-04-29.json",
+      "data/trend_history/i5_13600k/2026-04-29.json",
+      "data/trend_history/i7_13700k/2026-04-29.json",
+      "data/trend_history/insta360_acepro/2026-04-29.json",
+      "data/trend_history/insta360_x5/2026-04-29.json",
+      "data/trend_history/pocket3/2026-04-29.json",
+      "data/trend_history/pocket4/2026-04-29.json",
+      "data/trend_history/rtx3070/2026-04-29.json",
+      "data/trend_history/rtx4070/2026-04-29.json",
+      "data/trend_history/rtx_3060/2026-04-29.json",
+      "data/trend_history/rtx_3070/2026-04-29.json",
+      "data/trend_history/rtx_3080/2026-04-29.json",
+      "data/trend_history/rtx_3090/2026-04-29.json",
+      "data/trend_history/rtx_4070/2026-04-29.json",
+      "data/trend_history/rtx_4080/2026-04-29.json"
+    ],
+    "logs": [
+      "cloud-pc-monitor/logs/README.md"
+    ]
+  },
+  "notes": [
+    "This bundle is sanitized and safe to commit for debugging.",
+    "Runtime data remains ignored outside debug_snapshots/.",
+    "Do not commit raw data/, logs/, or 每日备份/ directories directly."
+  ]
+}

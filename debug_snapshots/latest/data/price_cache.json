@@ -1,0 +1,1492 @@
+{
+  "version": "0.2.0",
+  "updated_at": "2026-04-29T10:59:45.162698",
+  "scan_time": "2026-04-29",
+  "source": "/Users/lilixiaoran/工作/转转/行情追踪助手/扣子原价格爬取功能/白天异动检测_价格缓存.json",
+  "source_version": "1.0",
+  "source_updated_at": "2026-04-27",
+  "prices": {
+    "rtx_3060": {
+      "product_id": "rtx_3060",
+      "product_name": "RTX 3060",
+      "updated_at": "2026-04-28",
+      "source": "coze_original_price_cache",
+      "note": "search_web 4月28日数据，1600-1900元（3月矿卡报告），+10~31%，首次异动，待确认",
+      "status": "pending_confirm",
+      "platforms": {
+        "xianyu_market": {
+          "price": 1450.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        },
+        "xianyu_official": {
+          "price": 781.0,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        }
+      },
+      "xianyu_market": {
+        "avg": 1450.0,
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": 781.0,
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 1450.0,
+        "official_recycle_price": 781.0,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "rtx_3070": {
+      "product_id": "rtx_3070",
+      "product_name": "RTX 3070",
+      "updated_at": "2026-04-28",
+      "source": "coze_original_price_cache",
+      "note": "search_web 4月28日数据，2200-2600元（3月矿卡报告），+49~81%，首次异动，待确认",
+      "status": "pending_confirm",
+      "platforms": {
+        "xianyu_market": {
+          "price": 1480.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        }
+      },
+      "xianyu_market": {
+        "avg": 1480.0,
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 1480.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "rtx_3080": {
+      "product_id": "rtx_3080",
+      "product_name": "RTX 3080",
+      "updated_at": "2026-04-28",
+      "source": "coze_original_price_cache",
+      "note": "nickys 4/24数据，约3500元，+16.7%，连续2次异动",
+      "status": "confirmed",
+      "platforms": {
+        "xianyu_market": {
+          "price": 3500.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        }
+      },
+      "xianyu_market": {
+        "avg": 3500.0,
+        "last_crawl": "2026-04-28",
+        "status": "confirmed",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 3500.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "rtx_3090": {
+      "product_id": "rtx_3090",
+      "product_name": "RTX 3090",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": "有得卖官网ASUS ROG 3090约5192，矿卡报告4850，-6.9%",
+      "status": "normal",
+      "platforms": {
+        "xianyu_market": {
+          "price": 4850.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "normal"
+        },
+        "xianyu_official": {
+          "price": 5192.0,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "normal"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "normal"
+        }
+      },
+      "xianyu_market": {
+        "avg": 4850.0,
+        "last_crawl": "2026-04-27",
+        "status": "normal",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": 5192.0,
+        "last_crawl": "2026-04-27",
+        "status": "normal",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 4850.0,
+        "official_recycle_price": 5192.0,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "rtx_4070": {
+      "product_id": "rtx_4070",
+      "product_name": "RTX 4070",
+      "updated_at": "2026-04-28",
+      "source": "coze_original_price_cache",
+      "note": "nickys 4/24数据，2950元，+28.3%，连续2次异动",
+      "status": "confirmed",
+      "platforms": {
+        "xianyu_market": {
+          "price": 2950.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        },
+        "xianyu_official": {
+          "price": 2036.0,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        }
+      },
+      "xianyu_market": {
+        "avg": 2950.0,
+        "last_crawl": "2026-04-28",
+        "status": "confirmed",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": 2036.0,
+        "last_crawl": "2026-04-28",
+        "status": "confirmed",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 2950.0,
+        "official_recycle_price": 2036.0,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "rtx_4080": {
+      "product_id": "rtx_4080",
+      "product_name": "RTX 4080",
+      "updated_at": "2026-04-28",
+      "source": "coze_original_price_cache",
+      "note": "nickys 4/24数据，5850元，-16.4%，连续2次异动，40系下跌",
+      "status": "confirmed",
+      "platforms": {
+        "xianyu_market": {
+          "price": 5850.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "confirmed"
+        }
+      },
+      "xianyu_market": {
+        "avg": 5850.0,
+        "last_crawl": "2026-04-28",
+        "status": "confirmed",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 5850.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "i5_13600k": {
+      "product_id": "i5_13600k",
+      "product_name": "i5 13600K",
+      "updated_at": "2026-04-28",
+      "source": "coze_original_price_cache",
+      "note": "日本市场参考价约2200元，+47%，首次异动，待确认",
+      "status": "pending_confirm",
+      "platforms": {
+        "xianyu_market": {
+          "price": 1500.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        }
+      },
+      "xianyu_market": {
+        "avg": 1500.0,
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 1500.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "i7_13700k": {
+      "product_id": "i7_13700k",
+      "product_name": "i7 13700K",
+      "updated_at": "2026-04-28",
+      "source": "coze_original_price_cache",
+      "note": "微博数据约2100元，+40%，首次异动，待确认",
+      "status": "pending_confirm",
+      "platforms": {
+        "xianyu_market": {
+          "price": 2100.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        },
+        "xianyu_official": {
+          "price": 1499.5,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-28",
+          "status": "pending_confirm"
+        }
+      },
+      "xianyu_market": {
+        "avg": 2100.0,
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": 1499.5,
+        "last_crawl": "2026-04-28",
+        "status": "pending_confirm",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-28",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 2100.0,
+        "official_recycle_price": 1499.5,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "r5_5600x": {
+      "product_id": "r5_5600x",
+      "product_name": "5600X",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": null,
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "r7_5800x3d": {
+      "product_id": "r7_5800x3d",
+      "product_name": "5800X3D",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": null,
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "dji_pocket3": {
+      "product_id": "dji_pocket3",
+      "product_name": "DJI Pocket 3",
+      "updated_at": "2026-04-24",
+      "source": "coze_original_price_cache",
+      "note": "9成新，云手机实时爬取",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 1568.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": 1344.0,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 1568.0,
+        "last_crawl": "2026-04-24",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": 1344.0,
+        "last_crawl": "2026-04-24",
+        "status": "cached",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-24",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 1568.0,
+        "official_recycle_price": 1344.0,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "dji_pocket4": {
+      "product_id": "dji_pocket4",
+      "product_name": "DJI Pocket 4",
+      "updated_at": "2026-04-26",
+      "source": "coze_original_price_cache",
+      "note": "官方发布价，标准版，4月16日发布",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 2999.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 2999.0,
+        "last_crawl": "2026-04-26",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 2999.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "dji_action5": {
+      "product_id": "dji_action5",
+      "product_name": "DJI Action 5",
+      "updated_at": "2026-04-23",
+      "source": "coze_original_price_cache",
+      "note": "限时促销价",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 2098.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-23",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-23",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-23",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 2098.0,
+        "last_crawl": "2026-04-23",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-23",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-23",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 2098.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "dji_action6": {
+      "product_id": "dji_action6",
+      "product_name": "DJI Action 6",
+      "updated_at": "2026-04-24",
+      "source": "coze_original_price_cache",
+      "note": "官方发布价",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 2998.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 2998.0,
+        "last_crawl": "2026-04-24",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-24",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-24",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 2998.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "djilito1": {
+      "product_id": "djilito1",
+      "product_name": "DJI Lito 1",
+      "updated_at": "2026-04-26",
+      "source": "coze_original_price_cache",
+      "note": "官方发布价，入门级无人机，4月23日发布",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 1999.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 1999.0,
+        "last_crawl": "2026-04-26",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 1999.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "dji_lito_x1": {
+      "product_id": "dji_lito_x1",
+      "product_name": "DJI Lito X1",
+      "updated_at": "2026-04-26",
+      "source": "coze_original_price_cache",
+      "note": "官方发布价，入门级高性能，4月23日发布",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 2488.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 2488.0,
+        "last_crawl": "2026-04-26",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 2488.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "insta360_x4": {
+      "product_id": "insta360_x4",
+      "product_name": "insta360 X4",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": null,
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "insta360x4air": {
+      "product_id": "insta360x4air",
+      "product_name": "insta360 X4 Air",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": null,
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "insta360_x5": {
+      "product_id": "insta360_x5",
+      "product_name": "insta360 X5",
+      "updated_at": "2026-04-24",
+      "source": "coze_original_price_cache",
+      "note": "9成新，云手机实时爬取，含加价券",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 1717.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": 1302.0,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 1717.0,
+        "last_crawl": "2026-04-24",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": 1302.0,
+        "last_crawl": "2026-04-24",
+        "status": "cached",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-24",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 1717.0,
+        "official_recycle_price": 1302.0,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "insta360_acepro": {
+      "product_id": "insta360_acepro",
+      "product_name": "insta360 Ace Pro",
+      "updated_at": "2026-04-24",
+      "source": "coze_original_price_cache",
+      "note": "官网价格",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 1998.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-24",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 1998.0,
+        "last_crawl": "2026-04-24",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-24",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-24",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 1998.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "ddr5_16g": {
+      "product_id": "ddr5_16g",
+      "product_name": "DDR5内存",
+      "updated_at": "2026-04-26",
+      "source": "coze_original_price_cache",
+      "note": "16GB 6000MHz，价格暴跌40%-70%，需持续跟踪",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": 560.0,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": 560.0,
+        "last_crawl": "2026-04-26",
+        "status": "cached",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": 560.0,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "nand_ssd": {
+      "product_id": "nand_ssd",
+      "product_name": "NAND固态",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": null,
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "xiaomi_band9": {
+      "product_id": "xiaomi_band9",
+      "product_name": "小米手环9",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": null,
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "xiaomi_band10": {
+      "product_id": "xiaomi_band10",
+      "product_name": "小米手环10",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": null,
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "goprohero13": {
+      "product_id": "goprohero13",
+      "product_name": "GoPro Hero 13",
+      "updated_at": "2026-04-27",
+      "source": "coze_original_price_cache",
+      "note": "待补充价格",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-27",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-27",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    },
+    "gopromission1": {
+      "product_id": "gopromission1",
+      "product_name": "GoPro Mission 1",
+      "updated_at": "2026-04-26",
+      "source": "coze_original_price_cache",
+      "note": "4月15日发布，5月28日开售，价格未公布",
+      "status": "cached",
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "source": "coze_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "xianyu_official": {
+          "price": null,
+          "source": "coze_mobile_use",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        },
+        "aihuishou": {
+          "price": null,
+          "source": "coze_mobile_use_or_search_web",
+          "last_crawl": "2026-04-26",
+          "status": "cached"
+        }
+      },
+      "xianyu_market": {
+        "avg": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_search_web"
+      },
+      "xianyu_official": {
+        "price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use"
+      },
+      "aihuishou": {
+        "tansuo_price": null,
+        "last_crawl": "2026-04-26",
+        "status": "no_price",
+        "source": "coze_mobile_use_or_search_web"
+      },
+      "latest_prices": {
+        "market_price": null,
+        "official_recycle_price": null,
+        "recycle_price": null
+      },
+      "change_1d_by_platform": {
+        "xianyu_market": null,
+        "aihuishou": null,
+        "xianyu_official": null
+      },
+      "change_1d": null
+    }
+  }
+}

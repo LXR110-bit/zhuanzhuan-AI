@@ -1,0 +1,38 @@
+.DS_Store
+.env
+记忆文件/
+
+__pycache__/
+*.pyc
+
+logs/
+*.log
+
+# Deprecated Python crawling entrypoints must not return to scripts/
+scripts/price_crawler.py
+scripts/run_daytime_scan.py
+
+# Runtime data and generated reports
+data/*
+!data/.gitkeep
+cloud_pc_daily.json
+2026_*/
+每日备份/
+白天异动检测/日报_*.md
+
+# Generated images / exports
+data/outbox/
+data/report_cards/
+data/periodic_reports/
+cloud-pc-monitor/data/
+*.png
+*.zip
+*.tar.gz
+
+# Sanitized debug bundles are intentionally commit-able.
+!debug_snapshots/
+!debug_snapshots/.gitkeep
+!debug_snapshots/**/
+!debug_snapshots/**/*.json
+!debug_snapshots/**/*.md
+!debug_snapshots/**/*.log

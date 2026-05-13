@@ -1,0 +1,36 @@
+{
+  "version": "2.3.0",
+  "updated_at": "2026-04-28T21:40:00+08:00",
+  "module": "白天异动检测",
+  "entrypoint": "python3 ../scripts/run_daytime_scan.py run --slot HH:MM",
+  "canonical_schedule": "../config/schedule.json",
+  "canonical_price_cache": "../data/price_cache.json",
+  "status_file": "../data/daytime_scan_status.json",
+  "regular_times": [
+    "07:30",
+    "12:00",
+    "17:30"
+  ],
+  "mode_by_time": {
+    "07:30": "A层早盘检测",
+    "12:00": "A层午间检测",
+    "17:30": "A层下班前检测"
+  },
+  "evening_full_scan": {
+    "time": "21:00",
+    "module": "晚间全量检测",
+    "entrypoint": "python3 ../scripts/run_daytime_scan.py run --slot 21:00",
+    "scope": "A+B层22个机型深度爬取"
+  },
+  "timeout_seconds": 180,
+  "max_daily_runs": 3,
+  "watchdog": {
+    "enabled": true,
+    "progress_file": "../data/progress.json"
+  },
+  "push_policy": {
+    "S": "立即告警",
+    "A": "异常时推送或汇入报告",
+    "B": "缓存观察"
+  }
+}

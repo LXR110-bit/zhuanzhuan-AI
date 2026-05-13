@@ -1,0 +1,63 @@
+{
+  "archived_at": "2026-04-29T10:47:30.242579",
+  "scan_time": "2026-04-29",
+  "product_id": "pocket4",
+  "data": {
+    "product_id": "pocket4",
+    "product_name": "DJI Pocket 4",
+    "updated_at": "2026-04-29 10:46:46",
+    "platforms": {
+      "aihuishou": {
+        "price": null,
+        "condition": "",
+        "source_url": "https://www.aihuishou.com/search?keyword=大疆 Pocket 4",
+        "crawl_time": "2026-04-29 10:46:34",
+        "status": "failed:HTTPSConnectionPool(host='www.aihuishou.com', port=443): Max retries exceeded with url: /search?keyword=%E5%A4%A7%E7%96%86%20Pocket%204 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))"
+      },
+      "xianyu": {
+        "price": null,
+        "condition": "",
+        "source_url": "https://s.goofish.com/search?q=大疆 Pocket 4",
+        "crawl_time": "2026-04-29 10:46:41",
+        "status": "failed:HTTPSConnectionPool(host='s.goofish.com', port=443): Max retries exceeded with url: /search?q=%E5%A4%A7%E7%96%86%20Pocket%204 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))"
+      },
+      "pinduoduo": {
+        "price": null,
+        "condition": "",
+        "source_url": "https://mobile.yangkeduo.com/search_result.html?search_key=[REDACTED] Pocket 4",
+        "crawl_time": "2026-04-29 10:46:46",
+        "status": "failed:HTTPSConnectionPool(host='mobile.yangkeduo.com', port=443): Max retries exceeded with url: /search_result.html?search_key=[REDACTED] (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))"
+      }
+    },
+    "aihuishou": {
+      "tansuo_price": null,
+      "last_crawl": "2026-04-29 10:46:34",
+      "status": "failed:HTTPSConnectionPool(host='www.aihuishou.com', port=443): Max retries exceeded with url: /search?keyword=%E5%A4%A7%E7%96%86%20Pocket%204 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))",
+      "source_url": "https://www.aihuishou.com/search?keyword=大疆 Pocket 4"
+    },
+    "xianyu_market": {
+      "avg": null,
+      "last_crawl": "2026-04-29 10:46:41",
+      "status": "failed:HTTPSConnectionPool(host='s.goofish.com', port=443): Max retries exceeded with url: /search?q=%E5%A4%A7%E7%96%86%20Pocket%204 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))",
+      "source_url": "https://s.goofish.com/search?q=大疆 Pocket 4"
+    },
+    "pinduoduo": {
+      "lowest_price": null,
+      "last_crawl": "2026-04-29 10:46:46",
+      "status": "failed:HTTPSConnectionPool(host='mobile.yangkeduo.com', port=443): Max retries exceeded with url: /search_result.html?search_key=[REDACTED] (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))",
+      "source_url": "https://mobile.yangkeduo.com/search_result.html?search_key=[REDACTED] Pocket 4"
+    },
+    "latest_prices": {
+      "recycle_price": null,
+      "market_price": null,
+      "new_price": null
+    },
+    "change_1d_by_platform": {
+      "xianyu_market": null,
+      "aihuishou": null,
+      "pinduoduo": null,
+      "xianyu_official": null
+    },
+    "change_1d": null
+  }
+}

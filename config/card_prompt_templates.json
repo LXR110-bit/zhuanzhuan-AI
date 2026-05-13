@@ -1,0 +1,104 @@
+{
+  "_comment": "AI生图卡片prompt模板规范 v1.0.0",
+  "version": "1.0.0",
+  "spec_version": "1.0.0",
+  "last_updated": "2026-04-30",
+  "image_specs": {
+    "width": 1080,
+    "height": 1920,
+    "aspect_ratio": "9:16",
+    "orientation": "portrait"
+  },
+  "style_constants": {
+    "background_color": "#1a1a2e",
+    "background_gradient_end": "#16213e",
+    "text_primary": "#ffffff",
+    "text_secondary": "#94a3b8",
+    "accent_green": "#00e676",
+    "accent_red": "#ff5252",
+    "accent_blue": "#448aff",
+    "card_bg": "#0f0f23",
+    "border_color": "#2d3748",
+    "highlight_bg": "rgba(0, 230, 118, 0.1)"
+  },
+  "typography": {
+    "title_font": "bold sans-serif",
+    "body_font": "sans-serif",
+    "numbers_font": "monospace",
+    "chinese_preferred": true
+  },
+  "templates": {
+    "price_card": {
+      "_comment": "价格播报卡 - 展示所有监控品类的价格表",
+      "card_type": "price_card",
+      "base_prompt": "Create a mobile-optimized price report card (1080x1920px, 9:16 portrait) with a dark fintech dashboard aesthetic. Deep navy background (#1a1a2e to #16213e vertical gradient). Flat design, no 3D effects, no shadows. Chinese language interface. Financial data visualization style similar to Bloomberg terminal cards. Clean grid layout with precise alignment. All numbers must be crisp and clearly readable. Use monospace font for numerical data.",
+      "layout_description": "Header section with report date at top. Price table in center with alternating row backgrounds. Table columns vary by mode: Day mode (4 cols: model name, baseline price, latest price, daily change %) or Night mode (5 cols: model, xianyu market, xianyu recycle, aihuishou, daily change %). Footer with data source and update timestamp.",
+      "header_template": "Price Monitor | {date} | Daily Report",
+      "column_headers_day": ["Model / 机型", "Baseline / 原均价", "Latest / 最新价", "Change / 涨跌"],
+      "column_headers_night": ["Model / 机型", "Xianyu Market / 闲鱼市场", "Xianyu Recycle / 闲鱼回收", "AiHuiShou / 爱回收", "Change / 涨跌"],
+      "data_placeholders": {
+        "date": "Report date in format like '4月30日' (Chinese month+day)",
+        "price_rows": "Array of price data: model_name (clean name without brand prefix), baseline_price, latest_price, xianyu_market, xianyu_recycle, aihuishou, change_percent, change_direction",
+        "update_time": "ISO timestamp converted to friendly format like '4月30日 09:34'",
+        "data_source": "Source attribution string"
+      },
+      "style_rules": {
+        "change_positive": "Use bright green (#00e676) for positive change, prefix with '+'",
+        "change_negative": "Use bright red (#ff5252) for negative change, prefix with '-'",
+        "change_neutral": "Use muted gray (#94a3b8) for zero change",
+        "row_highlight": "Highlight rows with significant changes using accent background",
+        "table_stripe": "Alternating dark row backgrounds (#0f0f23 and #141428) for readability"
+      },
+      "prompt_template": "Price Monitor Report Card - {date}\n\n[STYLE] Dark fintech dashboard theme, 1080x1920 portrait mobile card. Navy gradient background (#1a1a2e to #16213e). Flat design, no shadows. Chinese language.\n\n[LAYOUT]\n- Top: Header banner with '价格监控' title, date '{date}', white text on dark card\n- Center: Price comparison table with {row_count} rows\n  {column_headers}\n  {price_rows}\n- Bottom: Data source line and update time '{update_time}'\n\n[TABLE DATA - EXACT NUMBERS]\n{model_rows}\n\n[STYLE RULES]\n- Model names: Clean product names like 'RTX 3060' (NO brand prefixes like '微星')\n- Price format: Use exact prices like '1600-1900元' or '1432-1700元'\n- Change %: Green (#00e676) for +X%, Red (#ff5252) for -X%, Gray for 0%\n- Row alternating: #0f0f23 / #141428\n- Numbers must be precise and clearly rendered in monospace style\n- Table columns must be perfectly aligned\n\n[QUALITY]\n- All numbers must be exactly as specified, no approximations\n- Chinese text should be clear and properly sized\n- Professional financial data card appearance"
+    },
+    "signal_card": {
+      "_comment": "信号速报卡 - 展示S/A级市场信号",
+      "card_type": "signal_card",
+      "base_prompt": "Create a mobile-optimized market signals alert card (1080x1920px, 9:16 portrait) with a dark UI theme. Deep navy background (#1a1a2e). Flat design, no 3D effects. Chinese language interface. News alert style similar to Bloomberg notifications. Signal levels displayed with color-coded badges. S-level signals in gold/yellow, A-level in blue, B-level in gray. Clean list layout with clear visual hierarchy.",
+      "layout_description": "Header with '市场信号' title and signal count summary. Signal list below showing level badge, source platform, title, and publish time for each signal. Deduplicated signals only (same title+source = one entry). Maximum 5-6 signals displayed for readability. If more signals exist, indicate count.",
+      "header_template": "Market Signals | {s_count}S / {a_count}A / {b_count}B signals today",
+      "data_placeholders": {
+        "date": "Report date",
+        "s_signals": "Array of S-level signals with title, source, published_at",
+        "a_signals": "Array of A-level signals with title, source, published_at",
+        "total_count": "Total signal count after deduplication"
+      },
+      "signal_level_colors": {
+        "S": "#ffd700",
+        "A": "#448aff",
+        "B": "#94a3b8"
+      },
+      "prompt_template": "Market Signals Alert Card - {date}\n\n[STYLE] Dark news alert card, 1080x1920 portrait. Navy background (#1a1a2e). Flat design. Chinese language. Professional financial alert aesthetic.\n\n[LAYOUT]\n- Header: '市场信号速报' title with level counts (S:{s_count} A:{a_count} B:{b_count})\n- Signal list with {signal_count} deduplicated signals\n- Each signal: [LEVEL BADGE] [SOURCE] [TITLE] [TIME]\n\n[SIGNAL DATA]\n{signal_list}\n\n[STYLE RULES]\n- S-level badge: Gold (#ffd700) rounded rectangle\n- A-level badge: Blue (#448aff) rounded rectangle  \n- B-level badge: Gray (#94a3b8) rounded rectangle\n- Source shown as platform icon placeholder + name (e.g., '抖音' or '微博')\n- Titles should be concise and readable\n- Time format: Relative like '昨天' or date '4月29日'\n- Background card for each signal with subtle border\n\n[QUALITY]\n- Signals must be deduplicated (same title+source = one entry)\n- Display most recent signals first\n- Chinese text clear and legible\n- Clean professional alert card appearance"
+    },
+    "summary_card": {
+      "_comment": "摘要卡 - 今日一句话总结和行动建议",
+      "card_type": "summary_card",
+      "base_prompt": "Create a mobile-optimized daily summary card (1080x1920px, 9:16 portrait) with a dark fintech theme. Deep navy gradient background (#1a1a2e to #16213e). Flat design, no 3D effects. Chinese language interface. Executive summary style with clear visual hierarchy. Key metrics displayed as large numbers with labels. Action items highlighted with accent color.",
+      "layout_description": "Hero section at top with main headline/summary text in large font. Middle section with key metrics displayed as cards/blocks (price count, signal count, data quality). Bottom section with today's action recommendation highlighted in accent color.",
+      "header_template": "Daily Summary | {date}",
+      "data_placeholders": {
+        "date": "Report date in Chinese format like '4月30日'",
+        "one_sentence_summary": "Main headline summarizing today's market",
+        "today_action": "Recommended action for today",
+        "price_count": "Number of price items monitored",
+        "signal_count": "Number of signals detected",
+        "data_quality": "Data quality description"
+      },
+      "prompt_template": "Daily Market Summary Card - {date}\n\n[STYLE] Dark executive summary card, 1080x1920 portrait. Navy gradient (#1a1a2e to #16213e). Flat design. Chinese language. Premium fintech dashboard aesthetic.\n\n[LAYOUT]\n- Top: Section label '今日摘要' in accent color\n- Hero: Main summary text '{one_sentence_summary}' in large white text\n- Middle: Key metrics display\n  - Card 1: {price_count} 价格项\n  - Card 2: {signal_count} 关注信号  \n  - Card 3: {data_quality}\n- Bottom: Action section with '{today_action}' highlighted\n\n[METRICS STYLING]\n- Large numbers in accent blue (#448aff)\n- Labels in muted gray (#94a3b8)\n- Metric cards with subtle borders\n\n[ACTION HIGHLIGHT]\n- Use green accent (#00e676) or blue accent for action box\n- Action text should be prominent and actionable\n- Clear call-to-action appearance\n\n[QUALITY]\n- Chinese text must be clear and properly rendered\n- Numbers exact as provided\n- Professional executive dashboard style\n- Clean visual hierarchy"
+    }
+  },
+  "generation_rules": {
+    "max_prompt_length": 800,
+    "language": "English for style description, Chinese for data content",
+    "number_precision": "All numbers must be exact, no approximations",
+    "deduplication": {
+      "signals": "Same title + same source = deduplicate to one entry"
+    },
+    "name_cleaning": {
+      "remove_brand_prefixes": ["微星", "华硕", "技嘉", "七彩虹", "影驰"]
+    },
+    "time_formatting": {
+      "iso_to_friendly": "2026-04-30T09:34:01 -> 4月30日 09:34"
+    }
+  }
+}

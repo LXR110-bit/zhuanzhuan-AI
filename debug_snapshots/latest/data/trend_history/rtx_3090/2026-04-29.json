@@ -1,0 +1,62 @@
+{
+  "archived_at": "2026-04-29T11:21:28.325178",
+  "scan_time": "2026-04-29",
+  "product_id": "rtx_3090",
+  "data": {
+    "product_id": "rtx_3090",
+    "product_name": "RTX 3090",
+    "updated_at": "2026-04-27",
+    "source": "coze_original_price_cache",
+    "note": "有得卖官网ASUS ROG 3090约5192，矿卡报告4850，-6.9%",
+    "status": "normal",
+    "platforms": {
+      "xianyu_market": {
+        "price": 4850.0,
+        "source": "coze_search_web",
+        "last_crawl": "2026-04-27",
+        "status": "normal"
+      },
+      "xianyu_official": {
+        "price": 5192.0,
+        "source": "coze_mobile_use",
+        "last_crawl": "2026-04-27",
+        "status": "normal"
+      },
+      "aihuishou": {
+        "price": null,
+        "source": "coze_mobile_use_or_search_web",
+        "last_crawl": "2026-04-27",
+        "status": "normal"
+      }
+    },
+    "xianyu_market": {
+      "avg": 4850.0,
+      "last_crawl": "2026-04-27",
+      "status": "normal",
+      "source": "coze_search_web"
+    },
+    "xianyu_official": {
+      "price": 5192.0,
+      "last_crawl": "2026-04-27",
+      "status": "normal",
+      "source": "coze_mobile_use"
+    },
+    "aihuishou": {
+      "tansuo_price": null,
+      "last_crawl": "2026-04-27",
+      "status": "no_price",
+      "source": "coze_mobile_use_or_search_web"
+    },
+    "latest_prices": {
+      "market_price": 4850.0,
+      "official_recycle_price": 5192.0,
+      "recycle_price": null
+    },
+    "change_1d_by_platform": {
+      "xianyu_market": null,
+      "aihuishou": null,
+      "xianyu_official": null
+    },
+    "change_1d": null
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "archived_at": "2026-04-29T11:21:28.325749",
+  "scan_time": "2026-04-29",
+  "product_id": "rtx_4070",
+  "data": {
+    "product_id": "rtx_4070",
+    "product_name": "RTX 4070",
+    "updated_at": "2026-04-28",
+    "source": "coze_original_price_cache",
+    "note": "nickys 4/24数据，2950元，+28.3%，连续2次异动",
+    "status": "confirmed",
+    "platforms": {
+      "xianyu_market": {
+        "price": 2950.0,
+        "source": "coze_search_web",
+        "last_crawl": "2026-04-28",
+        "status": "confirmed"
+      },
+      "xianyu_official": {
+        "price": 2036.0,
+        "source": "coze_mobile_use",
+        "last_crawl": "2026-04-28",
+        "status": "confirmed"
+      },
+      "aihuishou": {
+        "price": null,
+        "source": "coze_mobile_use_or_search_web",
+        "last_crawl": "2026-04-28",
+        "status": "confirmed"
+      }
+    },
+    "xianyu_market": {
+      "avg": 2950.0,
+      "last_crawl": "2026-04-28",
+      "status": "confirmed",
+      "source": "coze_search_web"
+    },
+    "xianyu_official": {
+      "price": 2036.0,
+      "last_crawl": "2026-04-28",
+      "status": "confirmed",
+      "source": "coze_mobile_use"
+    },
+    "aihuishou": {
+      "tansuo_price": null,
+      "last_crawl": "2026-04-28",
+      "status": "no_price",
+      "source": "coze_mobile_use_or_search_web"
+    },
+    "latest_prices": {
+      "market_price": 2950.0,
+      "official_recycle_price": 2036.0,
+      "recycle_price": null
+    },
+    "change_1d_by_platform": {
+      "xianyu_market": null,
+      "aihuishou": null,
+      "xianyu_official": null
+    },
+    "change_1d": null
+  }
+}

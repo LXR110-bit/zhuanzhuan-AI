@@ -1,0 +1,903 @@
+{
+  "version": "1.0.0",
+  "date": "2026-04-29",
+  "generated_at": "2026-04-29T11:21:28.352091",
+  "source": "/Users/lilixiaoran/工作/转转/行情追踪助手/data/price_cache.json",
+  "ok": true,
+  "manual_confirmation_required": false,
+  "errors": [],
+  "warnings": [
+    "5600X: 本次扫描没有任何有效价格",
+    "5800X3D: 本次扫描没有任何有效价格",
+    "insta360 X4: 本次扫描没有任何有效价格",
+    "insta360 X4 Air: 本次扫描没有任何有效价格",
+    "NAND固态: 本次扫描没有任何有效价格",
+    "小米手环9: 本次扫描没有任何有效价格",
+    "小米手环10: 本次扫描没有任何有效价格",
+    "GoPro Hero 13: 本次扫描没有任何有效价格",
+    "GoPro Mission 1: 本次扫描没有任何有效价格"
+  ],
+  "products": {
+    "rtx_3060": {
+      "product_id": "rtx_3060",
+      "product_name": "RTX 3060",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 1450.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1450.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": 781.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 781.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "rtx_3070": {
+      "product_id": "rtx_3070",
+      "product_name": "RTX 3070",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 1480.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1480.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "rtx_3080": {
+      "product_id": "rtx_3080",
+      "product_name": "RTX 3080",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 3500.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 3500.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "rtx_3090": {
+      "product_id": "rtx_3090",
+      "product_name": "RTX 3090",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 4850.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 4850.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": 5192.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 5192.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "rtx_4070": {
+      "product_id": "rtx_4070",
+      "product_name": "RTX 4070",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 2950.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 2950.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": 2036.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 2036.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "rtx_4080": {
+      "product_id": "rtx_4080",
+      "product_name": "RTX 4080",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 5850.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 5850.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "i5_13600k": {
+      "product_id": "i5_13600k",
+      "product_name": "i5 13600K",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 1500.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1500.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "i7_13700k": {
+      "product_id": "i7_13700k",
+      "product_name": "i7 13700K",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 2100.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 2100.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": 1499.5,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1499.5,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "r5_5600x": {
+      "product_id": "r5_5600x",
+      "product_name": "5600X",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "5600X: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "r7_5800x3d": {
+      "product_id": "r7_5800x3d",
+      "product_name": "5800X3D",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "5800X3D: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "dji_pocket3": {
+      "product_id": "dji_pocket3",
+      "product_name": "DJI Pocket 3",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 1568.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1568.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": 1344.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1344.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "dji_pocket4": {
+      "product_id": "dji_pocket4",
+      "product_name": "DJI Pocket 4",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 2999.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 2999.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "dji_action5": {
+      "product_id": "dji_action5",
+      "product_name": "DJI Action 5",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 2098.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 2098.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "dji_action6": {
+      "product_id": "dji_action6",
+      "product_name": "DJI Action 6",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 2998.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 2998.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "djilito1": {
+      "product_id": "djilito1",
+      "product_name": "DJI Lito 1",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 1999.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1999.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "dji_lito_x1": {
+      "product_id": "dji_lito_x1",
+      "product_name": "DJI Lito X1",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 2488.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 2488.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "insta360_x4": {
+      "product_id": "insta360_x4",
+      "product_name": "insta360 X4",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "insta360 X4: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "insta360x4air": {
+      "product_id": "insta360x4air",
+      "product_name": "insta360 X4 Air",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "insta360 X4 Air: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "insta360_x5": {
+      "product_id": "insta360_x5",
+      "product_name": "insta360 X5",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 1717.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1717.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": 1302.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1302.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "insta360_acepro": {
+      "product_id": "insta360_acepro",
+      "product_name": "insta360 Ace Pro",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 1998.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 1998.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "ddr5_16g": {
+      "product_id": "ddr5_16g",
+      "product_name": "DDR5内存",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "platforms": {
+        "xianyu_market": {
+          "price": 560.0,
+          "previous_price": null,
+          "change_pct": null,
+          "display": 560.0,
+          "reason": null,
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "nand_ssd": {
+      "product_id": "nand_ssd",
+      "product_name": "NAND固态",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "NAND固态: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "PC硬件在闲鱼官方回收和爱回收覆盖率低，暂无报价是正常结果",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "xiaomi_band9": {
+      "product_id": "xiaomi_band9",
+      "product_name": "小米手环9",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "小米手环9: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "xiaomi_band10": {
+      "product_id": "xiaomi_band10",
+      "product_name": "小米手环10",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "小米手环10: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "goprohero13": {
+      "product_id": "goprohero13",
+      "product_name": "GoPro Hero 13",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "GoPro Hero 13: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    },
+    "gopromission1": {
+      "product_id": "gopromission1",
+      "product_name": "GoPro Mission 1",
+      "status": "no_valid_price",
+      "warnings": [],
+      "errors": [
+        "GoPro Mission 1: 本次扫描没有任何有效价格"
+      ],
+      "platforms": {
+        "xianyu_market": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "xianyu_official": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        },
+        "aihuishou": {
+          "price": null,
+          "previous_price": null,
+          "change_pct": null,
+          "display": "—",
+          "reason": "本次扫描未获取到有效报价",
+          "requires_manual_confirmation": false
+        }
+      }
+    }
+  },
+  "stats": {
+    "product_count": 26,
+    "valid_product_count": 17,
+    "valid_price_count": 23
+  }
+}

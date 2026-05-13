@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1920">
+<title>回收价格日报</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #1a1a2e;
+  color: #fff;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+}
+
+.card {
+  width: 1080px;
+  background: #16213e;
+  border-radius: 0;
+  margin: 0 auto;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+/* 卡片1：价格播报卡 */
+.card-header {
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  padding: 34px 40px 22px;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 31px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.card-subtitle {
+  font-size: 19px;
+  color: #94a3b8;
+  margin-bottom: 5px;
+}
+
+.card-meta {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* 品类分组区域 */
+.table-container {
+  padding: 0 32px 18px;
+}
+
+.section-label {
+  font-size: 17px;
+  color: #94a3b8;
+  margin: 16px 0 10px;
+  padding-left: 8px;
+  border-left: 4px solid #00e676;
+}
+
+/* 品类分组 */
+.category-group {
+  margin-bottom: 13px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: linear-gradient(90deg, rgba(30,58,95,0.6) 0%, rgba(30,58,95,0.2) 100%);
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 2px;
+}
+
+.category-name {
+  font-size: 17px;
+  font-weight: bold;
+  color: #e2e8f0;
+}
+
+.category-count {
+  font-size: 14px;
+  color: #64748b;
+  margin-left: auto;
+}
+
+/* 品类数据表格 */
+.category-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.category-table th {
+  background: #1e3a5f;
+  color: #94a3b8;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.category-table th:first-child { border-radius: 0; }
+.category-table th:last-child { border-radius: 0; }
+
+.category-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid rgba(30,58,95,0.5);
+}
+
+.category-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+.category-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+
+.model-name {
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.model-tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.model-tag-core {
+  background: rgba(255,183,77,0.2);
+  color: #ffb74d;
+}
+
+.model-tag-hot {
+  background: rgba(0,230,118,0.15);
+  color: #00e676;
+}
+
+.baseline {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.trend-tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.trend-up {
+  background: rgba(0,230,118,0.15);
+  color: #00e676;
+}
+
+.trend-down {
+  background: rgba(255,82,82,0.15);
+  color: #ff5252;
+}
+
+.trend-stable {
+  background: rgba(148,163,184,0.15);
+  color: #94a3b8;
+}
+
+.price {
+  color: #e2e8f0;
+  font-variant-numeric: tabular-nums;
+}
+
+.change-up {
+  color: #00e676;
+  font-weight: bold;
+}
+
+.change-down {
+  color: #ff5252;
+  font-weight: bold;
+}
+
+.change-flat {
+  color: #888;
+}
+
+.empty-row td {
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* 卡片2：信号速报卡 */
+.signal-header {
+  background: linear-gradient(135deg, #2d1b4e 0%, #16213e 100%);
+  padding: 40px 40px 28px;
+  text-align: center;
+}
+
+.signal-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.signal-container {
+  padding: 0 32px 32px;
+}
+
+.signal-box {
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.signal-s {
+  background: linear-gradient(135deg, rgba(255,82,82,0.2) 0%, rgba(239,68,68,0.1) 100%);
+  border: 1px solid rgba(255,82,82,0.4);
+  border-left: 4px solid #ff5252;
+}
+
+.signal-a {
+  background: linear-gradient(135deg, rgba(255,183,77,0.2) 0%, rgba(245,158,11,0.1) 100%);
+  border: 1px solid rgba(255,183,77,0.4);
+  border-left: 4px solid #ffb74d;
+}
+
+.signal-b {
+  background: linear-gradient(135deg, rgba(33,150,243,0.15) 0%, rgba(25,118,210,0.1) 100%);
+  border: 1px solid rgba(33,150,243,0.3);
+  border-left: 4px solid #2196f3;
+}
+
+.signal-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.signal-s .signal-label { color: #ff5252; }
+.signal-a .signal-label { color: #ffb74d; }
+.signal-b .signal-label { color: #64b5f6; }
+
+.signal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.signal-s .signal-dot { background: #ff5252; }
+.signal-a .signal-dot { background: #ffb74d; }
+.signal-b .signal-dot { background: #2196f3; }
+
+.signal-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.signal-item:last-child {
+  border-bottom: none;
+}
+
+.signal-item-title {
+  font-size: 16px;
+  color: #e2e8f0;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.signal-item-summary {
+  font-size: 15px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.signal-item-meta {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.signal-item-link {
+  font-size: 13px;
+  color: #60a5fa;
+  margin-top: 6px;
+  line-height: 1.35;
+  word-break: break-all;
+}
+
+.signal-empty {
+  color: #64748b;
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* 底部 */
+.card-footer {
+  padding: 16px 40px;
+  text-align: center;
+  border-top: 1px solid #1e3a5f;
+}
+
+.footer-text {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.watermark {
+  font-size: 16px;
+  color: #475569;
+  font-weight: 500;
+}
+</style>
+</head>
+<body>
+
+<!-- ========== 卡片1：价格播报卡 ========== -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">📡 回收价格日报</div>
+    <div class="card-subtitle">{{date}}</div>
+    <div class="card-meta">数据更新于 {{updated_at}}</div>
+  </div>
+  
+  <div class="table-container">
+    <div class="section-label">{{mode_label}}</div>
+    {{category_groups}}
+  </div>
+  
+  <div class="card-footer">
+    <div class="footer-text">数据来源：闲鱼市场、闲鱼回收、爱回收</div>
+    <div class="watermark">by 汤米</div>
+  </div>
+</div>
+
+<!-- ========== 卡片2：信号速报卡 ========== -->
+<div class="card">
+  <div class="signal-header">
+    <div class="signal-title">🚨 市场信号速报</div>
+    <div class="card-subtitle">{{date}}</div>
+  </div>
+  
+  <div class="signal-container">
+    <!-- S级信号 -->
+    {{s_signals}}
+    
+    <!-- A级信号 -->
+    {{a_signals}}
+    
+    <!-- B级信号 -->
+    {{b_signals}}
+  </div>
+  
+  <div class="card-footer">
+    <div class="footer-text">{{data_quality}}</div>
+    <div class="watermark">by 汤米</div>
+  </div>
+</div>
+
+</body>
+</html>

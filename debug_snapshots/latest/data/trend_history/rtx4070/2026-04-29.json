@@ -1,0 +1,63 @@
+{
+  "archived_at": "2026-04-29T10:47:30.243106",
+  "scan_time": "2026-04-29",
+  "product_id": "rtx4070",
+  "data": {
+    "product_id": "rtx4070",
+    "product_name": "RTX 4070",
+    "updated_at": "2026-04-29 10:47:16",
+    "platforms": {
+      "aihuishou": {
+        "price": null,
+        "condition": "",
+        "source_url": "https://www.aihuishou.com/search?keyword=RTX 4070",
+        "crawl_time": "2026-04-29 10:47:08",
+        "status": "failed:HTTPSConnectionPool(host='www.aihuishou.com', port=443): Max retries exceeded with url: /search?keyword=RTX%204070 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))"
+      },
+      "xianyu": {
+        "price": null,
+        "condition": "",
+        "source_url": "https://s.goofish.com/search?q=RTX 4070",
+        "crawl_time": "2026-04-29 10:47:12",
+        "status": "failed:HTTPSConnectionPool(host='s.goofish.com', port=443): Max retries exceeded with url: /search?q=RTX%204070 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))"
+      },
+      "pinduoduo": {
+        "price": null,
+        "condition": "",
+        "source_url": "https://mobile.yangkeduo.com/search_result.html?search_key=[REDACTED] 4070",
+        "crawl_time": "2026-04-29 10:47:16",
+        "status": "failed:HTTPSConnectionPool(host='mobile.yangkeduo.com', port=443): Max retries exceeded with url: /search_result.html?search_key=[REDACTED] (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))"
+      }
+    },
+    "aihuishou": {
+      "tansuo_price": null,
+      "last_crawl": "2026-04-29 10:47:08",
+      "status": "failed:HTTPSConnectionPool(host='www.aihuishou.com', port=443): Max retries exceeded with url: /search?keyword=RTX%204070 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))",
+      "source_url": "https://www.aihuishou.com/search?keyword=RTX 4070"
+    },
+    "xianyu_market": {
+      "avg": null,
+      "last_crawl": "2026-04-29 10:47:12",
+      "status": "failed:HTTPSConnectionPool(host='s.goofish.com', port=443): Max retries exceeded with url: /search?q=RTX%204070 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))",
+      "source_url": "https://s.goofish.com/search?q=RTX 4070"
+    },
+    "pinduoduo": {
+      "lowest_price": null,
+      "last_crawl": "2026-04-29 10:47:16",
+      "status": "failed:HTTPSConnectionPool(host='mobile.yangkeduo.com', port=443): Max retries exceeded with url: /search_result.html?search_key=[REDACTED] (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=1082): Failed to establish a new connection: [Errno 1] Operation not permitted\")))",
+      "source_url": "https://mobile.yangkeduo.com/search_result.html?search_key=[REDACTED] 4070"
+    },
+    "latest_prices": {
+      "recycle_price": null,
+      "market_price": null,
+      "new_price": null
+    },
+    "change_1d_by_platform": {
+      "xianyu_market": null,
+      "aihuishou": null,
+      "pinduoduo": null,
+      "xianyu_official": null
+    },
+    "change_1d": null
+  }
+}

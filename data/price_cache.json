@@ -271,8 +271,8 @@
         ],
         "median": 1542,
         "currency": "CNY",
-        "change_1d": 0.0,
-        "prev_price": 950,
+        "change_1d": 6.42,
+        "prev_price": 1449,
         "collected_at": "2026-05-12T21:56:05+08:00"
       },
       "xianyu_official": {
@@ -310,8 +310,8 @@
         ],
         "median": 1100,
         "currency": "CNY",
-        "change_1d": 0.0,
-        "prev_price": 586,
+        "change_1d": 6.38,
+        "prev_price": 1034,
         "collected_at": "2026-05-11T22:00:11+08:00"
       },
       "xianyu_official": {
@@ -349,8 +349,8 @@
         ],
         "median": 6188,
         "currency": "CNY",
-        "change_1d": 0.0,
-        "prev_price": 4349,
+        "change_1d": 6.4,
+        "prev_price": 5816,
         "collected_at": "2026-05-11T22:00:11+08:00"
       },
       "xianyu_official": {
@@ -581,7 +581,7 @@
       "xianyu_market": {
         "price": 2050,
         "currency": "CNY",
-        "change_1d": 0.0,
+        "change_1d": 6.38,
         "collected_at": "2026-05-15T10:03:51+08:00",
         "samples": [
           1927.0,
@@ -591,7 +591,7 @@
           2173.0
         ],
         "median": 2050,
-        "prev_price": 1435
+        "prev_price": 1927
       },
       "xianyu_official": {
         "price": 1677,
@@ -622,7 +622,7 @@
       "xianyu_market": {
         "price": 1799,
         "currency": "CNY",
-        "change_1d": 94.49,
+        "change_1d": 6.39,
         "collected_at": "2026-05-15T10:18:01+08:00",
         "samples": [
           1691.1,
@@ -632,7 +632,7 @@
           1906.9
         ],
         "median": 1799,
-        "prev_price": 925
+        "prev_price": 1691
       },
       "xianyu_official": {},
       "aihuishou": {

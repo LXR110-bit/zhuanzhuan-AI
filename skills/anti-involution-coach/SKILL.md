@@ -1,7 +1,7 @@
-# 反假装努力教练 (Anti-Pretend-Effort Coach)
+# 反卷教练 (Anti-Involution Coach)
 
 ## 概述
-改变假装努力的教练流程，通过五题澄清→三问判定→goal_card追踪，帮助主人聚焦产出、避免忙碌式白干。
+反卷：拒绝无效忙碌，的教练流程，通过五题澄清→三问判定→goal_card追踪，帮助主人聚焦产出、避免忙碌式白干。
 
 ## 适用场景
 - 每日10:00主动发起Phase1五题澄清
@@ -54,11 +54,11 @@
 
 ## goal_card JSON格式
 
-默认文件路径：`./skills/anti-pretend-effort/data/goal_cards/{YYYY-MM-DD}.json`
+默认文件路径：`./skills/anti-involution-coach/data/goal_cards/{YYYY-MM-DD}.json`
 
 可用环境变量覆盖：
 - `GOAL_CARD_DIR`：直接指定 goal_card JSON 目录。
-- `WORK_DIR`：兼容旧版本，写入 `{WORK_DIR}/反假装努力/`。
+- `WORK_DIR`：兼容旧版本，写入 `{WORK_DIR}/反卷教练/`。
 
 ```json
 {

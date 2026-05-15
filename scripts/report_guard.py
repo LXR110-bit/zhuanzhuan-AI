@@ -123,7 +123,9 @@ def check_before_push():
     sent_at = push_status.get("sent_at", "")
     wecom_push = status.get("wecom_push", "")
     # 防重复推送：当天已推成功过（guard脚本或curl直接推送都会写push_status）
-    if (push_status.get("sent") is True and sent_at.startswith(today_str())) or wecom_push == "success" and status.get("date") == today_str():
+    sent_by_guard = push_status.get("sent") is True and sent_at.startswith(today_str())
+    sent_by_wecom = wecom_push == "success" and status.get("date") == today_str()
+    if sent_by_guard or sent_by_wecom:
         errors.append("daily report already sent")
 
     if push_time:

@@ -13,6 +13,8 @@ import argparse
 import json
 import mimetypes
 import os
+import subprocess
+import sys
 import uuid
 import urllib.parse
 import urllib.request
@@ -26,6 +28,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PAYLOAD_FILE = BASE_DIR / "data" / "daily_report_payload.json"
 PUSH_STATUS_FILE = BASE_DIR / "data" / "push_status.json"
 OUTBOX_DIR = BASE_DIR / "data" / "outbox"
+REPAIR_LOG_FILE = BASE_DIR / "data" / "logs" / "daily_report_pipeline.log"
+REPAIR_COMMANDS = [
+    [sys.executable, "scripts/price_data_validator.py"],
+    [sys.executable, "scripts/price_daily_recorder.py"],
+    [sys.executable, "scripts/generate_daily_report_payload.py"],
+    [sys.executable, "scripts/render_cards_html.py"],
+]
 
 
 def load_json(path):
@@ -41,6 +50,72 @@ def save_json(path, data):
     with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     tmp_path.replace(path)
+
+
+def today_str():
+    return datetime.now().strftime("%Y-%m-%d")
+
+
+def log_repair(message):
+    REPAIR_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(REPAIR_LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"{datetime.now().isoformat()} {message}\n")
+
+
+def file_is_today(path):
+    path = Path(path)
+    if not path.is_absolute():
+        path = BASE_DIR / path
+    if not path.exists():
+        return False
+    return datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d") == today_str()
+
+
+def needs_report_repair():
+    payload = load_json(PAYLOAD_FILE)
+    status = load_json(PUSH_STATUS_FILE)
+    reasons = []
+
+    if payload.get("date") != today_str():
+        reasons.append(f"payload.date={payload.get('date')}")
+    if status.get("date") != today_str():
+        reasons.append(f"push_status.date={status.get('date')}")
+
+    combined_card = (payload.get("images") or {}).get("combined_card")
+    if not combined_card:
+        reasons.append("combined_card missing")
+    elif not file_is_today(combined_card):
+        reasons.append(f"combined_card stale: {combined_card}")
+
+    return reasons
+
+
+def repair_daily_report_if_needed():
+    reasons = needs_report_repair()
+    if not reasons:
+        return []
+
+    log_repair("auto_repair_start: " + "; ".join(reasons))
+    for cmd in REPAIR_COMMANDS:
+        label = " ".join(cmd)
+        log_repair(f"run: {label}")
+        completed = subprocess.run(
+            cmd,
+            cwd=BASE_DIR,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=300,
+        )
+        if completed.returncode != 0:
+            log_repair(f"failed: {label}\nstdout={completed.stdout}\nstderr={completed.stderr}")
+            raise RuntimeError(f"daily report auto repair failed: {label}")
+        if completed.stdout:
+            log_repair(f"stdout: {label}\n{completed.stdout[-2000:]}")
+        if completed.stderr:
+            log_repair(f"stderr: {label}\n{completed.stderr[-2000:]}")
+    log_repair("auto_repair_done")
+    return reasons
 
 
 def post_json(url, payload):
@@ -354,6 +429,7 @@ def main():
     parser.add_argument("--base-url", default=os.environ.get("REPORT_CARD_BASE_URL", ""))
     args = parser.parse_args()
 
+    repaired_reasons = repair_daily_report_if_needed()
     guard = check_before_push()
     if not guard["ok"]:
         if any("push deadline passed" in err for err in guard.get("errors", [])):
@@ -368,6 +444,8 @@ def main():
             "ok": True,
             "mode": "dry_run",
             "outbox": str(outbox),
+            "auto_repaired": bool(repaired_reasons),
+            "repair_reasons": repaired_reasons,
             "images": payload.get("images", {}),
             "preferred_image": "combined_card" if payload.get("images", {}).get("combined_card") else "split_cards",
             "text_summary": build_text_summary(payload),

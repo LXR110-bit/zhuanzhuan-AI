@@ -104,11 +104,14 @@
       "description_template": "v2.8日程 - 汇总推送",
       "sub_agent_tools": ["bash"],
       "push_steps": [
-        "检查 data/report_cards/ 下当天PNG卡片是否存在",
-        "存在 → 推送两张卡片到扣子主对话 + 企业微信webhook",
-        "不存在 → 在扣子主对话报告异常"
+        "执行 python3 scripts/send_daily_report.py，由脚本自动检查 payload/push_status/合并PNG 是否为当天产物",
+        "如当天产物缺失或过期 → 自动补跑 price_data_validator、price_daily_recorder、generate_daily_report_payload、render_cards_html",
+        "产物有效 → 只推送 combined_card 合并卡片到扣子主对话 + 企业微信webhook",
+        "补生成或推送失败 → 在扣子主对话报告异常，并保留 data/logs/daily_report_pipeline.log"
       ],
-      "python_after_tools": []
+      "python_after_tools": [
+        "python3 scripts/send_daily_report.py"
+      ]
     },
     "noon_anomaly": {
       "calendar_summary": "异动午间",

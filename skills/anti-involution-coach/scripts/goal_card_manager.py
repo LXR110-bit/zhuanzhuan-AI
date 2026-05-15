@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-反假装努力 - goal_card 管理脚本
+反卷教练 - goal_card 管理脚本
 用于读写当天的 goal_card / review / daily_summary / heartbeat JSON 文件。
 
 调用方约定：
@@ -28,7 +28,7 @@ def resolve_base_dir():
         return Path(goal_card_dir).expanduser().resolve()
     work_dir = os.environ.get("WORK_DIR")
     if work_dir:
-        return Path(work_dir).expanduser().resolve() / "反假装努力"
+        return Path(work_dir).expanduser().resolve() / "反卷教练"
     return SKILL_DIR / "data" / "goal_cards"
 
 

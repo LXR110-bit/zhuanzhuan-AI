@@ -2,16 +2,17 @@
 
 ## goal_cards
 
-One day can contain multiple goal cards, but only one should be active at a time.
+One day can contain multiple goal cards, but the manager enforces that only one can be active at a time.
 
 Required fields:
 - `card_date`: Local date in Asia/Shanghai, formatted as `YYYY-MM-DD`.
 - `card_index`: 1-based index within the day.
-- `boss_want`: What the boss/user actually wants.
-- `structure`: The execution structure distilled from Q2-Q5.
-- `deliverable`: The most important deliverable today.
+- `boss_want`: What the boss/user actually wants (Q1).
+- `deliverable`: The most important deliverable today (Q2).
+- `min_version`: The minimum viable shape of the deliverable (Q3).
 - `deadline`: Deadline or expected handoff time.
-- `trap_forecast`: What would make today wasted.
+- `trap_forecast`: What would make today wasted (Q4).
+- `first_cut`: The first concrete cut to start with (Q5).
 - `status`: One of `active`, `completed`, `abandoned`.
 
 Recommended future fields:
@@ -20,7 +21,7 @@ Recommended future fields:
 
 ## reviews
 
-Each review belongs to an existing goal card.
+Each review must belong to an existing goal card. The manager rejects orphan reviews.
 
 Required fields:
 - `card_date`: Local date in Asia/Shanghai.
@@ -52,7 +53,7 @@ Required fields:
 
 ## heartbeat_logs
 
-Planned diagnostic layer for unreliable Coze heartbeats.
+Diagnostic layer for external scheduler (e.g. Coze) heartbeats. Every heartbeat MUST write a log entry, even if it skips action. The manager validates `event_type`, `active_card_found`, and `push_status`.
 
 Required fields:
 - `heartbeat_time`: Local timestamp.

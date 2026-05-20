@@ -39,6 +39,7 @@ VALID_REVIEW_VERDICTS = {"在轨", "跑偏", "伪装忙碌"}
 VALID_SUMMARY_VERDICTS = {"有效推进", "部分推进", "假装努力"}
 VALID_EVENT_TYPES = {"goal_start", "heartbeat", "segment_close", "daily_close"}
 VALID_PUSH_STATUSES = {"success", "failed", "skipped", "unknown"}
+VALID_OUTPUT_CHANNELS = {"coze"}
 DEFAULT_DATA = {
     "goal_cards": [],
     "reviews": [],
@@ -234,7 +235,7 @@ def update_goal_status(card_index, status):
     print(json.dumps({"ok": True, **result}, ensure_ascii=False))
 
 
-def add_heartbeat(node, event_type, active_card_found, action_taken, push_status="success", reason=""):
+def add_heartbeat(node, event_type, active_card_found, action_taken, push_status="success", reason="", output_channel="coze"):
     """
     写入一条心跳诊断日志。Coze 不可靠时，靠这张表反查哑火节点。
 
@@ -242,6 +243,7 @@ def add_heartbeat(node, event_type, active_card_found, action_taken, push_status
     event_type: goal_start | heartbeat | segment_close | daily_close
     active_card_found: "true" / "false"
     push_status: success | failed | skipped | unknown
+    output_channel: coze
     """
     if event_type not in VALID_EVENT_TYPES:
         print_error(f"invalid event_type: {event_type}")
@@ -249,6 +251,8 @@ def add_heartbeat(node, event_type, active_card_found, action_taken, push_status
         print_error("active_card_found must be true or false")
     if push_status not in VALID_PUSH_STATUSES:
         print_error(f"invalid push_status: {push_status}")
+    if output_channel not in VALID_OUTPUT_CHANNELS:
+        print_error(f"invalid output_channel for coaching message: {output_channel}")
 
     def mutator(data):
         file_path = str(get_today_file())
@@ -261,6 +265,7 @@ def add_heartbeat(node, event_type, active_card_found, action_taken, push_status
             "action_taken": action_taken,
             "push_status": push_status,
             "reason": reason,
+            "output_channel": output_channel,
         }
         data["heartbeat_logs"].append(entry)
         return entry
@@ -315,9 +320,10 @@ Commands:
   update_status <card_index> <status>
       status in {active, completed, abandoned}.
 
-  heartbeat <node> <event_type> <active_card_found> <action_taken> [push_status] [reason]
+  heartbeat <node> <event_type> <active_card_found> <action_taken> [push_status] [reason] [output_channel]
       Log a heartbeat run. event_type in {goal_start, heartbeat, segment_close, daily_close}.
       active_card_found is "true" or "false". push_status defaults to success.
+      output_channel defaults to coze; coaching messages reject all other channels.
 """
 
 
@@ -352,11 +358,12 @@ if __name__ == "__main__":
         update_goal_status(int(sys.argv[2]), sys.argv[3])
     elif cmd == "heartbeat":
         if len(sys.argv) < 6:
-            print("Usage: goal_card_manager.py heartbeat <node> <event_type> <active_card_found> <action_taken> [push_status] [reason]")
+            print("Usage: goal_card_manager.py heartbeat <node> <event_type> <active_card_found> <action_taken> [push_status] [reason] [output_channel]")
             sys.exit(1)
         push_status = sys.argv[6] if len(sys.argv) > 6 else "success"
         reason = sys.argv[7] if len(sys.argv) > 7 else ""
-        add_heartbeat(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], push_status, reason)
+        output_channel = sys.argv[8] if len(sys.argv) > 8 else "coze"
+        add_heartbeat(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], push_status, reason, output_channel)
     else:
         print(f"Unknown command: {cmd}\n")
         print(USAGE)

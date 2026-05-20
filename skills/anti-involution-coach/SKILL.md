@@ -27,6 +27,14 @@ description: 反卷教练。在每日10:00自动发起五题澄清、工作段�
 3. **只认产出**——"我思考了"不算产出，要可交付物
 4. **陷阱预判**——主动指出可能导致返工/白干的模式
 
+## 渠道隔离铁律
+
+- 反卷教练 coaching 消息只允许输出到扣子主对话，渠道名固定为 `coze`。
+- 任何外部群聊、机器人地址、webhook、`WECOM_WEBHOOK_URL`、`qyapi.weixin.qq.com/cgi-bin/webhook`、企微/企业微信/行情播报相关描述，出现在反卷教练日程描述里都视为配置污染。
+- 发现配置污染时，不要继续推送 coaching 内容；先写 heartbeat，`push_status=skipped`，`reason=channel_policy_violation`，然后在扣子主对话报告需要修正日程描述。
+- 行情播报渠道只服务日报卡片、异动信号、新品信号、微博信号；不得承载反卷教练内容。
+- 标准扣子日程描述使用 `templates/coze_schedules/` 下 6 个模板；发布前必须运行 `python3 scripts/validate_anti_involution_channels.py`。
+
 ## 流程
 
 详细时间表见 `config/schedule.md`；数据结构和后续心跳诊断字段见 `config/schema.md`。本文件只定义教练行为和判断标准。
@@ -37,7 +45,7 @@ description: 反卷教练。在每日10:00自动发起五题澄清、工作段�
 
 1. 运行 `python scripts/goal_card_manager.py status`，读出当天的 active goal_card、最近一条 review、当天 summary 状态。
 2. 根据当前时间和 `config/schedule.md` 判断这是哪个节点（10:00 五题 / 工作段心跳 / 12:00 收尾 / 13:30 开工 / 18:00 断点 / 19:00 开工 / 21:00 总结）。
-3. 写一条 heartbeat_log：`python scripts/goal_card_manager.py heartbeat <node> <event_type> <active_card_found> <action_taken>`。
+3. 写一条 heartbeat_log：`python scripts/goal_card_manager.py heartbeat <node> <event_type> <active_card_found> <action_taken> <push_status> <reason> coze`。
 
 **只有读完 status 才能开口**。如果上一条 review 的 next_action 是"19:00 回来先写引言段"，那 19:00 打过来时第一句必须是"上次说要先写引言段。开了吗？"——不是重新问"今晚最小可交付是什么"。**累积上下文是教练的本职，没累积就是失职。**
 

@@ -1,0 +1,21 @@
+{
+  "skill": "anti-involution-coach",
+  "allowed_output_channels": ["coze"],
+  "default_output_channel": "coze",
+  "forbidden_output_channels": ["wecom", "wechat_work", "enterprise_wechat", "webhook"],
+  "forbidden_terms": [
+    "webhook",
+    "WECOM_WEBHOOK_URL",
+    "qyapi.weixin.qq.com/cgi-bin/webhook",
+    "企业微信",
+    "企微",
+    "行情播报",
+    "行情咨询播报助手",
+    "5f161534-faed-49a3-a0da-1068ebbce0ea"
+  ],
+  "rules": [
+    "反卷教练 coaching 消息只允许输出到扣子主对话。",
+    "反卷教练日程描述不得包含任何外部群聊、机器人或 webhook 配置。",
+    "日报卡片、异动信号、新品信号、微博信号可以使用行情播报渠道；coaching 消息不可以。"
+  ]
+}

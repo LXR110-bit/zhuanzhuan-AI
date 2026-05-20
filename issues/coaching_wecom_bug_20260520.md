@@ -15,6 +15,31 @@
 2. **工单修正**：从反卷教练6个日程工单的description中移除企微webhook引用
 3. **代码层面**：coaching相关的heartbeat/review/summary推送逻辑增加渠道白名单检查，仅允许coze渠道
 
+## 仓库修复状态
+- 已新增渠道策略：`skills/anti-involution-coach/policy/channel_policy.json`
+- 已新增6个扣子日程描述模板：`skills/anti-involution-coach/templates/coze_schedules/`
+- 已增强 heartbeat：新增 `output_channel`，只允许 `coze`
+- 已新增校验脚本：`scripts/validate_anti_involution_channels.py`
+
+## 验证命令
+```bash
+python3 -m py_compile skills/anti-involution-coach/scripts/goal_card_manager.py scripts/validate_anti_involution_channels.py
+python3 scripts/validate_anti_involution_channels.py
+GOAL_CARD_DIR=/tmp/anti-involution-test python3 skills/anti-involution-coach/scripts/goal_card_manager.py heartbeat 19:00 heartbeat true evening_start success ok coze
+GOAL_CARD_DIR=/tmp/anti-involution-test python3 skills/anti-involution-coach/scripts/goal_card_manager.py heartbeat 19:00 heartbeat true evening_start success ok wecom
+```
+
+最后一条应返回失败，用于确认非 coze 渠道被拒绝。
+
+## 扣子后台同步清单
+- 将10:00日程description替换为 `templates/coze_schedules/10_00_goal_start.md`
+- 将12:00日程description替换为 `templates/coze_schedules/12_00_morning_close.md`
+- 将13:30日程description替换为 `templates/coze_schedules/13_30_afternoon_start.md`
+- 将18:00日程description替换为 `templates/coze_schedules/18_00_dinner_handoff.md`
+- 将19:00日程description替换为 `templates/coze_schedules/19_00_evening_start.md`
+- 将21:00日程description替换为 `templates/coze_schedules/21_00_daily_close.md`
+- 每条日程description都必须只出现 `coze_only`，不得包含任何外部群聊或机器人地址配置
+
 ## 规则记录
 - 行情播报webhook（5f161534-faed-49a3-a0da-1068ebbce0ea）只用于：日报卡片、异动信号、新品信号、微博信号
 - coaching消息（反卷教练6个节点）只通过扣子主对话推送

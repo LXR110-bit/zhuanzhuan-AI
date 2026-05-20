@@ -64,3 +64,4 @@ Required fields:
 - `action_taken`: What the run attempted.
 - `push_status`: One of `success`, `failed`, `skipped`, `unknown`.
 - `reason`: Why it succeeded, failed, or skipped.
+- `output_channel`: Must be `coze`. Coaching messages reject every other output channel.

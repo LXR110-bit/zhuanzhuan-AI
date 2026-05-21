@@ -22,6 +22,7 @@ from datetime import datetime
 from pathlib import Path
 
 from report_guard import check_before_push
+from runtime_logger import log_event, log_exception
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -61,6 +62,7 @@ def log_repair(message):
     REPAIR_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(REPAIR_LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"{datetime.now().isoformat()} {message}\n")
+    log_event("daily_report.repair_log", message=message)
 
 
 def file_is_today(path):
@@ -427,6 +429,7 @@ def mark_status(status_value, error=None):
         daily["sent"] = True
         daily["sent_at"] = now_text
     save_json(PUSH_STATUS_FILE, status)
+    log_event("daily_report.status_marked", status=status_value, error=error, push_time=daily.get("push_time"))
 
 
 def write_outbox(payload):
@@ -447,10 +450,12 @@ def main():
     parser.add_argument("--webhook-url", default=os.environ.get("WECOM_WEBHOOK_URL", ""))
     parser.add_argument("--base-url", default=os.environ.get("REPORT_CARD_BASE_URL", ""))
     args = parser.parse_args()
+    log_event("daily_report_send.start", dry_run=args.dry_run, has_webhook=bool(args.webhook_url), has_base_url=bool(args.base_url))
 
     repaired_reasons = repair_daily_report_if_needed()
     guard = check_before_push()
     if not guard["ok"]:
+        log_event("daily_report_send.guard_failed", ok=False, errors=guard.get("errors", []), warnings=guard.get("warnings", []))
         if any("push deadline passed" in err for err in guard.get("errors", [])):
             mark_status("missed", "; ".join(guard.get("errors", [])))
         raise SystemExit(json.dumps(guard, ensure_ascii=False, indent=2))
@@ -459,6 +464,7 @@ def main():
 
     if args.dry_run or not args.webhook_url:
         outbox = write_outbox(payload)
+        log_event("daily_report_send.done", ok=True, mode="dry_run", outbox=str(outbox), auto_repaired=bool(repaired_reasons))
         print(json.dumps({
             "ok": True,
             "mode": "dry_run",
@@ -481,11 +487,19 @@ def main():
             send_files(args.webhook_url, payload)
             mode = "file_upload"
         mark_status("sent")
+        log_event("daily_report_send.done", ok=True, mode=mode, auto_repaired=bool(repaired_reasons))
         print(json.dumps({"ok": True, "mode": mode}, ensure_ascii=False, indent=2))
     except Exception as exc:
         mark_status("retrying", str(exc))
+        log_exception("daily_report_send.exception", exc)
         raise
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as exc:
+        log_exception("daily_report_send.unhandled_exception", exc)
+        raise

@@ -10,6 +10,8 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+from runtime_logger import log_event, log_exception
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -343,12 +345,23 @@ def main():
     parser.add_argument("--report", default=str(VALIDATION_REPORT_FILE))
     parser.add_argument("--votes", default=str(ANOMALY_VOTES_FILE))
     args = parser.parse_args()
+    log_event("price_validator.start", price_cache=args.price_cache, report=args.report, votes=args.votes)
 
     cache = load_json(Path(args.price_cache))
     thresholds = load_json(THRESHOLDS_FILE)
     report, votes = validate_cache(cache, thresholds)
     save_json(Path(args.report), report)
     save_json(Path(args.votes), votes)
+    log_event(
+        "price_validator.done",
+        ok=report["ok"],
+        manual_confirmation_required=report["manual_confirmation_required"],
+        product_count=report["stats"]["product_count"],
+        valid_price_count=report["stats"]["valid_price_count"],
+        warnings=len(report["warnings"]),
+        errors=len(report["errors"]),
+        votes=len(votes.get("items", [])),
+    )
 
     print(json.dumps({
         "ok": report["ok"],
@@ -364,4 +377,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as exc:
+        log_exception("price_validator.exception", exc)
+        raise

@@ -118,7 +118,13 @@ def tail_file(src: Path, dst: Path, lines: int) -> bool:
 
 def collect_logs(dst_root: Path, lines: int) -> list[str]:
     copied = []
-    for pattern in ("logs/*.log", "cloud-pc-monitor/logs/*.log", "cloud-pc-monitor/logs/*.md"):
+    for pattern in (
+        "logs/*.log",
+        "data/logs/*.log",
+        "data/logs/*.jsonl",
+        "cloud-pc-monitor/logs/*.log",
+        "cloud-pc-monitor/logs/*.md",
+    ):
         for src in sorted(ROOT.glob(pattern)):
             rel = src.relative_to(ROOT)
             if tail_file(src, dst_root / rel, lines):

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from price_history_analyzer import build_all_products_history
 from action_engine import ActionEngine
+from runtime_logger import log_event, log_exception
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -529,6 +530,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default=str(PAYLOAD_FILE))
     args = parser.parse_args()
+    log_event("daily_payload.start", output=args.output)
 
     price_cache = load_json(PRICE_CACHE_FILE)
     cloud_pc_data = load_json(CLOUD_PC_DAILY_FILE)
@@ -547,6 +549,7 @@ def main():
         history = build_all_products_history()
     except Exception as exc:
         print(f"[warn] history build failed: {exc}", file=sys.stderr)
+        log_event("daily_payload.history_failed", ok=False, error=str(exc))
 
     history_products = history.get("products", {})
     for row in display_rows:
@@ -612,6 +615,7 @@ def main():
         engine.save_actions(action_items)
     except Exception as exc:
         print(f"[warn] action engine failed: {exc}", file=sys.stderr)
+        log_event("daily_payload.action_engine_failed", ok=False, error=str(exc))
     
     payload = {
         "version": "2.8.0",
@@ -664,7 +668,25 @@ def main():
         "action_items_count": len(action_items),
         "missing": len(missing),
     }, ensure_ascii=False, indent=2))
+    log_event(
+        "daily_payload.done",
+        ok=True,
+        output=str(output),
+        date=payload["date"],
+        rows=len(rows),
+        display_rows=len(display_rows),
+        display_policy=display_policy.get("mode"),
+        signals={k: len(v) for k, v in signals.items()},
+        action_items_count=len(action_items),
+        missing=len(missing),
+    )
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as exc:
+        log_exception("daily_payload.exception", exc)
+        raise

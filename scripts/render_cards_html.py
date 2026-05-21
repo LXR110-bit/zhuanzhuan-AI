@@ -15,6 +15,8 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 
+from runtime_logger import log_event, log_exception
+
 # 尝试导入 playwright
 try:
     from playwright.sync_api import sync_playwright
@@ -779,6 +781,13 @@ def main():
     payload_file = Path(args.payload) if args.payload else PAYLOAD_FILE
     template_file = Path(args.template) if args.template else TEMPLATE_FILE
     output_dir = Path(args.output) if args.output else OUTPUT_DIR
+    log_event(
+        "card_render.start",
+        payload=str(payload_file),
+        template=str(template_file),
+        output_dir=str(output_dir),
+        no_screenshot=args.no_screenshot,
+    )
     
     # 确保输出目录存在
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -839,6 +848,15 @@ def main():
             print(f"价格SVG已保存: {price_path}")
             print(f"信号SVG已保存: {market_path}")
             print(f"合并SVG已保存: {combined_path}")
+            log_event(
+                "card_render.done",
+                ok=True,
+                render_engine="html_css_svg_fallback",
+                date=date,
+                market_card=str(market_path),
+                price_card=str(price_path),
+                combined_card=str(combined_path),
+            )
             return
         update_payload_and_status(
             payload_file.resolve(),
@@ -850,7 +868,24 @@ def main():
         print(f"价格PNG已保存: {price_png_path}")
         print(f"信号PNG已保存: {market_png_path}")
         print(f"合并PNG已保存: {combined_png_path}")
+        log_event(
+            "card_render.done",
+            ok=True,
+            render_engine="html_css_browser_screenshot",
+            date=date,
+            market_card=str(market_png_path.resolve()),
+            price_card=str(price_png_path.resolve()),
+            combined_card=str(combined_png_path.resolve()),
+        )
+    else:
+        log_event("card_render.done", ok=True, render_engine="html_only", date=date, combined_html=str(html_path.resolve()))
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as exc:
+        log_exception("card_render.exception", exc)
+        raise

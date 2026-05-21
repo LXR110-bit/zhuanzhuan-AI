@@ -147,6 +147,13 @@ export WECOM_WEBHOOK_URL="企业微信机器人Webhook"
 export REPORT_CARD_BASE_URL="可公开访问data/report_cards的URL，可选"
 ```
 
+运行诊断日志：
+- 行情链路结构化日志默认写入 `data/logs/market_runtime.jsonl`
+- 自动补跑文本日志仍写入 `data/logs/daily_report_pipeline.log`
+- 可用 `MARKET_TRACKER_LOG_FILE=/tmp/market_runtime.jsonl` 临时改日志位置
+- 默认脱敏命令参数；排障时如需记录原始参数，临时设置 `MARKET_TRACKER_LOG_RAW_ARGS=1`
+- 提交排障材料时优先用 `python3 scripts/collect_debug_snapshot.py`，不要直接提交原始 `data/logs/`
+
 安全要求：
 - `记忆文件/SECRET.md` 只允许本地保存，已加入 `.gitignore` / `.exportignore`
 - 对外打包时必须排除 `SECRET.md`

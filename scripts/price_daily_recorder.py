@@ -6,6 +6,8 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+from runtime_logger import log_event, log_exception
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -227,6 +229,7 @@ def write_collection_flag(daily):
         "source": str(PRICE_CACHE_FILE),
         "records": len(daily.get("records") or []),
     })
+    log_event("price_daily_recorder.flag_written", file=str(PRICE_COLLECTION_FLAG), date=daily["date"], records=len(daily.get("records") or []))
 
 
 def main():
@@ -234,6 +237,7 @@ def main():
     parser.add_argument("--price-cache", default=str(PRICE_CACHE_FILE))
     parser.add_argument("--output-dir", default=str(DAILY_PRICE_DIR))
     args = parser.parse_args()
+    log_event("price_daily_recorder.start", price_cache=args.price_cache, output_dir=args.output_dir)
 
     cache_path = Path(args.price_cache)
     cache = load_json(cache_path)
@@ -249,7 +253,14 @@ def main():
         "output": str(output),
         "records": len(daily["records"]),
     }, ensure_ascii=False, indent=2))
+    log_event("price_daily_recorder.done", ok=True, output=str(output), date=daily["date"], records=len(daily["records"]))
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as exc:
+        log_exception("price_daily_recorder.exception", exc)
+        raise

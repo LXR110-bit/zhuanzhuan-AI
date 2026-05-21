@@ -25,6 +25,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from runtime_logger import log_event, log_exception
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_CACHE_PATH = BASE_DIR / "data" / "price_cache.json"
@@ -77,6 +79,7 @@ def update_product(data: dict, product_id: str, new_price: float, platform: str 
     config = PLATFORM_CONFIG.get(platform, PLATFORM_CONFIG["xianyu_market"])
     
     if product_id not in data["prices"]:
+        log_event("price_update.product_missing", product_id=product_id, platform=platform)
         print(f"  ⚠️  产品 {product_id} 不存在于缓存中，跳过")
         return data
     
@@ -122,6 +125,14 @@ def update_product(data: dict, product_id: str, new_price: float, platform: str 
     product["change_1d"] = change_1d
     
     print(f"  ✓ {product_id} [{platform}]: {old_price} → {new_price} ({change_1d:+.2f}%)")
+    log_event(
+        "price_update.product_updated",
+        product_id=product_id,
+        platform=platform,
+        old_price=old_price,
+        new_price=new_price,
+        change_1d=change_1d,
+    )
     
     return data
 
@@ -137,6 +148,14 @@ def main():
     parser.add_argument("--skip-validation", action="store_true", help="跳过行情价合理性校验，强制写入")
     
     args = parser.parse_args()
+    log_event(
+        "price_update.start",
+        platform=args.platform,
+        cache=args.cache,
+        from_file=bool(args.file),
+        has_inline_prices=bool(args.prices),
+        skip_validation=args.skip_validation,
+    )
     
     # 解析价格数据
     if args.prices:
@@ -193,9 +212,11 @@ def main():
     }
     def is_valid_price(product_id, price):
         if price is None or price <= 0:
+            log_event("price_update.price_rejected", product_id=product_id, price=price, reason="non_positive_or_null")
             return False
         min_price = MIN_PRICE_BY_PRODUCT.get(product_id, 1)
         if price < min_price:
+            log_event("price_update.price_rejected", product_id=product_id, price=price, min_price=min_price, reason="below_min_price")
             print(f"  ⚠️  {product_id} 价格 ¥{price} 低于最低阈值 ¥{min_price}，视为异常低价跳过")
             return False
         return True
@@ -206,6 +227,7 @@ def main():
         print(f"⚠️  跳过{len(skipped)}个无效价格（≤0或null）：{list(skipped.keys())}")
     
     if not filtered:
+        log_event("price_update.no_valid_prices", ok=True, raw_count=len(prices), filtered_count=0)
         print("❌ 所有价格均为0或null，不更新cache")
         sys.exit(0)
     
@@ -261,10 +283,12 @@ def main():
         if not args.skip_validation:
             is_valid, reason = validate_market_price(product_id, new_price, cache_data, args.platform)
             if not is_valid:
+                log_event("price_update.validation_rejected", product_id=product_id, platform=args.platform, price=new_price, reason=reason)
                 print(f"  🚫 {product_id} 校验失败: {reason}")
                 print(f"     如确认价格正确，请使用 --skip-validation 参数强制写入")
                 continue
             else:
+                log_event("price_update.validation_passed", product_id=product_id, platform=args.platform, price=new_price)
                 print(f"  ✅ {product_id} 校验通过: {reason}")
         
         if product_id in cache_data["prices"]:
@@ -281,6 +305,7 @@ def main():
                     matched = True
                     break
             if not matched:
+                log_event("price_update.product_unmatched", product_id=product_id, platform=args.platform)
                 print(f"  ⚠️  产品 {product_id} 不在缓存中，且无模糊匹配")
 
     # 更新元数据
@@ -302,9 +327,25 @@ def main():
     print(f"-" * 50)
     print(f"✅ 更新完成！已更新 {len(updated_products)} 个产品")
     print(f"📁 文件: {cache_path}")
+    log_event(
+        "price_update.done",
+        ok=True,
+        platform=args.platform,
+        cache=str(cache_path),
+        raw_count=len(prices),
+        filtered_count=len(filtered),
+        updated_count=len(updated_products),
+        updated_products=updated_products,
+    )
     
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except SystemExit:
+        raise
+    except Exception as exc:
+        log_exception("price_update.exception", exc)
+        raise

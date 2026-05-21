@@ -16,17 +16,17 @@
 3. **代码层面**：coaching相关的heartbeat/review/summary推送逻辑增加渠道白名单检查，仅允许coze渠道
 
 ## 仓库修复状态
-- 已新增渠道策略：`skills/anti-involution-coach/policy/channel_policy.json`
-- 已新增6个扣子日程描述模板：`skills/anti-involution-coach/templates/coze_schedules/`
-- 已增强 heartbeat：新增 `output_channel`，只允许 `coze`
-- 已新增校验脚本：`scripts/validate_anti_involution_channels.py`
+- 2026-05-21：反卷教练已迁移到独立仓库 `https://github.com/LXR110-bit/zhuanzhuan-anti-coach.git`
+- 独立仓已包含渠道策略、6个扣子日程描述模板、heartbeat `output_channel=coze` 校验和日程污染校验脚本
+- 行情仓不再维护可执行 coaching skill，只保留本 issue 作为事故记录
 
 ## 验证命令
 ```bash
-python3 -m py_compile skills/anti-involution-coach/scripts/goal_card_manager.py scripts/validate_anti_involution_channels.py
-python3 scripts/validate_anti_involution_channels.py
-GOAL_CARD_DIR=/tmp/anti-involution-test python3 skills/anti-involution-coach/scripts/goal_card_manager.py heartbeat 19:00 heartbeat true evening_start success ok coze
-GOAL_CARD_DIR=/tmp/anti-involution-test python3 skills/anti-involution-coach/scripts/goal_card_manager.py heartbeat 19:00 heartbeat true evening_start success ok wecom
+cd /Users/lilixiaoran/工作/转转/zhuanzhuan-anti-coach
+python3 -m py_compile scripts/goal_card_manager.py scripts/validate_channels.py
+python3 scripts/validate_channels.py
+GOAL_CARD_DIR=/tmp/anti-involution-test python3 scripts/goal_card_manager.py heartbeat 19:00 heartbeat true evening_start success ok coze
+GOAL_CARD_DIR=/tmp/anti-involution-test python3 scripts/goal_card_manager.py heartbeat 19:00 heartbeat true evening_start success ok wecom
 ```
 
 最后一条应返回失败，用于确认非 coze 渠道被拒绝。

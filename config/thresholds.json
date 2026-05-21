@@ -71,6 +71,7 @@
     "product_price_min": {
       "i5_13600k": 600,
       "i7_13700k": 1400,
+      "dji_pocket3": 1500,
       "xiaomi_band9": 50,
       "xiaomi_band10": 50,
       "ddr5_16g": 120,

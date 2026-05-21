@@ -662,7 +662,7 @@ def write_html(path, html):
         f.write(html)
 
 
-def update_payload_and_status(payload_path, payload, market_path, price_path, combined_path):
+def update_payload_and_status(payload_path, payload, market_path, price_path, combined_path, render_engine="html_css_browser_screenshot"):
     payload.setdefault("images", {})
     payload["images"]["market_daily_card"] = str(market_path)
     payload["images"]["price_monitor_card"] = str(price_path)
@@ -686,8 +686,86 @@ def update_payload_and_status(payload_path, payload, market_path, price_path, co
     daily["images"]["price_monitor_card"] = str(price_path)
     daily["images"]["combined_card"] = str(combined_path)
     daily["preferred_image"] = "combined_card"
-    daily["render_engine"] = "html_css_browser_screenshot"
+    daily["render_engine"] = render_engine
     save_json(PUSH_STATUS_FILE, status)
+
+
+def svg_lines(lines, x, y, line_height, max_lines):
+    parts = []
+    for idx, line in enumerate(lines[:max_lines]):
+        safe = escape_html(line)
+        parts.append(f'<text x="{x}" y="{y + idx * line_height}" class="line">{safe}</text>')
+    return "\n".join(parts)
+
+
+def write_svg_card(path, title, subtitle, lines, width=1080, height=1920):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    body = svg_lines(lines, 72, 250, 54, 26)
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .title {{ fill: #f8fafc; font: 700 64px "PingFang SC", "Microsoft YaHei", Arial, sans-serif; }}
+    .subtitle {{ fill: #93c5fd; font: 500 34px "PingFang SC", "Microsoft YaHei", Arial, sans-serif; }}
+    .line {{ fill: #e5e7eb; font: 400 32px "PingFang SC", "Microsoft YaHei", Arial, sans-serif; }}
+    .footer {{ fill: #94a3b8; font: 400 24px "PingFang SC", "Microsoft YaHei", Arial, sans-serif; }}
+  </style>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <text x="72" y="112" class="title">{escape_html(title)}</text>
+  <text x="72" y="170" class="subtitle">{escape_html(subtitle)}</text>
+  {body}
+  <text x="72" y="{height - 72}" class="footer">浏览器截图不可用时自动生成的稳定兜底卡片</text>
+</svg>
+'''
+    path.write_text(svg, encoding="utf-8")
+
+
+def compact_price_lines(payload):
+    lines = []
+    for row in (payload.get("prices", {}).get("rows") or [])[:18]:
+        model = row.get("model") or row.get("product_id") or "-"
+        market = row.get("xianyu_market") or "—"
+        recycle = row.get("xianyu_recycle") or "—"
+        aihuishou = row.get("aihuishou") or "—"
+        change = row.get("daily_change") or "—"
+        lines.append(f"{model}｜闲鱼 {market}｜回收 {recycle}｜爱回收 {aihuishou}｜{change}")
+    if not lines:
+        lines.append("今日暂无有效价格行。")
+    return lines
+
+
+def compact_signal_lines(payload):
+    lines = []
+    signals = payload.get("signals") or {}
+    for level in ("S", "A", "B"):
+        items = signals.get(level) or []
+        if not items:
+            continue
+        lines.append(f"{level}级信号")
+        for item in items[:6]:
+            title = item.get("title") or "未命名信号"
+            source = item.get("source") or "未知来源"
+            lines.append(f"- {source}: {title}")
+    if not lines:
+        lines.append("今日暂无行情信号。")
+    return lines
+
+
+def write_svg_fallback_cards(payload, output_dir, date):
+    price_svg_path = output_dir / f"{date}_price_monitor_card.svg"
+    market_svg_path = output_dir / f"{date}_market_daily_card.svg"
+    combined_svg_path = output_dir / "report_cards_combined.svg"
+    subtitle = f"{date}｜{payload.get('summary', {}).get('one_sentence', '')}"
+    price_lines = compact_price_lines(payload)
+    signal_lines = compact_signal_lines(payload)
+    write_svg_card(price_svg_path, "回收价格日报", subtitle, price_lines)
+    write_svg_card(market_svg_path, "市场信号速报", subtitle, signal_lines)
+    write_svg_card(combined_svg_path, "今日行情日报", subtitle, price_lines[:12] + ["", "市场信号"] + signal_lines[:12])
+    return market_svg_path.resolve(), price_svg_path.resolve(), combined_svg_path.resolve()
 
 
 def main():
@@ -748,7 +826,20 @@ def main():
             html_to_png(str(html_path.resolve()), str(combined_png_path.resolve())),
         ])
         if not ok:
-            raise SystemExit("截图失败：未能生成 PNG 卡片")
+            print("截图不可用，生成 SVG 兜底卡片...")
+            market_path, price_path, combined_path = write_svg_fallback_cards(payload, output_dir, date)
+            update_payload_and_status(
+                payload_file.resolve(),
+                payload,
+                market_path,
+                price_path,
+                combined_path,
+                render_engine="html_css_svg_fallback",
+            )
+            print(f"价格SVG已保存: {price_path}")
+            print(f"信号SVG已保存: {market_path}")
+            print(f"合并SVG已保存: {combined_path}")
+            return
         update_payload_and_status(
             payload_file.resolve(),
             payload,

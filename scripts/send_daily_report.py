@@ -29,6 +29,7 @@ PAYLOAD_FILE = BASE_DIR / "data" / "daily_report_payload.json"
 PUSH_STATUS_FILE = BASE_DIR / "data" / "push_status.json"
 OUTBOX_DIR = BASE_DIR / "data" / "outbox"
 REPAIR_LOG_FILE = BASE_DIR / "data" / "logs" / "daily_report_pipeline.log"
+PRICE_COLLECTION_FLAG = BASE_DIR / "data" / "price_collection_done.flag"
 REPAIR_COMMANDS = [
     [sys.executable, "scripts/price_data_validator.py"],
     [sys.executable, "scripts/price_daily_recorder.py"],
@@ -71,6 +72,17 @@ def file_is_today(path):
     return datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d") == today_str()
 
 
+def flag_is_today(path):
+    path = Path(path)
+    if not path.exists():
+        return False
+    try:
+        payload = load_json(path)
+    except (json.JSONDecodeError, OSError):
+        payload = {}
+    return payload.get("date") == today_str() or file_is_today(path)
+
+
 def needs_report_repair():
     payload = load_json(PAYLOAD_FILE)
     status = load_json(PUSH_STATUS_FILE)
@@ -80,6 +92,8 @@ def needs_report_repair():
         reasons.append(f"payload.date={payload.get('date')}")
     if status.get("date") != today_str():
         reasons.append(f"push_status.date={status.get('date')}")
+    if not flag_is_today(PRICE_COLLECTION_FLAG):
+        reasons.append("price_collection_done.flag missing_or_stale")
 
     combined_card = (payload.get("images") or {}).get("combined_card")
     if not combined_card:
@@ -399,14 +413,19 @@ def send_files(webhook_url, payload):
 
 def mark_status(status_value, error=None):
     status = load_json(PUSH_STATUS_FILE)
-    status["updated_at"] = datetime.now().isoformat()
+    now = datetime.now()
+    now_text = now.isoformat()
+    status["date"] = today_str()
+    status["updated_at"] = now_text
     daily = status.setdefault("daily_report", {})
     daily["attempts"] = int(daily.get("attempts", 0)) + 1
     daily["status"] = status_value
     daily["last_error"] = error
+    daily["push_time"] = now.strftime("%Y%m%d%H%M%S")
+    daily["last_attempt_at"] = now_text
     if status_value == "sent":
         daily["sent"] = True
-        daily["sent_at"] = datetime.now().isoformat()
+        daily["sent_at"] = now_text
     save_json(PUSH_STATUS_FILE, status)
 
 

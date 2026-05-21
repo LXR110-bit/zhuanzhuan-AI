@@ -12,6 +12,7 @@ DATA_DIR = BASE_DIR / "data"
 PRICE_CACHE_FILE = DATA_DIR / "price_cache.json"
 TREND_HISTORY_DIR = DATA_DIR / "trend_history"
 DAILY_PRICE_DIR = DATA_DIR / "daily_price_records"
+PRICE_COLLECTION_FLAG = DATA_DIR / "price_collection_done.flag"
 
 
 PLATFORM_PATHS = {
@@ -218,6 +219,16 @@ def build_daily_record(cache):
     }
 
 
+def write_collection_flag(daily):
+    save_json(PRICE_COLLECTION_FLAG, {
+        "ok": True,
+        "date": daily["date"],
+        "generated_at": now_iso(),
+        "source": str(PRICE_CACHE_FILE),
+        "records": len(daily.get("records") or []),
+    })
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--price-cache", default=str(PRICE_CACHE_FILE))
@@ -229,6 +240,7 @@ def main():
     daily = build_daily_record(cache)
     output = Path(args.output_dir) / f"{daily['date']}.json"
     save_json(output, daily)
+    write_collection_flag(daily)
     if cache_path.resolve() == PRICE_CACHE_FILE.resolve():
         save_json(cache_path, cache)
 

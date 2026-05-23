@@ -463,11 +463,12 @@ def generate_signal_box(level, signals):
         else:
             meta = f"{source} · {time_str}" if time_str else source
         
+        link_html = f'<div class="signal-item-link">原文：{escape_html(short_url(url))}</div>' if url else ""
         items_html.append(f"""<div class="signal-item">
             <div class="signal-item-title">{escape_html(title)}</div>
             <div class="signal-item-summary">{escape_html(summary)}</div>
             <div class="signal-item-meta">{escape_html(meta)}</div>
-            <div class="signal-item-link">原文：{escape_html(short_url(url))}</div>
+            {link_html}
         </div>""")
     
     return f"""<div class="signal-box {config['class']}">

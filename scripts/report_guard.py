@@ -39,6 +39,10 @@ def today_str():
     return datetime.now().strftime("%Y-%m-%d")
 
 
+def is_weekday():
+    return datetime.now().weekday() < 5
+
+
 def has_value(value):
     return value not in (None, "", [], {})
 
@@ -114,6 +118,9 @@ def check_before_push():
 
     if daily_config.get("format") != "image_cards":
         errors.append("daily_report.format must be image_cards")
+
+    if daily_config.get("workday_only", True) and not is_weekday():
+        errors.append("daily report is disabled on weekends")
 
     if status.get("date") != today_str():
         errors.append(

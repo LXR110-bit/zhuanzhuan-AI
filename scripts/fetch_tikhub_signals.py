@@ -212,22 +212,21 @@ def fix_platform_url(url: str, raw: dict, platform: str) -> str:
 def normalize_item(record, source, query, max_age_days):
     pub_time = parse_timestamp(record.get("published_raw"))
     if pub_time is None:
-        # Do not invent platform time. Use a low-confidence collection time so
-        # the existing freshness filter can still mark it as recent but traceable.
-        pub_time = datetime.now()
-        time_quality = "collected_at_fallback"
-    else:
-        time_quality = "platform_publish_time"
+        return None
 
     if pub_time < datetime.now() - timedelta(days=max_age_days):
         return None
 
     raw = record.get("raw") or {}
     url = fix_platform_url(record.get("url") or "", raw, source["platform"])
+    if not url or not url.startswith(("http://", "https://")):
+        return None
     domain = ""
     if url:
         domain = urlparse(url).netloc
-    title = record.get("title") or f"{source['platform']} signal: {query}"
+    title = str(record.get("title") or "").strip()
+    if not title or title in {"无标题", "未命名信号"} or len(title) < 4:
+        return None
     return {
         "title": title,
         "summary": title,
@@ -239,7 +238,7 @@ def normalize_item(record, source, query, max_age_days):
         "domain": domain,
         "author": record.get("author") or "",
         "published_at": pub_time.strftime("%Y-%m-%d %H:%M:%S"),
-        "publish_time_quality": time_quality,
+        "publish_time_quality": "platform_publish_time",
         "level": source.get("level") or "B",
         "credibility": source.get("credibility_weight"),
         "raw": raw,

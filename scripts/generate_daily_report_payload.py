@@ -355,12 +355,18 @@ def merge_news_signals(signals, news_data):
         pub_time = parse_time(publish_time(item))
         if pub_time is None or pub_time < cutoff:
             continue
+        if item.get("publish_time_quality") and item.get("publish_time_quality") != "platform_publish_time":
+            continue
         level = item.get("level") or "B"
         if level not in signals:
             level = "B"
         title = item.get("title") or item.get("summary") or "未命名信号"
         summary_text = item.get("summary") or item.get("content") or item.get("description") or title
         source_url = item.get("url") or item.get("source_url") or item.get("link") or ""
+        if not source_url.startswith(("http://", "https://")):
+            continue
+        if clean_signal_title(title) in ("无标题", "未命名信号") or len(clean_signal_title(title)) < 4:
+            continue
         published_at = pub_time.strftime("%Y-%m-%d %H:%M:%S")
         publish_date = pub_time.strftime("%Y-%m-%d")
         raw_source = item.get("source") or "news_signals"

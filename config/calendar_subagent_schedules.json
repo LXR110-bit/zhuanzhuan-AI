@@ -101,6 +101,8 @@
     "daily_report_push": {
       "calendar_summary": "日报推送",
       "time": "10:00",
+      "schedule": "WEEKLY MO-FR 10:00",
+      "workday_only": true,
       "description_template": "v2.8日程 - 汇总推送",
       "sub_agent_tools": ["bash"],
       "push_steps": [
@@ -162,6 +164,9 @@
     "evening_full_detection": {
       "calendar_summary": "全量检测+B层轮换采价",
       "time": "21:00",
+      "workday_only": true,
+      "report_generation": false,
+      "push_enabled": false,
       "description_template": "v2.8日程 - 全量数据校验 + B层机型轮换采集",
       "sub_agent_tools": ["mobile_use"],
       "mobile_use_slot": 4,
@@ -170,9 +175,7 @@
       "python_after_tools": [
         "python3 scripts/price_data_validator.py",
         "python3 scripts/price_daily_recorder.py",
-        "python3 scripts/price_archiver.py archive",
-        "python3 scripts/generate_daily_report_payload.py",
-        "python3 scripts/render_cards_html.py"
+        "python3 scripts/price_archiver.py archive"
       ]
     },
     "baseline_update": {

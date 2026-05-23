@@ -12,6 +12,7 @@ import json
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
+from urllib.parse import urlparse
 
 try:
     from signal_freshness import evaluate_signal_level
@@ -98,6 +99,27 @@ def publish_time(item):
     )
 
 
+def signal_url(item):
+    return item.get("url") or item.get("source_url") or item.get("link") or ""
+
+
+def valid_http_url(value):
+    if not value:
+        return False
+    parsed = urlparse(str(value))
+    return parsed.scheme in ("http", "https") and bool(parsed.netloc)
+
+
+def meaningful_title(value):
+    title = str(value or "").strip()
+    generic = {"无标题", "未命名信号", "大家都在搜", "45分钟前", "1小时前", "3小时前"}
+    if not title or title in generic:
+        return False
+    if len(normalize_title(title)) < 4:
+        return False
+    return True
+
+
 def load_history(path, max_age_days=7):
     raw = load_json(path)
     cutoff = now() - timedelta(days=max_age_days)
@@ -146,6 +168,15 @@ def filter_signals(data, max_age_days=7, history=None):
     for item in items:
         if not isinstance(item, dict):
             dropped.append({"reason": "invalid_item", "raw": item})
+            continue
+        if item.get("publish_time_quality") and item.get("publish_time_quality") != "platform_publish_time":
+            dropped.append({"reason": "invalid_publish_time_quality", "item": item})
+            continue
+        if not meaningful_title(item.get("title") or item.get("summary")):
+            dropped.append({"reason": "invalid_or_generic_title", "item": item})
+            continue
+        if not valid_http_url(signal_url(item)):
+            dropped.append({"reason": "missing_valid_url", "item": item})
             continue
         pub_raw = publish_time(item)
         pub_time = parse_time(pub_raw)

@@ -58,6 +58,10 @@ def today_str():
     return datetime.now().strftime("%Y-%m-%d")
 
 
+def is_weekday():
+    return datetime.now().weekday() < 5
+
+
 def log_repair(message):
     REPAIR_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(REPAIR_LOG_FILE, "a", encoding="utf-8") as f:
@@ -451,6 +455,16 @@ def main():
     parser.add_argument("--base-url", default=os.environ.get("REPORT_CARD_BASE_URL", ""))
     args = parser.parse_args()
     log_event("daily_report_send.start", dry_run=args.dry_run, has_webhook=bool(args.webhook_url), has_base_url=bool(args.base_url))
+
+    if not is_weekday():
+        result = {
+            "ok": False,
+            "phase": "before_repair",
+            "errors": ["daily report is disabled on weekends"],
+            "warnings": [],
+        }
+        log_event("daily_report_send.weekend_blocked", ok=False, errors=result["errors"])
+        raise SystemExit(json.dumps(result, ensure_ascii=False, indent=2))
 
     repaired_reasons = repair_daily_report_if_needed()
     guard = check_before_push()

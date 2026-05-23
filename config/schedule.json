@@ -31,6 +31,14 @@
       "tikhub"
     ],
     "canonical_push_time": "10:00",
+    "workday_only": true,
+    "allowed_weekdays": [
+      "MO",
+      "TU",
+      "WE",
+      "TH",
+      "FR"
+    ],
     "scan_start": "04:00",
     "aggregation_time": "05:00",
     "analysis_time": "05:30",
@@ -171,9 +179,11 @@
       "search_web_fallback"
     ],
     "output": [
-      "图片卡片日报",
-      "告警"
+      "价格记录",
+      "异常记录"
     ],
+    "report_generation": false,
+    "push_enabled": false,
     "layers": [
       "A",
       "B"

@@ -23,6 +23,19 @@ from urllib.error import HTTPError, URLError
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_FILE = ROOT / "config" / "tikhub_sources.json"
 ENV_FILE = ROOT / ".env"
+RELEVANCE_KEYWORDS = (
+    "rtx", "nvidia", "英伟达", "显卡", "矿卡", "矿潮",
+    "ddr", "dram", "nand", "ssd", "内存", "固态", "存储",
+    "dji", "大疆", "pocket", "action", "mini", "无人机",
+    "insta360", "影石", "gopro", "运动相机", "拇指相机",
+    "13600k", "13700k", "5600x", "5800x3d", "cpu",
+    "小米手环", "智能手环", "手环",
+    "爱回收", "回收价", "二手价格", "以旧换新",
+)
+IRRELEVANT_KEYWORDS = (
+    "废旧手机", "旧手机", "手机回收", "折叠屏手机", "iphone",
+    "华强北手机", "碰撞概率", "概率碰撞", "至少碰撞", "无套路",
+)
 SENSITIVE_TEXT = re.compile(
     r"(Authorization[\"']?\s*[:=]\s*[\"']?Bearer\s+)[^\"',}\s]+",
     re.IGNORECASE,
@@ -209,6 +222,22 @@ def fix_platform_url(url: str, raw: dict, platform: str) -> str:
     return url
 
 
+def market_relevant(title: str, query: str) -> bool:
+    text = f"{title} {query}".lower()
+    if any(word.lower() in text for word in IRRELEVANT_KEYWORDS):
+        return False
+    return any(word.lower() in text for word in RELEVANCE_KEYWORDS)
+
+
+def meaningful_title(title: str) -> bool:
+    title = str(title or "").strip()
+    if title in {"无标题", "未命名信号", "大家都在搜", "相关搜索"}:
+        return False
+    if re.fullmatch(r"(\d+\s*(分钟前|小时前|天前)|昨天\s*\d{1,2}:\d{2}|前天\s*\d{1,2}:\d{2})", title):
+        return False
+    return len(title) >= 4
+
+
 def normalize_item(record, source, query, max_age_days):
     pub_time = parse_timestamp(record.get("published_raw"))
     if pub_time is None:
@@ -225,7 +254,9 @@ def normalize_item(record, source, query, max_age_days):
     if url:
         domain = urlparse(url).netloc
     title = str(record.get("title") or "").strip()
-    if not title or title in {"无标题", "未命名信号"} or len(title) < 4:
+    if not meaningful_title(title):
+        return None
+    if not market_relevant(title, query):
         return None
     return {
         "title": title,

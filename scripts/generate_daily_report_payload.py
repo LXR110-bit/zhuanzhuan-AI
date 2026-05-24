@@ -2,6 +2,7 @@
 """Build the single daily report payload from current local data sources."""
 import argparse
 import json
+import re
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -350,6 +351,20 @@ def normalize_signals(cloud_pc_data):
 
 
 def merge_news_signals(signals, news_data):
+    relevance_keywords = (
+        "rtx", "nvidia", "英伟达", "显卡", "矿卡", "矿潮",
+        "ddr", "dram", "nand", "ssd", "内存", "固态", "存储",
+        "dji", "大疆", "pocket", "action", "mini", "无人机",
+        "insta360", "影石", "gopro", "运动相机", "拇指相机",
+        "13600k", "13700k", "5600x", "5800x3d", "cpu",
+        "小米手环", "智能手环", "手环",
+        "爱回收", "回收价", "二手价格", "以旧换新",
+    )
+    irrelevant_keywords = (
+        "废旧手机", "旧手机", "手机回收", "折叠屏手机", "iphone",
+        "华强北手机", "碰撞概率", "概率碰撞", "至少碰撞", "无套路",
+    )
+    generic_titles = {"无标题", "未命名信号", "大家都在搜", "相关搜索"}
     cutoff = datetime.now() - timedelta(days=int(news_data.get("max_age_days") or 7))
     for item in (news_data.get("items") or [])[:20]:
         pub_time = parse_time(publish_time(item))
@@ -365,13 +380,21 @@ def merge_news_signals(signals, news_data):
         source_url = item.get("url") or item.get("source_url") or item.get("link") or ""
         if not source_url.startswith(("http://", "https://")):
             continue
-        if clean_signal_title(title) in ("无标题", "未命名信号") or len(clean_signal_title(title)) < 4:
+        cleaned_title = clean_signal_title(title)
+        if cleaned_title in generic_titles or len(cleaned_title) < 4:
+            continue
+        if re.fullmatch(r"(\d+\s*(分钟前|小时前|天前)|昨天\s*\d{1,2}:\d{2}|前天\s*\d{1,2}:\d{2})", cleaned_title):
+            continue
+        relevance_text = f"{title} {summary_text} {item.get('query') or ''}".lower()
+        if any(word.lower() in relevance_text for word in irrelevant_keywords):
+            continue
+        if not any(word.lower() in relevance_text for word in relevance_keywords):
             continue
         published_at = pub_time.strftime("%Y-%m-%d %H:%M:%S")
         publish_date = pub_time.strftime("%Y-%m-%d")
         raw_source = item.get("source") or "news_signals"
         signals[level].append({
-            "title": clean_signal_title(title),
+            "title": cleaned_title,
             "summary": summary_text,
             "source": _display_source(raw_source),
             "url": source_url,

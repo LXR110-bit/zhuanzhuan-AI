@@ -826,7 +826,8 @@ def main():
     
     # 截图
     if not args.no_screenshot:
-        combined_png_path = output_dir / "report_cards_combined.png"
+        combined_png_path = output_dir / f"{date}_report_cards_combined.png"
+        legacy_combined_png_path = output_dir / "report_cards_combined.png"
         price_png_path = output_dir / f"{date}_price_monitor_card.png"
         market_png_path = output_dir / f"{date}_market_daily_card.png"
         print(f"开始截图...")
@@ -866,6 +867,8 @@ def main():
             price_png_path.resolve(),
             combined_png_path.resolve(),
         )
+        if combined_png_path != legacy_combined_png_path:
+            shutil.copy2(combined_png_path, legacy_combined_png_path)
         print(f"价格PNG已保存: {price_png_path}")
         print(f"信号PNG已保存: {market_png_path}")
         print(f"合并PNG已保存: {combined_png_path}")

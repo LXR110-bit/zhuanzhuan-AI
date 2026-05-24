@@ -25,6 +25,19 @@ DATA_DIR = BASE_DIR / "data"
 INPUT_FILE = DATA_DIR / "news_signals.json"
 OUTPUT_FILE = DATA_DIR / "news_signals_filtered.json"
 HISTORY_FILE = DATA_DIR / "news_signal_dedupe_history.json"
+RELEVANCE_KEYWORDS = (
+    "rtx", "nvidia", "英伟达", "显卡", "矿卡", "矿潮",
+    "ddr", "dram", "nand", "ssd", "内存", "固态", "存储",
+    "dji", "大疆", "pocket", "action", "mini", "无人机",
+    "insta360", "影石", "gopro", "运动相机", "拇指相机",
+    "13600k", "13700k", "5600x", "5800x3d", "cpu",
+    "小米手环", "智能手环", "手环",
+    "爱回收", "回收价", "二手价格", "以旧换新",
+)
+IRRELEVANT_KEYWORDS = (
+    "废旧手机", "旧手机", "手机回收", "折叠屏手机", "iphone",
+    "华强北手机", "碰撞概率", "概率碰撞", "至少碰撞", "无套路",
+)
 
 
 def now():
@@ -112,12 +125,22 @@ def valid_http_url(value):
 
 def meaningful_title(value):
     title = str(value or "").strip()
-    generic = {"无标题", "未命名信号", "大家都在搜", "45分钟前", "1小时前", "3小时前"}
+    generic = {"无标题", "未命名信号", "大家都在搜", "相关搜索"}
     if not title or title in generic:
+        return False
+    if re.fullmatch(r"(\d+\s*(分钟前|小时前|天前)|昨天\s*\d{1,2}:\d{2}|前天\s*\d{1,2}:\d{2})", title):
         return False
     if len(normalize_title(title)) < 4:
         return False
     return True
+
+
+def market_relevant(item):
+    text = " ".join(str(item.get(key) or "") for key in ("title", "summary", "description", "content", "query"))
+    text_lower = text.lower()
+    if any(word.lower() in text_lower for word in IRRELEVANT_KEYWORDS):
+        return False
+    return any(word.lower() in text_lower for word in RELEVANCE_KEYWORDS)
 
 
 def load_history(path, max_age_days=7):
@@ -177,6 +200,9 @@ def filter_signals(data, max_age_days=7, history=None):
             continue
         if not valid_http_url(signal_url(item)):
             dropped.append({"reason": "missing_valid_url", "item": item})
+            continue
+        if not market_relevant(item):
+            dropped.append({"reason": "irrelevant_to_monitored_categories", "item": item})
             continue
         pub_raw = publish_time(item)
         pub_time = parse_time(pub_raw)

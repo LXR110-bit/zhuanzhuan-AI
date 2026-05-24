@@ -26,6 +26,7 @@ from runtime_logger import log_event, log_exception
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+PRICE_CACHE_FILE = BASE_DIR / "data" / "price_cache.json"
 PAYLOAD_FILE = BASE_DIR / "data" / "daily_report_payload.json"
 PUSH_STATUS_FILE = BASE_DIR / "data" / "push_status.json"
 OUTBOX_DIR = BASE_DIR / "data" / "outbox"
@@ -89,11 +90,26 @@ def flag_is_today(path):
     return payload.get("date") == today_str() or file_is_today(path)
 
 
+def json_data_is_today(path):
+    data = load_json(path)
+    if not data:
+        return False
+    if data.get("date") == today_str():
+        return True
+    for key in ("updated_at", "generated_at", "scan_time"):
+        value = str(data.get(key) or "")
+        if value.startswith(today_str()):
+            return True
+    return file_is_today(path)
+
+
 def needs_report_repair():
     payload = load_json(PAYLOAD_FILE)
     status = load_json(PUSH_STATUS_FILE)
     reasons = []
 
+    if not json_data_is_today(PRICE_CACHE_FILE):
+        reasons.append("price_cache missing_or_stale")
     if payload.get("date") != today_str():
         reasons.append(f"payload.date={payload.get('date')}")
     if status.get("date") != today_str():
@@ -114,6 +130,10 @@ def repair_daily_report_if_needed():
     reasons = needs_report_repair()
     if not reasons:
         return []
+
+    if "price_cache missing_or_stale" in reasons:
+        log_repair("auto_repair_blocked: price_cache missing_or_stale")
+        raise RuntimeError("fresh price_cache is missing; skip daily report push")
 
     log_repair("auto_repair_start: " + "; ".join(reasons))
     for cmd in REPAIR_COMMANDS:

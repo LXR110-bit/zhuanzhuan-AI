@@ -73,6 +73,32 @@ def load_json(path):
         raise SystemExit(f"invalid json: {path}: {exc}") from exc
 
 
+def is_today_data(data, label):
+    if not data:
+        return False
+    if data.get("date") == today_str():
+        return True
+    generated_at = str(data.get("generated_at") or data.get("updated_at") or "")
+    return generated_at.startswith(today_str())
+
+
+def load_today_json(path, label):
+    data = load_json(path)
+    if not data:
+        return {}
+    if is_today_data(data, label):
+        return data
+    log_event(
+        "daily_payload.stale_input_skipped",
+        label=label,
+        path=str(path),
+        date=data.get("date"),
+        generated_at=data.get("generated_at"),
+        updated_at=data.get("updated_at"),
+    )
+    return {}
+
+
 def save_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = path.with_suffix(".tmp")
@@ -562,10 +588,10 @@ def main():
     log_event("daily_payload.start", output=args.output)
 
     price_cache = load_json(PRICE_CACHE_FILE)
-    cloud_pc_data = load_json(CLOUD_PC_DAILY_FILE)
-    validation_report = load_json(VALIDATION_REPORT_FILE)
-    anomaly_votes = load_json(ANOMALY_VOTES_FILE)
-    news_data = load_json(NEWS_SIGNALS_FILE)
+    cloud_pc_data = load_today_json(CLOUD_PC_DAILY_FILE, "cloud_pc_daily")
+    validation_report = load_today_json(VALIDATION_REPORT_FILE, "validation_report")
+    anomaly_votes = load_today_json(ANOMALY_VOTES_FILE, "anomaly_votes")
+    news_data = load_today_json(NEWS_SIGNALS_FILE, "news_signals_filtered")
     categories_data = load_json(CATEGORIES_FILE)
 
     rows, missing = build_rows_from_price_cache(price_cache, validation_report)

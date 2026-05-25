@@ -50,7 +50,7 @@ def save_json(path, data):
         json.dump(data, f, ensure_ascii=False, indent=2)
     tmp_path.replace(path)
 def baseline_key(product_id):
-    return product_id.replace("-", "_").replace(" ", "_")
+    return product_id.replace("-", "_").replace(" ", "_").upper()
 
 
 def market_price(item):

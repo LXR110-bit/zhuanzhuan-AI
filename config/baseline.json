@@ -1,13 +1,15 @@
 {
   "version": "1.0.0",
-  "updated_at": "2026-05-18T05:04:25.980326",
+  "updated_at": "2026-05-25",
   "baselines": {
     "RTX_3070": {
       "min": 3899,
       "max": 4999,
       "avg": 4299,
-      "source": "ZOL",
-      "updated": "2026-04-26"
+      "source": "adaptive_2026-05-25",
+      "updated": "2026-04-26",
+      "price": 1434.0,
+      "updated_at": "2026-05-25"
     },
     "RTX_3090": {
       "min": 12999,
@@ -44,8 +46,10 @@
       "trend": "下跌中",
       "peak_price": 1800,
       "drop_pct": 68,
-      "source": "多渠道综合",
-      "updated": "2026-04-26"
+      "source": "adaptive_2026-05-25",
+      "updated": "2026-04-26",
+      "price": 350.0,
+      "updated_at": "2026-05-25"
     },
     "DDR5_32G": {
       "min": 1000,
@@ -54,8 +58,10 @@
       "trend": "下跌中",
       "peak_price": 3800,
       "drop_pct": 68,
-      "source": "多渠道综合",
-      "updated": "2026-04-26"
+      "source": "adaptive_2026-05-25",
+      "updated": "2026-04-26",
+      "price": 1034.0,
+      "updated_at": "2026-05-25"
     },
     "Pocket_3": {
       "official": 2799,

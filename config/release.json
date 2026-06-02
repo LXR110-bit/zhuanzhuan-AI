@@ -1,7 +1,7 @@
 {
-  "version": "2.14.1",
+  "version": "2.14.2",
   "branch": "local/dev",
-  "updated_at": "2026-05-09T17:20:00+08:00",
-  "last_change": "对齐v2.14采价流程后的架构边界：修复动作引擎下跌阈值判断、归档临时TikHub脚本、修正采价模板路径并同步版本事实源",
+  "updated_at": "2026-06-02T14:40:00+08:00",
+  "last_change": "补充Coze 3.0多Agent总控路由和行情监控专职Agent边界说明",
   "version_rule": "每次提交并推送local/dev前，必须递增本文件version并更新updated_at；涉及日程主配置时同步更新config/schedule.json版本。"
 }

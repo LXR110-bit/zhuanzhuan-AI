@@ -393,3 +393,11 @@ modules/
 4. 最后抽 `scheduler/`，只读取配置，不承载业务逻辑。
 
 重构期间必须保留现有脚本入口，避免 Calendar 日程失效。
+
+## Coze 3.0 多 Agent 边界
+
+Coze 3.0 后，本仓只承接“行情监控 Agent”职责：价格采集、行情日报、异动检测、趋势报告和行情推送链路排障。总控 Agent 只负责把行情类意图路由到本仓，不直接运行本仓脚本。
+
+- 总控路由说明：`docs/Coze3_多Agent总控路由说明.md`
+- 行情专职 Agent 说明：`docs/Coze3_行情监控专职Agent说明.md`
+- 反卷教练任务必须交给独立反卷仓 `/Users/lilixiaoran/工作/转转/zhuanzhuan-anti-coach`，不得在本仓跨仓执行。

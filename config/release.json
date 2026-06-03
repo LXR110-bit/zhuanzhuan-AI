@@ -1,7 +1,7 @@
 {
-  "version": "2.14.2",
+  "version": "2.15.0",
   "branch": "local/dev",
-  "updated_at": "2026-06-02T14:40:00+08:00",
-  "last_change": "补充Coze 3.0多Agent总控路由和行情监控专职Agent边界说明",
+  "updated_at": "2026-06-03",
+  "last_change": "Coze V2 production migration: cloud computer execution and GitHub lightweight ops logs",
   "version_rule": "每次提交并推送local/dev前，必须递增本文件version并更新updated_at；涉及日程主配置时同步更新config/schedule.json版本。"
 }

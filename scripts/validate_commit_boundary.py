@@ -29,6 +29,10 @@ CODE_PREFIXES = (
     "templates/",
     "docs/",
 )
+OPS_LOG_PREFIXES = (
+    "ops_logs/",
+    "handoff/codex/",
+)
 CODE_FILES = (
     "README_文件清单.md",
     ".gitignore",
@@ -65,6 +69,20 @@ def is_code(path):
     return startswith_any(path, CODE_PREFIXES) or path in CODE_FILES
 
 
+def is_ops_log(path):
+    return startswith_any(path, OPS_LOG_PREFIXES)
+
+
+def is_ops_log_runtime(path):
+    setup_files = {
+        "ops_logs/TEMPLATE_run_summary.md",
+        "ops_logs/runs/.gitkeep",
+        "ops_logs/schedules/.gitkeep",
+        "handoff/codex/TEMPLATE_issue.md",
+    }
+    return is_ops_log(path) and path not in setup_files
+
+
 def is_runtime(path):
     return startswith_any(path, RUNTIME_DATA_PREFIXES) and path not in ALLOWED_RUNTIME_FILES
 
@@ -80,7 +98,9 @@ def main():
     generated_cards = [path for path in files if startswith_any(path, GENERATED_CARD_PREFIXES)]
     anti_coach = [path for path in files if startswith_any(path, ANTI_COACH_PREFIXES)]
     code_files = [path for path in files if is_code(path)]
-    runtime_files = [path for path in files if is_runtime(path)]
+    runtime_files = [path for path in files if is_runtime(path) and not is_ops_log(path)]
+    ops_logs = [path for path in files if is_ops_log(path)]
+    ops_log_runtime = [path for path in files if is_ops_log_runtime(path)]
 
     if raw_logs:
         violations.append({
@@ -100,6 +120,15 @@ def main():
             "message": "行情仓不得提交反卷教练 skill 或运行数据。",
             "files": anti_coach,
         })
+    
+    if code_files and ops_log_runtime:
+        violations.append({
+            "rule": "ops_log_code_mixed_commit",
+            "message": "Coze 运行日志 commit 不得和代码/配置/文档变更混在同一个 commit。",
+            "code_files": code_files,
+            "ops_log_files": ops_log_runtime,
+        })
+
     if code_files and runtime_files:
         violations.append({
             "rule": "code_runtime_mixed_commit",
@@ -113,6 +142,7 @@ def main():
         "repo": "zhuanzhuan-AI",
         "checked": "staged_files",
         "staged_count": len(files),
+        "ops_log_files": ops_logs,
         "violations": violations,
     }
     print(json.dumps(result, ensure_ascii=False, indent=2))

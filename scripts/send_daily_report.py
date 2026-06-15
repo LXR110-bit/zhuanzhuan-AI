@@ -21,6 +21,7 @@ import urllib.request
 from datetime import datetime
 from pathlib import Path
 
+from feishu_utils import load_dotenv, send_post, write_daily_doc
 from report_guard import check_before_push
 from runtime_logger import log_event, log_exception
 
@@ -456,13 +457,35 @@ def mark_status(status_value, error=None):
     log_event("daily_report.status_marked", status=status_value, error=error, push_time=daily.get("push_time"))
 
 
+def write_price_feishu_doc(payload):
+    title = f"【价格监控】{payload.get('date') or today_str()} 价格日报"
+    body = build_text_summary(payload)
+    return write_daily_doc("price", title, body, date=payload.get("date") or today_str())
+
+
+def send_feishu_daily_report(webhook_url, payload):
+    title = f"【价格监控】{payload.get('date') or today_str()} 价格日报"
+    summary = build_text_summary(payload).splitlines()
+    lines = summary[:40]
+    images = payload.get("images", {})
+    if images:
+        lines.append("")
+        lines.append("卡片产物：")
+        for key in ("combined_card", "market_daily_card", "price_monitor_card"):
+            if images.get(key):
+                lines.append(f"- {key}: {images[key]}")
+    return send_post(webhook_url, title, lines)
+
+
 def write_outbox(payload):
     OUTBOX_DIR.mkdir(parents=True, exist_ok=True)
     path = OUTBOX_DIR / f"daily_report_{payload.get('date')}.json"
+    doc_path = write_price_feishu_doc(payload)
     save_json(path, {
         "created_at": datetime.now().isoformat(),
         "reason": "dry_run_or_missing_webhook",
         "text_summary": build_text_summary(payload),
+        "feishu_doc_path": str(doc_path),
         "payload": payload,
     })
     return path
@@ -471,10 +494,18 @@ def write_outbox(payload):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--channel", choices=("wecom", "feishu"), default=os.environ.get("REPORT_PUSH_CHANNEL", "wecom"))
     parser.add_argument("--webhook-url", default=os.environ.get("WECOM_WEBHOOK_URL", ""))
+    parser.add_argument("--feishu-webhook-url", default="")
     parser.add_argument("--base-url", default=os.environ.get("REPORT_CARD_BASE_URL", ""))
     args = parser.parse_args()
-    log_event("daily_report_send.start", dry_run=args.dry_run, has_webhook=bool(args.webhook_url), has_base_url=bool(args.base_url))
+    load_dotenv(BASE_DIR / ".env")
+    if not args.webhook_url:
+        args.webhook_url = os.environ.get("WECOM_WEBHOOK_URL", "")
+    if not args.feishu_webhook_url:
+        args.feishu_webhook_url = os.environ.get("FEISHU_PRICE_WEBHOOK_URL") or os.environ.get("FEISHU_WEBHOOK_URL", "")
+    active_webhook = args.feishu_webhook_url if args.channel == "feishu" else args.webhook_url
+    log_event("daily_report_send.start", dry_run=args.dry_run, channel=args.channel, has_webhook=bool(active_webhook), has_base_url=bool(args.base_url))
 
     if not is_weekday():
         result = {
@@ -496,12 +527,13 @@ def main():
 
     payload = load_json(PAYLOAD_FILE)
 
-    if args.dry_run or not args.webhook_url:
+    if args.dry_run or not active_webhook:
         outbox = write_outbox(payload)
-        log_event("daily_report_send.done", ok=True, mode="dry_run", outbox=str(outbox), auto_repaired=bool(repaired_reasons))
+        log_event("daily_report_send.done", ok=True, mode="dry_run", channel=args.channel, outbox=str(outbox), auto_repaired=bool(repaired_reasons))
         print(json.dumps({
             "ok": True,
             "mode": "dry_run",
+            "channel": args.channel,
             "outbox": str(outbox),
             "auto_repaired": bool(repaired_reasons),
             "repair_reasons": repaired_reasons,
@@ -513,16 +545,23 @@ def main():
 
     try:
         mark_status("sending")
-        send_markdown_summary(args.webhook_url, payload, args.base_url)
-        if args.base_url:
-            send_news(args.webhook_url, payload, args.base_url)
-            mode = "news"
+        if args.channel == "feishu":
+            response = send_feishu_daily_report(args.feishu_webhook_url, payload)
+            mode = "feishu_post"
+            response_code = response.get("code", response.get("StatusCode", 0))
         else:
-            send_files(args.webhook_url, payload)
-            mode = "file_upload"
+            send_markdown_summary(args.webhook_url, payload, args.base_url)
+            if args.base_url:
+                send_news(args.webhook_url, payload, args.base_url)
+                mode = "news"
+            else:
+                send_files(args.webhook_url, payload)
+                mode = "file_upload"
+            response_code = 0
         mark_status("sent")
-        log_event("daily_report_send.done", ok=True, mode=mode, auto_repaired=bool(repaired_reasons))
-        print(json.dumps({"ok": True, "mode": mode}, ensure_ascii=False, indent=2))
+        doc_path = write_price_feishu_doc(payload)
+        log_event("daily_report_send.done", ok=True, channel=args.channel, mode=mode, auto_repaired=bool(repaired_reasons), feishu_doc_path=str(doc_path))
+        print(json.dumps({"ok": True, "channel": args.channel, "mode": mode, "response_code": response_code, "feishu_doc_path": str(doc_path)}, ensure_ascii=False, indent=2))
     except Exception as exc:
         mark_status("retrying", str(exc))
         log_exception("daily_report_send.exception", exc)

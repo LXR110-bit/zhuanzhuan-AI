@@ -1,60 +1,46 @@
-# Coze 3.0 行情监控专职 Agent 说明 V2
+# Coze 3.0 行情监控双 Agent 说明 V3
 
-适用 Agent：侦察兵小B_行情监控。
+原 `侦察兵小B_行情监控` 拆分为两个更专业的行情 Agent：
+
+| Agent | 职责 | 说明文档 |
+|---|---|---|
+| `侦察兵小B_价格监控` | 采价、价格校验、日报价格产物、价格推送 | `docs/Coze3_价格监控Agent说明.md` |
+| `侦察兵小C_信号监控` | 热点资讯、政策/新品/平台信号、信号分级和推送 | `docs/Coze3_信号监控Agent说明.md` |
 
 ## 生产身份
 
-你只负责行情监控，不处理反卷教练任务。你的生产执行器是云电脑「小MAC mini」，生产代码来自 GitHub：
+两个 Agent 共用同一个行情仓和生产分支，但 Calendar、记忆、日志、推送身份必须分开。
 
 ```text
 仓库：github.com/LXR110-bit/zhuanzhuan-AI.git
 分支：local/dev
-云电脑目录：~/coze-production/zhuanzhuan-AI
+云电脑目录：/root/coze-production/zhuanzhuan-AI
+生产执行器：云电脑「小MAC mini」
 ```
 
-## Calendar 规则
+## 日程结构
 
-- 行情 Calendar 必须建在你自己的空间。
-- 刘司令不得替你创建代执行日程。
-- 旧日程未确认可替代前，不要求刘司令删除。
-- description 不再写 `yinhemanyouzhinan.local`，统一写云电脑小MAC mini。
+日常循环只创建 4 条 MO-FR：
 
-## 执行规则
+| Agent | 时间 | 日程 | 类型 |
+|---|---|---|---|
+| 价格监控 | 06:00 | 早盘价格全量任务包 | MO-FR 循环 |
+| 信号监控 | 08:30 | 早盘信号雷达 | MO-FR 循环 |
+| 价格监控 | 10:00 | 价格日报推送任务包 | MO-FR 循环 |
+| 信号监控 | 15:30 | 午后信号补扫 | MO-FR 循环 |
 
-每次任务开始前在云电脑执行：
+机动任务只保留 description 模板，不创建循环：
 
-```bash
-cd ~/coze-production/zhuanzhuan-AI
-git fetch origin
-git checkout local/dev
-git pull --ff-only origin local/dev
-git rev-parse --short HEAD
-```
+- 18:00 晚盘价格机动任务包。
+- 20:30 晚间信号机动任务包。
 
-随后按生产任务运行既有脚本。不要改代码、不要修 bug、不要提交代码或配置。
+完整 description 模板见 `docs/Coze3_行情双Agent日程模板.md`。
 
-## 日志规则
+## 硬规则
 
-每次生产任务必须写一份运行摘要：
-
-```text
-ops_logs/runs/YYYY-MM-DD/<task_name>.md
-```
-
-如发现 bug 或脚本失败，写 Codex 交接单：
-
-```text
-handoff/codex/<YYYY-MM-DD>_<issue_slug>.md
-```
-
-只有当 `git status --short` 只包含 `ops_logs/` 或 `handoff/codex/` 时，才允许：
-
-```bash
-git add ops_logs/ handoff/codex/
-git commit -m "ops-log: <task_name> <YYYY-MM-DD>"
-git push origin local/dev
-```
-
-## 渠道规则
-
-行情允许扣子主对话和企微/飞书等外部推送，但真实 webhook key 不得出现在日程 description、日志或 Git commit 中。日志只记录渠道名称和成功/失败，不记录密钥。
+- 价格 Agent 不调用 TikHub/search_web 做热点扩展。
+- 信号 Agent 不调用 mobile_use，不写 `data/price_cache.json`。
+- 刘司令只路由、监督、汇总，不创建代执行日程。
+- 新日程验证跑通前，不删除旧小B日程。
+- 飞书 webhook / secret 只放 `.env` 或环境变量，不写入 description、日志或 Git。
+- Coze 不修 bug，不改代码/配置，只运行既有脚本并写日志/交接单。

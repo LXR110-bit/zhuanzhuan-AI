@@ -1,7 +1,7 @@
 {
-  "version": "2.15.0",
+  "version": "2.16.0",
   "branch": "local/dev",
-  "updated_at": "2026-06-03",
-  "last_change": "Coze V2 production migration: cloud computer execution and GitHub lightweight ops logs",
+  "updated_at": "2026-06-15",
+  "last_change": "Split market monitor into price and signal Coze Agents; add Feishu push/daily-doc support and 4 daily schedule templates",
   "version_rule": "每次提交并推送local/dev前，必须递增本文件version并更新updated_at；涉及日程主配置时同步更新config/schedule.json版本。"
 }

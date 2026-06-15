@@ -8,13 +8,15 @@
 用户 / Calendar
   ↓
 刘司令：只做路由、监督、汇总，不创建代执行日程，不跑业务脚本
-  ├─ 侦察兵小B_行情监控：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-AI/local/dev
+  ├─ 侦察兵小B_价格监控：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-AI/local/dev
+  ├─ 侦察兵小C_信号监控：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-AI/local/dev
   └─ 罗杰指挥官_反卷教练：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-anti-coach/main
 ```
 
 硬规则：
 
-- 行情日程必须建在小B自己的 Calendar 空间。
+- 行情价格日程必须建在价格监控 Agent 自己的 Calendar 空间。
+- 行情信号日程必须建在信号监控 Agent 自己的 Calendar 空间。
 - 反卷日程必须建在罗杰自己的 Calendar 空间。
 - 刘司令不得创建代执行日程。
 - 新日程验证跑通前，不删除刘司令空间旧日程。
@@ -42,7 +44,8 @@ git rev-parse --short HEAD
 
 | Agent | 仓库 | 分支 |
 |---|---|---|
-| 侦察兵小B_行情监控 | `github.com/LXR110-bit/zhuanzhuan-AI.git` | `local/dev` |
+| 侦察兵小B_价格监控 | `github.com/LXR110-bit/zhuanzhuan-AI.git` | `local/dev` |
+| 侦察兵小C_信号监控 | `github.com/LXR110-bit/zhuanzhuan-AI.git` | `local/dev` |
 | 罗杰指挥官_反卷教练 | `github.com/LXR110-bit/zhuanzhuan-anti-coach.git` | `main` |
 
 Coze/Agent 在云电脑上只允许：
@@ -162,3 +165,20 @@ feishu_bitable_record:
 4. 小B先建 1 条行情测试任务包；罗杰先建 1 条反卷测试事件。
 5. 新 Agent 空间日程跑通后，刘司令输出旧日程待删除清单，等用户确认后删除。
 ```
+
+## 八、行情双 Agent 与飞书触达
+
+行情由两个应用/机器人触达同一个飞书群：
+
+| Agent | 飞书环境变量 | 消息前缀 | 日维度文档 |
+|---|---|---|---|
+| `侦察兵小B_价格监控` | `FEISHU_PRICE_WEBHOOK_URL` | `【价格监控】` | `data/feishu_daily_docs/YYYY-MM-DD/price.md` |
+| `侦察兵小C_信号监控` | `FEISHU_SIGNAL_WEBHOOK_URL` | `【信号监控】` | `data/feishu_daily_docs/YYYY-MM-DD/signal.md` |
+
+规则：
+
+- 两个飞书机器人可以在同一个飞书群，但必须用不同应用/机器人名称或消息前缀区分。
+- 日报类价格消息由价格 Agent 推送；S/A 级热点信号由信号 Agent 推送。
+- B 级信号只进入扣子/日志/日报摘要，默认不打扰飞书群。
+- 每次飞书推送同时生成一份日维度 Markdown 文档草稿，供后续同步飞书知识库。
+- 真实 webhook 只允许存在 `.env` 或环境变量，不得进入 description、日志或 Git。

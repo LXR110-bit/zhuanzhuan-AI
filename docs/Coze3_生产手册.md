@@ -8,8 +8,8 @@
 用户 / Calendar
   ↓
 刘司令：只做路由、监督、汇总，不创建代执行日程，不跑业务脚本
-  ├─ 侦察兵小B_价格监控：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-AI/local/dev
-  ├─ 侦察兵小C_信号监控：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-AI/local/dev
+  ├─ 侦察兵小C_价格监控：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-AI/local/dev
+  ├─ 侦察兵小B_信号监控：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-AI/local/dev
   └─ 罗杰指挥官_反卷教练：自己的 Calendar → 云电脑小MAC mini → zhuanzhuan-anti-coach/main
 ```
 
@@ -44,8 +44,8 @@ git rev-parse --short HEAD
 
 | Agent | 仓库 | 分支 |
 |---|---|---|
-| 侦察兵小B_价格监控 | `github.com/LXR110-bit/zhuanzhuan-AI.git` | `local/dev` |
-| 侦察兵小C_信号监控 | `github.com/LXR110-bit/zhuanzhuan-AI.git` | `local/dev` |
+| 侦察兵小C_价格监控 | `github.com/LXR110-bit/zhuanzhuan-AI.git` | `local/dev` |
+| 侦察兵小B_信号监控 | `github.com/LXR110-bit/zhuanzhuan-AI.git` | `local/dev` |
 | 罗杰指挥官_反卷教练 | `github.com/LXR110-bit/zhuanzhuan-anti-coach.git` | `main` |
 
 Coze/Agent 在云电脑上只允许：
@@ -172,8 +172,8 @@ feishu_bitable_record:
 
 | Agent | 飞书环境变量 | 消息前缀 | 日维度文档 |
 |---|---|---|---|
-| `侦察兵小B_价格监控` | `FEISHU_PRICE_WEBHOOK_URL` | `【价格监控】` | `data/feishu_daily_docs/YYYY-MM-DD/price.md` |
-| `侦察兵小C_信号监控` | `FEISHU_SIGNAL_WEBHOOK_URL` | `【信号监控】` | `data/feishu_daily_docs/YYYY-MM-DD/signal.md` |
+| `侦察兵小C_价格监控` | `FEISHU_PRICE_WEBHOOK_URL` | `【价格监控】` | `data/feishu_daily_docs/YYYY-MM-DD/price.md` |
+| `侦察兵小B_信号监控` | `FEISHU_SIGNAL_WEBHOOK_URL` | `【信号监控】` | `data/feishu_daily_docs/YYYY-MM-DD/signal.md` |
 
 规则：
 

@@ -76,7 +76,7 @@
   ],
   "schedules": {
     "price_morning_full": {
-      "agent": "侦察兵小B_价格监控",
+      "agent": "侦察兵小C_价格监控",
       "calendar_summary": "早盘价格全量任务包",
       "schedule": "WEEKLY MO-FR 06:00",
       "workday_only": true,
@@ -99,7 +99,7 @@
       ]
     },
     "signal_morning_radar": {
-      "agent": "侦察兵小C_信号监控",
+      "agent": "侦察兵小B_信号监控",
       "calendar_summary": "早盘信号雷达",
       "schedule": "WEEKLY MO-FR 08:30",
       "workday_only": true,
@@ -119,7 +119,7 @@
       ]
     },
     "price_daily_push": {
-      "agent": "侦察兵小B_价格监控",
+      "agent": "侦察兵小C_价格监控",
       "calendar_summary": "价格日报推送任务包",
       "schedule": "WEEKLY MO-FR 10:00",
       "workday_only": true,
@@ -137,7 +137,7 @@
       ]
     },
     "signal_afternoon_rescan": {
-      "agent": "侦察兵小C_信号监控",
+      "agent": "侦察兵小B_信号监控",
       "calendar_summary": "午后信号补扫",
       "schedule": "WEEKLY MO-FR 15:30",
       "workday_only": true,
@@ -157,7 +157,7 @@
       ]
     },
     "price_evening_flex": {
-      "agent": "侦察兵小B_价格监控",
+      "agent": "侦察兵小C_价格监控",
       "calendar_summary": "晚盘价格机动任务包",
       "schedule": "NON_RECURRING_OR_MANUAL 18:00",
       "workday_only": false,
@@ -173,7 +173,7 @@
       "not_mo_fr": true
     },
     "signal_evening_flex": {
-      "agent": "侦察兵小C_信号监控",
+      "agent": "侦察兵小B_信号监控",
       "calendar_summary": "晚间信号机动任务包",
       "schedule": "NON_RECURRING_OR_MANUAL 20:30",
       "workday_only": false,
@@ -191,8 +191,8 @@
     }
   },
   "agent_split": {
-    "price_agent": "侦察兵小B_价格监控",
-    "signal_agent": "侦察兵小C_信号监控",
+    "price_agent": "侦察兵小C_价格监控",
+    "signal_agent": "侦察兵小B_信号监控",
     "shared_repo": "github.com/LXR110-bit/zhuanzhuan-AI.git",
     "branch": "local/dev",
     "cloud_dir": "/root/coze-production/zhuanzhuan-AI",

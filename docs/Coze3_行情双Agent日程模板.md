@@ -63,11 +63,14 @@ python3 scripts/send_daily_report.py
 允许执行：
 
 ```bash
+python3 scripts/multi_engine_search.py --profile platform_policy --dry-run
+# 如已采集search_web结果：python3 scripts/multi_engine_search.py --profile platform_policy --input <search_results.json>
 python3 scripts/fetch_tikhub_signals.py --append
 python3 scripts/news_signal_filter.py
+python3 scripts/send_signal_digest.py
 ```
 
-说明：抓早间热点、新品、政策、平台变化，去重并分级。禁止 mobile_use、禁止写 `data/price_cache.json`。
+说明：抓早间热点、新品、政策、平台变化，去重并分级；多引擎搜索只产出平台政策待验证候选线索和运营承接预备，禁止当作已确认政策。禁止 mobile_use、禁止写 `data/price_cache.json`。
 
 ## 4. 15:30 午后信号补扫
 
@@ -78,11 +81,14 @@ python3 scripts/news_signal_filter.py
 允许执行：
 
 ```bash
+python3 scripts/multi_engine_search.py --profile platform_policy --dry-run
+# 如已采集search_web结果：python3 scripts/multi_engine_search.py --profile platform_policy --input <search_results.json>
 python3 scripts/fetch_tikhub_signals.py --append
 python3 scripts/news_signal_filter.py
+python3 scripts/send_signal_digest.py
 ```
 
-说明：补抓午后热点，复查早盘失败源，避免一次失败导致全天空白。禁止 mobile_use、禁止写 `data/price_cache.json`。
+说明：补抓午后热点，复查早盘失败源，避免一次失败导致全天空白；如有大促/国补/以旧换新线索，按平台政策证据闸门输出运营承接预备。禁止 mobile_use、禁止写 `data/price_cache.json`。
 
 ## 5. 18:00 晚盘价格机动任务包（不建循环）
 

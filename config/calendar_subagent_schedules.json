@@ -1,7 +1,7 @@
 {
-  "version": "2.16.0",
-  "updated_at": "2026-06-15",
-  "execution_model": "Calendar -> price/signal Agent -> cloud bash/mobile_use/TikHub/search_web -> Python post-processing -> Feishu/Coze outputs",
+  "version": "2.17.0",
+  "updated_at": "2026-06-17",
+  "execution_model": "Calendar -> price/signal Agent -> cloud bash/mobile_use/TikHub/search_web/multi-engine candidates -> Python post-processing -> Feishu/Coze outputs",
   "source_templates": {
     "sub_agent_execution": "扣子原价格爬取功能/sub-agent执行方式说明_20260429.md",
     "calendar_description": "扣子原价格爬取功能/日程描述模板_20260429.md",
@@ -12,6 +12,7 @@
     "信号监控Agent只负责资讯/热点/政策/新品信号采集、去重、分级和信号推送",
     "价格Agent不得主动调用TikHub/search_web做热点扩展",
     "信号Agent不得调用mobile_use采价，不得写data/price_cache.json",
+    "多引擎搜索只作为平台政策候选线索层；未经过官方/API/截图/OCR/人工复核不得写成已确认结论",
     "日常循环只创建4条MO-FR：06:00价格、08:30信号、10:00价格推送、15:30信号补扫",
     "18:00价格机动和20:30信号机动不得创建MO-FR循环，只能非循环/手动触发",
     "真实webhook/secret只放.env或环境变量，不写description、日志或Git",
@@ -109,6 +110,7 @@
       ],
       "push_enabled": "S/A only to Feishu",
       "python_after_tools": [
+        "python3 scripts/multi_engine_search.py --profile platform_policy --dry-run",
         "python3 scripts/fetch_tikhub_signals.py --append",
         "python3 scripts/news_signal_filter.py",
         "python3 scripts/send_signal_digest.py"
@@ -116,6 +118,12 @@
       "forbidden_tools": [
         "mobile_use",
         "price_cache写入"
+      ],
+      "platform_policy_candidate_flow": [
+        "先用multi_engine_search.py --dry-run生成多引擎搜索任务清单",
+        "由信号Agent/search_web按清单抽样采集候选结果并整理为JSON",
+        "用multi_engine_search.py --input归一化为data/platform_policy_candidates.json",
+        "send_signal_digest.py只按待验证候选展示运营承接预备；不得当作已确认政策"
       ]
     },
     "price_daily_push": {
@@ -147,6 +155,7 @@
       ],
       "push_enabled": "S/A only to Feishu",
       "python_after_tools": [
+        "python3 scripts/multi_engine_search.py --profile platform_policy --dry-run",
         "python3 scripts/fetch_tikhub_signals.py --append",
         "python3 scripts/news_signal_filter.py",
         "python3 scripts/send_signal_digest.py"
@@ -154,6 +163,12 @@
       "forbidden_tools": [
         "mobile_use",
         "price_cache写入"
+      ],
+      "platform_policy_candidate_flow": [
+        "先用multi_engine_search.py --dry-run生成多引擎搜索任务清单",
+        "由信号Agent/search_web按清单抽样采集候选结果并整理为JSON",
+        "用multi_engine_search.py --input归一化为data/platform_policy_candidates.json",
+        "send_signal_digest.py只按待验证候选展示运营承接预备；不得当作已确认政策"
       ]
     },
     "price_evening_flex": {
@@ -183,11 +198,18 @@
       ],
       "push_enabled": "S/A only to Feishu",
       "python_after_tools": [
+        "python3 scripts/multi_engine_search.py --profile platform_policy --dry-run",
         "python3 scripts/fetch_tikhub_signals.py --append",
         "python3 scripts/news_signal_filter.py",
         "python3 scripts/send_signal_digest.py"
       ],
-      "not_mo_fr": true
+      "not_mo_fr": true,
+      "platform_policy_candidate_flow": [
+        "先用multi_engine_search.py --dry-run生成多引擎搜索任务清单",
+        "由信号Agent/search_web按清单抽样采集候选结果并整理为JSON",
+        "用multi_engine_search.py --input归一化为data/platform_policy_candidates.json",
+        "send_signal_digest.py只按待验证候选展示运营承接预备；不得当作已确认政策"
+      ]
     }
   },
   "agent_split": {
@@ -207,5 +229,17 @@
     "price_prefix": "【价格监控】",
     "signal_prefix": "【信号监控】",
     "daily_doc_dir": "data/feishu_daily_docs/YYYY-MM-DD/"
+  },
+  "multi_search_config": {
+    "config_file": "config/multi_search_sources.json",
+    "default_profile": "platform_policy",
+    "output": "data/platform_policy_candidates.json",
+    "role": "信号Agent平台政策候选线索发现；输出运营流量承接预备，不替代API/官方页/截图证据",
+    "default_steps": [
+      "python3 scripts/multi_engine_search.py --profile platform_policy --dry-run",
+      "如Agent已用search_web采集到候选结果，整理为JSON后执行：python3 scripts/multi_engine_search.py --profile platform_policy --input <search_results.json>",
+      "仅在明确需要且环境允许时使用：python3 scripts/multi_engine_search.py --profile platform_policy --fetch-direct"
+    ],
+    "evidence_gate": "candidate_only_pending_verification"
   }
 }

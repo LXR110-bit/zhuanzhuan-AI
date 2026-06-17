@@ -1,7 +1,7 @@
 {
-  "version": "2.16.1",
+  "version": "2.17.0",
   "branch": "local/dev",
   "updated_at": "2026-06-17",
-  "last_change": "Correct price/signal Coze Agent names: 小C for price, 小B for signal",
+  "last_change": "Add multi-engine platform policy candidate discovery and ops traffic承接 evidence gate for signal Agent",
   "version_rule": "每次提交并推送local/dev前，必须递增本文件version并更新updated_at；涉及日程主配置时同步更新config/schedule.json版本。"
 }

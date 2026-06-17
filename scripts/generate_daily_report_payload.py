@@ -22,6 +22,7 @@ CLOUD_PC_DAILY_FILE = BASE_DIR / "cloud_pc_daily.json"
 VALIDATION_REPORT_FILE = DATA_DIR / "validation_report.json"
 ANOMALY_VOTES_FILE = DATA_DIR / "anomaly_votes.json"
 NEWS_SIGNALS_FILE = DATA_DIR / "news_signals_filtered.json"
+PLATFORM_POLICY_CANDIDATES_FILE = DATA_DIR / "platform_policy_candidates.json"
 DAILY_PRICE_DIR = DATA_DIR / "daily_price_records"
 DAILY_CATEGORY_LIMIT = 2
 
@@ -502,6 +503,44 @@ def clean_signal_title(title):
     return title
 
 
+def merge_platform_policy_candidates(signals, policy_data):
+    """Merge multi-engine platform-policy candidates as pending-verification signals.
+
+    These items are discovery leads only. They must not be interpreted as
+    confirmed platform policy facts until API/official URL/screenshot/OCR/manual
+    evidence is attached.
+    """
+    if not policy_data:
+        return signals
+    for item in (policy_data.get("items") or [])[:12]:
+        evidence_status = item.get("evidence_status") or "pending_verification"
+        level = item.get("level") or "A"
+        if evidence_status != "confirmed":
+            # Candidate-only search results can guide ops prep but should not become S-level facts.
+            level = "A" if level == "S" else level
+        if level not in signals:
+            level = "B"
+        title = clean_signal_title(item.get("title") or item.get("summary") or "平台政策候选线索")
+        summary_text = item.get("summary") or title
+        ops = item.get("ops_playbook") or {}
+        if evidence_status != "confirmed":
+            summary_text = f"【待验证】{summary_text}。运营可先准备承接：{ops.get('landing_page', '落地页/入口/文案待配置')}"
+        signals[level].append({
+            "title": title,
+            "summary": summary_text,
+            "source": "多引擎搜索候选",
+            "url": item.get("url") or "",
+            "domain": item.get("domain") or "",
+            "published_at": item.get("captured_at") or policy_data.get("generated_at"),
+            "publish_date": (item.get("captured_at") or policy_data.get("date") or "")[:10],
+            "evidence_status": evidence_status,
+            "ops_playbook": ops,
+            "dedupe_key": item.get("dedupe_key"),
+            "raw": item,
+        })
+    return signals
+
+
 def merge_anomaly_votes(signals, anomaly_votes):
     for item in (anomaly_votes.get("items") or [])[:20]:
         level = item.get("level", "B")
@@ -592,6 +631,7 @@ def main():
     validation_report = load_today_json(VALIDATION_REPORT_FILE, "validation_report")
     anomaly_votes = load_today_json(ANOMALY_VOTES_FILE, "anomaly_votes")
     news_data = load_today_json(NEWS_SIGNALS_FILE, "news_signals_filtered")
+    platform_policy_data = load_today_json(PLATFORM_POLICY_CANDIDATES_FILE, "platform_policy_candidates")
     categories_data = load_json(CATEGORIES_FILE)
 
     rows, missing = build_rows_from_price_cache(price_cache, validation_report)
@@ -633,6 +673,7 @@ def main():
 
     signals = normalize_signals(cloud_pc_data)
     signals = merge_news_signals(signals, news_data)
+    signals = merge_platform_policy_candidates(signals, platform_policy_data)
     signals = merge_anomaly_votes(signals, anomaly_votes)
     recommendations = cloud_pc_data.get("recommendations") or []
     if recommendations and not signals["A"] and not signals["S"]:
@@ -662,12 +703,13 @@ def main():
         extended_payload = {
             "signals": signals,
             "news_signals": news_data,
+            "platform_policy_candidates": platform_policy_data,
             "prices": rows,
         }
-        action_items = engine.generate_actions_from_payload(extended_payload)
+        action_objects = engine.generate_actions_from_payload(extended_payload)
+        engine.save_actions(action_objects)
         # 转换为可序列化的dict列表
-        action_items = [action.to_dict() for action in action_items]
-        engine.save_actions(action_items)
+        action_items = [action.to_dict() for action in action_objects]
     except Exception as exc:
         print(f"[warn] action engine failed: {exc}", file=sys.stderr)
         log_event("daily_payload.action_engine_failed", ok=False, error=str(exc))
@@ -679,6 +721,7 @@ def main():
         "summary": summarize(rows, signals, missing, cloud_pc_data, news_data),
         "signals": signals,
         "action_items": action_items,
+        "platform_policy_candidates": platform_policy_data,
         "prices": {
             "updated_at": price_cache.get("updated_at") or cloud_pc_data.get("generated_at"),
             "rows": display_rows,
@@ -704,6 +747,7 @@ def main():
             "validation_report": str(VALIDATION_REPORT_FILE) if validation_report else None,
             "anomaly_votes": str(ANOMALY_VOTES_FILE) if anomaly_votes else None,
             "news_signals_filtered": str(NEWS_SIGNALS_FILE) if news_data else None,
+            "platform_policy_candidates": str(PLATFORM_POLICY_CANDIDATES_FILE) if platform_policy_data else None,
         },
     }
 

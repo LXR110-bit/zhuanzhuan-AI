@@ -18,15 +18,19 @@
 允许：
 
 - 使用 TikHub / search_web 获取资讯、热点、新品、政策、平台变化。
+- 使用多引擎搜索配置发现平台政策候选线索，尤其是京东/天猫/拼多多的国补、以旧换新、旧机门槛券；该结果只作为待验证线索。
 - 运行既有信号脚本：
   - `python3 scripts/fetch_tikhub_signals.py --append`
   - `python3 scripts/news_signal_filter.py`
+  - `python3 scripts/multi_engine_search.py --profile platform_policy --dry-run`
+  - `python3 scripts/multi_engine_search.py --profile platform_policy --input <search_results.json>`
 - 做信号去重、S/A/B 分级、摘要和复核建议。
 
 禁止：
 
 - 采价、跑 `mobile_use`、写 `data/price_cache.json`。
 - 生成价格日报主产物或代替价格 Agent 推送日报。
+- 把多引擎搜索候选线索直接写成“已确认政策”；必须有官方/API/截图/OCR/人工复核证据才能升级结论。
 - 修改业务代码、配置、模板或版本号。
 - 把真实 webhook key / app secret 写进 description、日志或 Git。
 
@@ -44,6 +48,18 @@
 | 建议时间 | 日程 | 类型 | 说明 |
 |---|---|---|---|
 | 20:30 | 晚间信号机动任务包 | 非循环/手动 | 大事件、S/A 信号复核、白天抓取失败补救 |
+
+## 平台政策候选线索与运营承接
+
+多引擎搜索的定位是“雷达”，不是“裁判”。执行平台政策任务时：
+
+1. 先运行 `python3 scripts/multi_engine_search.py --profile platform_policy --dry-run` 获取 Baidu / Bing CN / Bing INT / 360 / Sogou / WeChat 搜索任务清单。
+2. 由 Agent 使用 `search_web` 按清单抽样采集候选结果，整理为临时 JSON，再运行 `python3 scripts/multi_engine_search.py --profile platform_policy --input <search_results.json>` 归一化为 `data/platform_policy_candidates.json`。
+3. 若使用 `--fetch-direct`，只能作为候选发现兜底；搜索引擎 403/429/验证码不视为业务失败。
+4. 所有候选默认 `pending_verification`，不得直接输出“京东已确认满X减Y”。
+5. 给运营的输出优先是流量承接预备：页面入口、文案方向、人群圈选、渠道和指标；定价/供应链只做附属提醒。
+
+升级为已确认结论至少需要一种证据：官方/API字段、官方活动页、商品页/结算页截图或OCR、人工核验记录。
 
 ## 飞书推送规则
 

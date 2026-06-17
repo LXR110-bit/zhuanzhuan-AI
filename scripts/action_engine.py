@@ -32,6 +32,7 @@ class SignalType(Enum):
     SUPPLY_CHAIN = "supply_chain"       # 上游供应链信号
     NEW_PRODUCT = "new_product"         # 新品发布/评测爆发
     POLICY = "policy"                   # 政策面信号
+    PLATFORM_POLICY_COUPON = "platform_policy_coupon"  # 平台政策/以旧换新/旧机门槛券
     COMPETITOR = "competitor"           # 竞品动态
     ANOMALY = "anomaly"                 # 异动检测
 
@@ -46,6 +47,7 @@ class ActionType(Enum):
     PRE_STOCK = "pre_stock"             # 预判囤货
     ACCELERATE_SHIPMENT = "accelerate_shipment"  # 加速出货
     POLICY_CAMPAIGN = "policy_campaign" # 配合政策活动
+    TRAFFIC_CAPTURE_PLAYBOOK = "traffic_capture_playbook" # 平台政策流量承接包
     FOLLOW_PRICE = "follow_price"       # 跟价策略
     DIFFERENTIATE = "differentiate"     # 差异化策略
     MONITOR = "monitor"                 # 持续监控
@@ -189,6 +191,21 @@ SIGNAL_ACTION_RULES = {
         description="以旧换新政策发布，建议配合政策做召回活动"
     ),
     
+
+    # 平台政策/以旧换新旧机门槛券 → 输出运营流量承接包
+    SignalType.PLATFORM_POLICY_COUPON: RuleConfig(
+        signal_type=SignalType.PLATFORM_POLICY_COUPON,
+        action_type=ActionType.TRAFFIC_CAPTURE_PLAYBOOK,
+        direction=ActionDirection.MONITOR,
+        trigger_conditions={
+            "policy_types": ["trade_in_coupon", "platform_coupon", "subsidy"],
+            "requires_evidence_gate": True,
+            "ops_first": True,
+        },
+        auto_confirm=False,
+        confidence_base=65,
+        description="平台政策候选信号，建议先做流量承接预备，并用官方/API/截图/OCR复核后再下结论"
+    ),
     # 竞品提价 → 跟价或差异化策略
     SignalType.COMPETITOR: RuleConfig(
         signal_type=SignalType.COMPETITOR,
@@ -529,6 +546,7 @@ class ActionEngine:
             SignalType.SUPPLY_CHAIN: "建议预判7天后涨价，提前囤货",
             SignalType.NEW_PRODUCT: "建议加速旧款出货，降低库存",
             SignalType.POLICY: "建议配合政策制定召回活动",
+            SignalType.PLATFORM_POLICY_COUPON: "建议输出运营流量承接包：页面入口、文案、人群、渠道和指标先预备；证据复核后再升级结论",
             SignalType.COMPETITOR: "建议评估跟价或差异化策略",
             SignalType.ANOMALY: f"建议加强监控，变动{pct_str}",
         }
@@ -582,7 +600,9 @@ class ActionEngine:
             signal_type = None
             if any(x in title.lower() or x in summary.lower() for x in ["新品", "发布", "发布"]):
                 signal_type = SignalType.NEW_PRODUCT
-            elif any(x in title.lower() or x in summary.lower() for x in ["政策", "补贴", "以旧换新"]):
+            elif any(x in title.lower() or x in summary.lower() for x in ["旧机", "国补", "平台券", "品牌券", "满", "减", "以旧换新"]):
+                signal_type = SignalType.PLATFORM_POLICY_COUPON
+            elif any(x in title.lower() or x in summary.lower() for x in ["政策", "补贴"]):
                 signal_type = SignalType.POLICY
             elif any(x in title.lower() or x in summary.lower() for x in ["上游", "供应", "涨价"]):
                 signal_type = SignalType.SUPPLY_CHAIN
@@ -603,7 +623,29 @@ class ActionEngine:
                 if action:
                     actions.append(action)
         
-        # 3. 去重（相同产品+相同动作类型）
+
+        # 3. 处理平台政策候选线索：只生成运营承接预备动作，不当作已确认政策事实
+        policy_data = payload.get("platform_policy_candidates", {}) or {}
+        for item in (policy_data.get("items") or [])[:10]:
+            title = item.get("title", "")
+            summary = item.get("summary", "") or item.get("description", "")
+            signal_data = {
+                "type": SignalType.PLATFORM_POLICY_COUPON.value,
+                "product_id": "platform_policy",
+                "product_name": title[:30] or "平台政策候选线索",
+                "level": item.get("level", "A"),
+                "sources": [item.get("source", "multi_search")],
+                "confidence": item.get("score", 65),
+                "category": ",".join((item.get("ops_playbook") or {}).get("target_categories", [])),
+                "evidence_status": item.get("evidence_status", "pending_verification"),
+                "summary": summary,
+            }
+            action = self.process_signal(signal_data)
+            if action:
+                action.suggested_adjustment = "运营承接预备：配置电脑办公估价入口、换新前估价文案、目标人群和指标看板；待官方/API/截图/OCR复核后再升级结论"
+                actions.append(action)
+
+        # 4. 去重（相同产品+相同动作类型）
         seen = set()
         unique_actions = []
         for action in actions:
@@ -612,7 +654,7 @@ class ActionEngine:
                 seen.add(key)
                 unique_actions.append(action)
         
-        # 4. 排序（按置信度和级别）
+        # 5. 排序（按置信度和级别）
         unique_actions.sort(
             key=lambda x: (-x.confidence_score, x.signal_type)
         )

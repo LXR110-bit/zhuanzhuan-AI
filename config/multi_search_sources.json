@@ -1,0 +1,194 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-06-17",
+  "enabled": true,
+  "purpose": "多引擎搜索作为信号监控Agent的平台政策候选线索层；只用于发现线索，不作为已确认政策事实源。",
+  "default_profile": "platform_policy",
+  "output": "data/platform_policy_candidates.json",
+  "timeout_seconds": 12,
+  "delay_seconds": 1.2,
+  "max_results_per_engine": 5,
+  "max_candidates": 40,
+  "min_score": 40,
+  "fetch_direct_default": false,
+  "evidence_rules": {
+    "candidate_only": "多引擎搜索结果默认均为待验证线索，不得直接写成已确认结论。",
+    "promote_to_confirmed_requires_any": [
+      "官方/API返回的活动或券字段",
+      "平台官方活动页URL",
+      "商品页或结算页截图/OCR券面文字",
+      "人工核验记录"
+    ]
+  },
+  "profiles": {
+    "platform_policy": {
+      "description": "京东/天猫/拼多多等平台政策、国补、以旧换新、旧机门槛券候选线索发现。",
+      "language": "zh",
+      "level": "A",
+      "queries": [
+        "京东 电脑办公 以旧换新 国补 旧机满减",
+        "京东 618 电脑 以旧换新 旧机满3500 减",
+        "京东 显卡 台式机 以旧换新 国补",
+        "京东 联想 华硕 AI笔记本 以旧换新 旧机",
+        "天猫 电脑 国补 以旧换新 旧机补贴",
+        "拼多多 电脑 国补 以旧换新 补贴"
+      ],
+      "engines": [
+        "baidu",
+        "bing_cn",
+        "bing_int",
+        "sogou",
+        "wechat",
+        "so360"
+      ],
+      "include_keywords": [
+        "京东",
+        "天猫",
+        "淘宝",
+        "拼多多",
+        "电脑",
+        "电脑办公",
+        "笔记本",
+        "台式机",
+        "组装机",
+        "显卡",
+        "国补",
+        "以旧换新",
+        "旧机",
+        "补贴",
+        "满",
+        "减",
+        "券"
+      ],
+      "policy_keywords": [
+        "国补",
+        "以旧换新",
+        "旧机",
+        "补贴",
+        "平台券",
+        "品牌券",
+        "满",
+        "减",
+        "券"
+      ],
+      "ops_keywords": [
+        "电脑",
+        "电脑办公",
+        "笔记本",
+        "台式机",
+        "组装机",
+        "显卡"
+      ],
+      "irrelevant_keywords": [
+        "废旧手机",
+        "旧手机回收",
+        "小说",
+        "招聘",
+        "教程",
+        "破解"
+      ],
+      "official_domains": [
+        "jd.com",
+        "mall.jd.com",
+        "pro.jd.com",
+        "huishou.jd.com",
+        "tmall.com",
+        "taobao.com",
+        "pinduoduo.com",
+        "yangkeduo.com",
+        "gov.cn",
+        "ndrc.gov.cn",
+        "mof.gov.cn"
+      ],
+      "trusted_domains": [
+        "ithome.com",
+        "36kr.com",
+        "smzdm.com",
+        "weixin.sogou.com",
+        "sogou.com"
+      ]
+    }
+  },
+  "engines": {
+    "baidu": {
+      "label": "Baidu",
+      "language": "zh",
+      "url": "https://www.baidu.com/s?wd={keyword}"
+    },
+    "bing_cn": {
+      "label": "Bing CN",
+      "language": "zh",
+      "url": "https://cn.bing.com/search?q={keyword}&ensearch=0"
+    },
+    "bing_int": {
+      "label": "Bing INT",
+      "language": "zh",
+      "url": "https://cn.bing.com/search?q={keyword}&ensearch=1"
+    },
+    "so360": {
+      "label": "360",
+      "language": "zh",
+      "url": "https://www.so.com/s?q={keyword}"
+    },
+    "sogou": {
+      "label": "Sogou",
+      "language": "zh",
+      "url": "https://sogou.com/web?query={keyword}"
+    },
+    "wechat": {
+      "label": "WeChat Sogou",
+      "language": "zh",
+      "url": "https://wx.sogou.com/weixin?type=2&query={keyword}"
+    },
+    "shenma": {
+      "label": "Shenma",
+      "language": "zh",
+      "url": "https://m.sm.cn/s?q={keyword}"
+    },
+    "google": {
+      "label": "Google",
+      "language": "en",
+      "url": "https://www.google.com/search?q={keyword}"
+    },
+    "google_hk": {
+      "label": "Google HK",
+      "language": "en",
+      "url": "https://www.google.com.hk/search?q={keyword}"
+    },
+    "duckduckgo": {
+      "label": "DuckDuckGo",
+      "language": "en",
+      "url": "https://duckduckgo.com/html/?q={keyword}"
+    },
+    "yahoo": {
+      "label": "Yahoo",
+      "language": "en",
+      "url": "https://search.yahoo.com/search?p={keyword}"
+    },
+    "startpage": {
+      "label": "Startpage",
+      "language": "en",
+      "url": "https://www.startpage.com/sp/search?query={keyword}"
+    },
+    "brave": {
+      "label": "Brave",
+      "language": "en",
+      "url": "https://search.brave.com/search?q={keyword}"
+    },
+    "ecosia": {
+      "label": "Ecosia",
+      "language": "en",
+      "url": "https://www.ecosia.org/search?q={keyword}"
+    },
+    "qwant": {
+      "label": "Qwant",
+      "language": "en",
+      "url": "https://www.qwant.com/?q={keyword}"
+    },
+    "wolframalpha": {
+      "label": "WolframAlpha",
+      "language": "en",
+      "url": "https://www.wolframalpha.com/input?i={keyword}"
+    }
+  }
+}
